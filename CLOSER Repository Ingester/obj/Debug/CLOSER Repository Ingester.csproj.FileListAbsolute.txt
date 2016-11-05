@@ -1,0 +1,17 @@
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\CLOSER Repository Ingester.exe.config
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\obj\Debug\CLOSER Repository Ingester.csprojResolveAssemblyReference.cache
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\CLOSER Repository Ingester.exe
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\CLOSER Repository Ingester.pdb
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.Model.Ddi.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.Model.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.Repository.Client.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.ViewModel.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\log4net.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Newtonsoft.Json.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\QuickGraph.dll
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.Model.xml
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.Model.Ddi.xml
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.Repository.Client.xml
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\bin\Debug\Algenta.Colectica.ViewModel.xml
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\obj\Debug\CLOSER Repository Ingester.exe
+c:\users\pwidqssglsa\documents\visual studio 2013\Projects\CLOSER Repository Ingester\CLOSER Repository Ingester\obj\Debug\CLOSER Repository Ingester.pdb
