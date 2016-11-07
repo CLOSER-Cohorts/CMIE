@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using System.Xml.Linq;
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Ddi.Serialization;
@@ -16,9 +12,8 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
     {
         string filepath;
 
-        public LoadInstrument(string scope, string filepath)
+        public LoadInstrument(string filepath)
         {
-            this.scope = scope;
             this.filepath = filepath;
         }
 
@@ -32,7 +27,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             DdiValidator validator = new DdiValidator(this.filepath, DdiFileFormat.Ddi32);
             if (validator.Validate())
             {
-                this.doc = validator.ValidatedXDocument;
+                doc = validator.ValidatedXDocument;
             } 
             else
             {

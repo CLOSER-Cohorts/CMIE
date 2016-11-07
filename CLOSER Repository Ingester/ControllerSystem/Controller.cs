@@ -72,7 +72,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     switch (pieces[0].ToLower())
                     {
                         case "instrument":
-                            group.addAction(new LoadInstrument(pieces[2], this.basePath + pieces[3]));
+                            group.AddAction(pieces[2], new LoadInstrument(this.basePath + pieces[3]));
                             break;
                     }
                 }
