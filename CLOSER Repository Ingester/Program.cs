@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CLOSER_Repository_Ingester
 {
@@ -10,21 +6,45 @@ namespace CLOSER_Repository_Ingester
     {
         static void Main(string[] args)
         {
-            Ingester ingester = new Ingester();
-
-            ingester.Init(@"d:\closer\development\will\ingest\control.txt");
-
-            if (ingester.Prepare())
+            string buildDirectory = null;
+            string controlFile = null;
+            for (var i = 0; i < args.Length; i++)
             {
-                ingester.Build();
-                ingester.CompareWithRepository();
+                if (args[i] == "-b")
+                {
+                    buildDirectory = args[i + 1];
+                    i++;
+                    continue;
+                }
+                if (args[i] == "-c")
+                {
+                    controlFile = args[i + 1];
+                    i++;
+                }
+            }
+            if (controlFile == null)
+            {
+                Console.WriteLine("No control file was specified.");
             }
             else
             {
+                Ingester ingester = new Ingester();
 
+                ingester.Init(controlFile);
+
+                if (ingester.Prepare(buildDirectory))
+                {
+                    ingester.Build();
+                    ingester.CompareWithRepository();
+                }
+                else
+                {
+
+                }
+
+                Console.WriteLine("Finished. Press enter to exit");
             }
 
-            Console.WriteLine("Finished. Press enter to exit");
             Console.ReadLine();
         }
     }

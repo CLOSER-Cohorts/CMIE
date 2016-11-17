@@ -15,8 +15,6 @@ namespace CLOSER_Repository_Ingester
     {
         string controlFilepath;
         Controller controller;
-        public Ingester() {}
-
 
         public void Init(string controlFilepath) 
         {
@@ -25,12 +23,19 @@ namespace CLOSER_Repository_Ingester
             this.controlFilepath = controlFilepath;
         }
 
-        public bool Prepare()
+        public void SetBasePath(string basePath)
         {
-            this.controller = new Controller(this.controlFilepath);
+            controller.basePath = basePath;
+        }
+
+        public bool Prepare(string basePath = null)
+        {
+            controller = new Controller(controlFilepath);
+            controller.basePath = basePath;
+
             try
             {
-                this.controller.loadFile();
+                controller.loadFile();
             } catch (Exception e) {
                 Console.WriteLine("{0}", e);
             }
@@ -39,7 +44,7 @@ namespace CLOSER_Repository_Ingester
 
         public void Build()
         {
-            foreach (Group group in this.controller.groups)
+            foreach (Group group in controller.groups)
             {
                 group.Build();
             }
@@ -47,7 +52,7 @@ namespace CLOSER_Repository_Ingester
 
         public void CompareWithRepository()
         {
-            foreach (Group group in this.controller.groups)
+            foreach (Group group in controller.groups)
             {
                 group.CompareWithRepository();
             }

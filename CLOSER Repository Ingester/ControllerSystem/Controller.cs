@@ -12,7 +12,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
     class Controller
     {
         string filepath;
-        string basePath { get; set; }
+        public string basePath { get; set; }
         public List<Group> groups { get; private set; }
 
         public Controller(string filepath)
@@ -23,7 +23,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
         public void loadFile()
         {
-            loadFile(this.filepath);
+            loadFile(filepath);
         }
 
         public void loadFile(string filepath)
@@ -52,11 +52,11 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                         return;
 
                     case "rootdir":
-                        this.basePath = pieces[1];
+                        basePath = pieces[1];
                         return;
 
                     case "control":
-                        loadFile(pieces[1]);
+                        loadFile(Path.Combine(Path.GetDirectoryName(filepath), pieces[1]));
                         return;
 
                     case "concepts":
@@ -72,11 +72,21 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     switch (pieces[0].ToLower())
                     {
                         case "instrument":
-                            group.AddAction(pieces[2], new LoadInstrument(this.basePath + pieces[3]));
+                            group.AddAction(pieces[2], new LoadInstrument(BuildFilePath(pieces[3])));
                             break;
                     }
                 }
             }
+        }
+
+        private string BuildFilePath(string filepath)
+        {
+            var output = Path.Combine(basePath, filepath);
+
+            output = output.Replace('/', Path.DirectorySeparatorChar);
+            output = output.Replace('\\', Path.DirectorySeparatorChar);
+
+            return output;
         }
     }
 }

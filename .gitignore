@@ -1,3 +1,5 @@
 .idea/
 *.swp
 .DS_Store
+CLOSER\ Repository\ Ingester/bin
+CLOSER\ Repository\ Ingester/obj
