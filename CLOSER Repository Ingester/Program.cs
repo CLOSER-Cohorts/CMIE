@@ -17,6 +17,7 @@ namespace CLOSER_Repository_Ingester
             if (ingester.Prepare())
             {
                 ingester.Build();
+                ingester.CompareWithRepository();
             }
             else
             {

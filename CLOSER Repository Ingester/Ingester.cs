@@ -42,16 +42,15 @@ namespace CLOSER_Repository_Ingester
             foreach (Group group in this.controller.groups)
             {
                 group.Build();
-                foreach (string scope in group.GetAllScopes())
-                {
-                    Console.WriteLine(scope);
-                }
             }
         }
 
         public void CompareWithRepository()
         {
-
+            foreach (Group group in this.controller.groups)
+            {
+                group.CompareWithRepository();
+            }
         }
 
         public void Run()
