@@ -11,20 +11,26 @@ namespace CLOSER_Repository_Ingester
 {
     public static class Utility
     {
-        public static RepositoryClientBase GetClient()
+        public static RepositoryClientBase GetClient(string url = "localhost")
         {
             // The WcfRepositoryClient takes a configation object
             // detailing how to connect to the Repository.
             var connectionInfo = new RepositoryConnectionInfo()
             {
-                // TODO Replace this with the hostname of your Colectica Repository
-                Url = "localhost",
+                Url = "colecticaint.inst.ioe.ac.uk",
                 AuthenticationMethod = RepositoryAuthenticationMethod.Windows,
                 TransportMethod = RepositoryTransportMethod.NetTcp,
+                UserName = "inst\\pwidqssglsa",
+                Password = "Telephone12&"
             };
 
+            Console.WriteLine("before connection");
+            var repo = new WcfRepositoryClient(connectionInfo);
+            Console.WriteLine("after connection");
+            Console.WriteLine(repo.GetRepositoryInfo());
+
             // Create the client object, passing in the connection information.
-            return new WcfRepositoryClient(connectionInfo);;
+            return repo;;
         }
     }
 }

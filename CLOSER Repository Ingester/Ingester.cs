@@ -44,7 +44,7 @@ namespace CLOSER_Repository_Ingester
 
         public void Build()
         {
-            foreach (Group group in controller.groups)
+            foreach (var group in controller.groups)
             {
                 group.Build();
             }
@@ -52,7 +52,7 @@ namespace CLOSER_Repository_Ingester
 
         public void CompareWithRepository()
         {
-            foreach (Group group in controller.groups)
+            foreach (var group in controller.groups)
             {
                 group.CompareWithRepository();
             }
