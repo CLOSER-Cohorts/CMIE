@@ -74,6 +74,10 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                         case "instrument":
                             group.AddAction(pieces[2], new LoadInstrument(BuildFilePath(pieces[3])));
                             break;
+
+                        case "studysweep":
+                            group.AddAction(new LoadStudySweep(BuildFilePath(pieces[2])));
+                            break;
                     }
                 }
             }

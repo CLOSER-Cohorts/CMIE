@@ -10,29 +10,9 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 {
     class LoadInstrument : DDIFileAction
     {
-        string filepath;
-
         public LoadInstrument(string filepath)
         {
             this.filepath = filepath;
-        }
-
-        public override void Validate()
-        {
-            if (!System.IO.File.Exists(this.filepath))
-            {
-                throw new System.Exception("Missing file: " + this.filepath);
-            }
-
-            DdiValidator validator = new DdiValidator(this.filepath, DdiFileFormat.Ddi32);
-            if (validator.Validate())
-            {
-                doc = validator.ValidatedXDocument;
-            } 
-            else
-            {
-                throw new System.Exception("Invalid file: " + this.filepath);
-            }
         }
 
         public override IEnumerable<IVersionable> Build()

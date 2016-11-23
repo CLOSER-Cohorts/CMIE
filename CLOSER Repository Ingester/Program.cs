@@ -36,10 +36,23 @@ namespace CLOSER_Repository_Ingester
                 {
                     ingester.Build();
                     ingester.CompareWithRepository();
+
+                    Console.WriteLine("About to commit to repository, do you want to continue? (y/N)");
+                    string response = Console.ReadLine().ToLower();
+                    if (response[0].Equals('y'))
+                    {
+                        Console.Write("Committing ");
+                        ingester.Commit();
+                        Console.WriteLine("Done.");
+                    }
+                    else
+                    {
+                        Console.Write("No changes committed.");
+                    }
                 }
                 else
                 {
-
+                    Console.WriteLine("Failed to prepare build.");
                 }
 
                 Console.WriteLine("Finished. Press enter to exit");

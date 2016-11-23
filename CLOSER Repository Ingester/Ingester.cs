@@ -58,6 +58,14 @@ namespace CLOSER_Repository_Ingester
             }
         }
 
+        public void Commit()
+        {
+            foreach (var group in controller.groups)
+            {
+                group.Commit();
+            }
+        }
+
         public void Run()
         {
             if (Prepare())

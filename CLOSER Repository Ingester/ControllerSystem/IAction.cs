@@ -22,10 +22,28 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
     public abstract class DDIFileAction : IAction
     {
         public string scope { get; protected set; }
-        public abstract void Validate();
         public abstract IEnumerable<IVersionable> Build();
 
         protected XDocument doc;
+        protected string filepath;
+
+        public void Validate()
+        {
+            if (!System.IO.File.Exists(this.filepath))
+            {
+                throw new System.Exception("Missing file: " + this.filepath);
+            }
+
+            DdiValidator validator = new DdiValidator(this.filepath, DdiFileFormat.Ddi32);
+            if (validator.Validate())
+            {
+                doc = validator.ValidatedXDocument;
+            }
+            else
+            {
+                throw new System.Exception("Invalid file: " + this.filepath);
+            }
+        }
 
         protected Collection<IVersionable> getAllItems()
         {

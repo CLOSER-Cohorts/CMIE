@@ -17,20 +17,14 @@ namespace CLOSER_Repository_Ingester
             // detailing how to connect to the Repository.
             var connectionInfo = new RepositoryConnectionInfo()
             {
-                Url = "colecticaint.inst.ioe.ac.uk",
+                Url = url,
                 AuthenticationMethod = RepositoryAuthenticationMethod.Windows,
                 TransportMethod = RepositoryTransportMethod.NetTcp,
-                UserName = "inst\\pwidqssglsa",
-                Password = "Telephone12&"
             };
 
-            Console.WriteLine("before connection");
             var repo = new WcfRepositoryClient(connectionInfo);
-            Console.WriteLine("after connection");
-            Console.WriteLine(repo.GetRepositoryInfo());
 
-            // Create the client object, passing in the connection information.
-            return repo;;
+            return repo;
         }
     }
 }
