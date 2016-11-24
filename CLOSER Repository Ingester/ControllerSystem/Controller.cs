@@ -14,11 +14,13 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         string filepath;
         public string basePath { get; set; }
         public List<Group> groups { get; private set; }
+        private List<IAction> globalActions;
 
         public Controller(string filepath)
         {
             this.filepath = filepath;
             groups = new List<Group>();
+            globalActions = new List<IAction>();
         }
 
         public void loadFile()
@@ -60,7 +62,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                         return;
 
                     case "concepts":
-
+                        globalActions.Add(new LoadTopics(pieces[1]));
                         return;
 
                     default:
@@ -77,6 +79,36 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
                         case "studysweep":
                             group.AddAction(new LoadStudySweep(BuildFilePath(pieces[2])));
+                            break;
+
+                        case "dataset":
+                            if (pieces.Length > 3)
+                            {
+                                group.AddAction(pieces[2], new LoadDataset(BuildFilePath(pieces[3])));
+                            }
+                            else
+                            {
+                                group.AddAction(new LoadDataset(BuildFilePath(pieces[2])));
+                            }
+                            break;
+
+                        case "qvmapping":
+                            if (pieces.Length > 3)
+                            {
+                                group.AddAction(pieces[2], new LoadQVMapping(BuildFilePath(pieces[3])));
+                            }
+                            else
+                            {
+                                group.AddAction(new LoadQVMapping(BuildFilePath(pieces[2])));
+                            }
+                            break;
+
+                        case "dvmapping":
+                            group.AddAction(pieces[2], new LoadDVMapping(BuildFilePath(pieces[3])));
+                            break;
+
+                        case "topics":
+                            group.AddAction(new LoadTopics(BuildFilePath(pieces[2])));
                             break;
                     }
                 }

@@ -15,7 +15,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             this.filepath = filepath;
         }
 
-        public override IEnumerable<IVersionable> Build()
+        public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
         {
             Collection<IVersionable> allItems = getAllItems();
 

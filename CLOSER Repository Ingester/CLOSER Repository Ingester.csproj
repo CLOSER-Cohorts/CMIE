@@ -78,6 +78,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControllerSystem\Actions\LoadQVMapping.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadDataset.cs" />
     <Compile Include="ControllerSystem\Actions\LoadStudySweep.cs" />
     <Compile Include="ControllerSystem\Actions\LoadInstrument.cs" />
     <Compile Include="ControllerSystem\Controller.cs" />

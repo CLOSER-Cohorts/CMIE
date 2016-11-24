@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Linq;
+
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Utility;
 using Algenta.Colectica.Model.Ddi;
@@ -46,7 +47,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             Parallel.ForEach<IAction>(unscopedActions, action =>
             {
                 action.Validate();
-                workingSet.AddRange(action.Build());
+                workingSet.AddRange(action.Build(workingSet));
             });
             Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
             {
@@ -59,47 +60,53 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             var client = Utility.GetClient();
 
             var facet = new SearchFacet();
-            facet.ItemTypes.Add(DdiItemType.ResourcePackage);
-            facet.SearchTargets.Add(DdiStringType.Name);
+            facet.ItemTypes.Add(DdiItemType.StudyUnit);
+            SearchResponse response = client.Search(facet);
+            foreach (var result in response.Results)
+            {
+                var su = client.GetItem(
+                        result.CompositeId,
+                        ChildReferenceProcessing.Populate) as StudyUnit;
+                foreach (var rp in su.ResourcePackages)
+                {
+                    try
+                    {
+                        var scope = scopes[rp.ItemName.Best];
+                        scope.su = su;
+                        scope.rp = rp;
+                    } catch(KeyNotFoundException)
+                    {
+                    }
+                }
+            }
 
             foreach (var scope in scopes)
             {
-                facet.SearchTerms.Clear();
-                facet.SearchTerms.Add(scope.Value.name);
-                SearchResponse response = client.Search(facet);
-                Console.WriteLine("{0} has {1} results", scope.Key, response.Results.Count);
-                if (response.Results.Count > 0)
+                if (scope.Value.rp != default(ResourcePackage)) continue;
+
+                var wsRps = workingSet.OfType<ResourcePackage>().Where( x => string.Compare(
+                    x.DublinCoreMetadata.Title.Best, scope.Value.name
+                    ) == 0
+                );
+                if (wsRps.Count() > 0)
                 {
-                    var rp = client.GetItem(
-                        response.Results.First().CompositeId,
-                        ChildReferenceProcessing.Populate) as ResourcePackage;
-                    scope.Value.rp = rp;
-                }
-                else
-                {
-                    var wsRps = workingSet.OfType<ResourcePackage>().Where( x => string.Compare(
-                        x.DublinCoreMetadata.Title.Best, scope.Value.name
-                        ) == 0
-                    );
-                    if (wsRps.Count() > 0)
+                    scope.Value.rp = wsRps.First();
+                    var bubbleOut = false;
+                    foreach (var g in workingSet.OfType<Algenta.Colectica.Model.Ddi.Group>())
                     {
-                        scope.Value.rp = wsRps.First();
-                        var bubbleOut = false;
-                        foreach (var g in workingSet.OfType<Algenta.Colectica.Model.Ddi.Group>())
+                        foreach (var su in g.StudyUnits)
                         {
-                            foreach (var su in g.StudyUnits)
+                            if (su.DataCollections.Where(x => x.ItemName.Best == scope.Key).Count() > 0)
                             {
-                                if (su.DataCollections.Where(x => x.ItemName.Best == scope.Key).Count() > 0)
-                                {
-                                    var gatherer = new ItemGathererVisitor();
-                                    g.Accept(gatherer);
-                                    toBeAdded.AddRange(gatherer.FoundItems);
-                                    bubbleOut = true;
-                                }
-                                if (bubbleOut) break;
+                                scope.Value.su = su;
+                                var gatherer = new ItemGathererVisitor();
+                                g.Accept(gatherer);
+                                toBeAdded.AddRange(gatherer.FoundItems);
+                                bubbleOut = true;
                             }
                             if (bubbleOut) break;
                         }
+                        if (bubbleOut) break;
                     }
                 }
             }

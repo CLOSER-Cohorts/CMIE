@@ -16,6 +16,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
     {
         public string name { get; set; }
         public ResourcePackage rp { get; set; }
+        public StudyUnit su { get; set; }
         private List<IAction> actions;
         private List<IVersionable> workingSet;
         public List<IVersionable> toBeAdded { get; private set; }
@@ -40,7 +41,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 try
                 {
                     action.Validate();
-                    workingSet.AddRange(action.Build());
+                    workingSet.AddRange(action.Build(workingSet));
                 }
                 catch (Exception e)
                 {
@@ -67,33 +68,49 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             rp.Accept(gatherer);
             var rpItems = gatherer.FoundItems;
 
-            var wsRP = workingSet.OfType<ResourcePackage>().First();
             DataCollection dc = null;
             if (rp.DataCollections.Count == 1)
             {
-               dc = rp.DataCollections.First();
+                dc = rp.DataCollections.First();
             }
-            
-            foreach (var item in wsRP.GetChildren())
+
+            var wsRPs = workingSet.OfType<ResourcePackage>();
+            foreach (var wsRP in wsRPs)
             {
-                var rpFinds = rpItems.Where(x => x.UserIds.Count > 0 ? item.UserIds[0].Identifier == x.UserIds[0].Identifier : false);
-                if (rpFinds.Count() == 0)
+                foreach (var item in wsRP.GetChildren())
                 {
-                    Console.WriteLine("Adding item");
-                    rp.AddItem(item);
-                    if (dc != null && (
-                        item.ItemType == DdiItemType.InstrumentScheme ||
-                        item.ItemType == DdiItemType.Instrument
-                        ))
+                    var rpFinds = rpItems.Where(x => x.UserIds.Count > 0 ? item.UserIds[0].Identifier == x.UserIds[0].Identifier : false);
+                    if (rpFinds.Count() == 0)
                     {
-                        dc.AddChild(item);
+                        Console.WriteLine("Adding item");
+                        rp.AddItem(item);
+                        Guid[] rpBindings = { 
+                                                DdiItemType.InstrumentScheme,
+                                                DdiItemType.Instrument
+                                            };
+                        if (dc != null && rpBindings.Contains(item.ItemType))
+                        {
+                            dc.AddChild(item);
+                            continue;
+                        }
+                        Guid[] suBindings = { 
+                                                DdiItemType.LogicalProduct,
+                                                DdiItemType.PhysicalDataProduct,
+                                                DdiItemType.PhysicalInstance,
+                                            };
+                        if (su != default(StudyUnit) && suBindings.Contains(item.ItemType))
+                        {
+                            su.AddChild(item);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+
                     }
                 }
-                else
-                {
-                    
-                }
             }
+            
             var gthr = new ItemGathererVisitor();
             rp.Accept(gthr);
             toBeAdded.AddRange(gthr.FoundItems);
