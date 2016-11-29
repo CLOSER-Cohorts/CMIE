@@ -22,19 +22,25 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             var rp = allItems.OfType<ResourcePackage>().First();
             var qcs = new ControlConstructScheme();
             qcs.ItemName.Add("en-GB", "Topic Question Construct Groups");
+            qcs.UserIds.Add(new UserId("closerid", "topics-ccs-000001"));
             var vs = new VariableScheme();
             vs.ItemName.Add("en-GB", "Topic Variable Groups");
+            vs.UserIds.Add(new UserId("closerid", "topics-vs-000001"));
             rp.ControlConstructSchemes.Add(qcs);
             rp.VariableSchemes.Add(vs);
+            allItems.Add(qcs);
+            allItems.Add(vs);
 
-            foreach (var concept in allItems.OfType<Concept>())
+            foreach (var concept in allItems.OfType<Concept>().ToList())
             {
                 var qcg = new ControlConstructGroup();
                 qcg.TypeOfGroup = "ConceptGroup";
                 qcg.Concept = concept;
                 qcg.Label.Add("en-GB", concept.Label.Best + " Question Construct Group");
                 qcg.ItemName.Add("en-GB", concept.ItemName.Best);
+                qcg.UserIds.Add(new UserId("closerid", "topics-qcg-"+concept.ItemName.Best.ToLower().));
                 qcs.ControlConstructGroups.Add(qcg);
+                allItems.Add(qcg);
 
                 var vg = new VariableGroup();
                 vg.TypeOfGroup = "ConceptGroup";
@@ -42,6 +48,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                 vg.Label.Add("en-GB", concept.Label.Best + " Variable Group");
                 vg.ItemName.Add("en-GB", concept.ItemName.Best);
                 vs.VariableGroups.Add(vg);
+                allItems.Add(vg);
             }
 
             return allItems;

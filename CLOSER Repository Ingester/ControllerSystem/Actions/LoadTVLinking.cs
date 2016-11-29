@@ -52,13 +52,12 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 
             if (tref == "0") return;
 
-            var srcs = ws.OfType<Variable>().Where(x => x.ItemName.Best == sourceVariable);
-            var DVs = ws.OfType<Variable>().Where(x => x.ItemName.Best == derivedVariable);
+            var variable = ws.OfType<Variable>().Where(x => x.ItemName.Best == vref);
 
-            if (srcs.Count() > 0 && DVs.Count() > 0)
-            {
-                DVs.First().SourceVariables.Add(srcs.First());
-            }
+            //if (srcs.Count() > 0 && DVs.Count() > 0)
+            //{
+            //    DVs.First().SourceVariables.Add(srcs.First());
+            //}
         }
     }
 }

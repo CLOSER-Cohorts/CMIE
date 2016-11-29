@@ -14,7 +14,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         string filepath;
         public string basePath { get; set; }
         public List<Group> groups { get; private set; }
-        private List<IAction> globalActions;
+        public List<IAction> globalActions { get; private set; }
 
         public Controller(string filepath)
         {
@@ -62,7 +62,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                         return;
 
                     case "concepts":
-                        globalActions.Add(new LoadTopics(pieces[1]));
+                        globalActions.Add(new LoadTopics(BuildFilePath(pieces[1])));
                         return;
 
                     default:
