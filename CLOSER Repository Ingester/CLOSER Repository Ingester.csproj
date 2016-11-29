@@ -78,10 +78,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComparatorVisitor.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadDVMapping.cs" />
     <Compile Include="ControllerSystem\Actions\LoadQVMapping.cs" />
     <Compile Include="ControllerSystem\Actions\LoadDataset.cs" />
     <Compile Include="ControllerSystem\Actions\LoadStudySweep.cs" />
     <Compile Include="ControllerSystem\Actions\LoadInstrument.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadTopics.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadTVLinking.cs" />
     <Compile Include="ControllerSystem\Controller.cs" />
     <Compile Include="ControllerSystem\Group.cs" />
     <Compile Include="ControllerSystem\IAction.cs" />
