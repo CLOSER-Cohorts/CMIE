@@ -112,8 +112,9 @@ namespace CLOSER_Repository_Ingester
                     {
                         var rp = client.GetItem(
                         res.CompositeId,
-                        ChildReferenceProcessing.Populate) as DdiInstance;
+                        ChildReferenceProcessing.PopulateLatest) as DdiInstance;
                         var graphPopulator = new GraphPopulator(client);
+                        graphPopulator.ChildProcessing = ChildReferenceProcessing.PopulateLatest;
                         rp.Accept(graphPopulator);
                         var gatherer = new ItemGathererVisitor();
                         rp.Accept(gatherer);

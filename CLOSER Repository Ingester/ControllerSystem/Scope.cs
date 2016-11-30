@@ -20,6 +20,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         private List<IAction> actions;
         private List<IVersionable> workingSet;
         public List<IVersionable> toBeAdded { get; private set; }
+        private Comparator comparator;
 
         public Scope(string _name)
         {
@@ -27,6 +28,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             actions = new List<IAction>();
             workingSet = new List<IVersionable>();
             toBeAdded = new List<IVersionable>();
+            comparator = new Comparator();
         }
 
         public void AddAction(IAction _action)
@@ -63,6 +65,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
             var client = Utility.GetClient();
             var graphPopulator = new GraphPopulator(client);
+            graphPopulator.ChildProcessing = ChildReferenceProcessing.PopulateLatest;
             rp.Accept(graphPopulator);
             var gatherer = new ItemGathererVisitor();
             rp.Accept(gatherer);
@@ -75,6 +78,17 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             }
 
             var wsRPs = workingSet.OfType<ResourcePackage>();
+            Guid[] rpBindings = { 
+                DdiItemType.InstrumentScheme,
+                DdiItemType.Instrument
+            };
+            Guid[] suBindings = { 
+                DdiItemType.LogicalProduct,
+                DdiItemType.PhysicalDataProduct,
+                DdiItemType.PhysicalInstance,
+            };
+
+
             foreach (var wsRP in wsRPs)
             {
                 foreach (var item in wsRP.GetChildren())
@@ -82,22 +96,13 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     var rpFinds = rpItems.Where(x => x.UserIds.Count > 0 ? item.UserIds[0].Identifier == x.UserIds[0].Identifier : false);
                     if (rpFinds.Count() == 0)
                     {
-                        Console.WriteLine("Adding item");
                         rp.AddItem(item);
-                        Guid[] rpBindings = { 
-                                                DdiItemType.InstrumentScheme,
-                                                DdiItemType.Instrument
-                                            };
                         if (dc != null && rpBindings.Contains(item.ItemType))
                         {
                             dc.AddChild(item);
                             continue;
                         }
-                        Guid[] suBindings = { 
-                                                DdiItemType.LogicalProduct,
-                                                DdiItemType.PhysicalDataProduct,
-                                                DdiItemType.PhysicalInstance,
-                                            };
+                        
                         if (su != default(StudyUnit) && suBindings.Contains(item.ItemType))
                         {
                             su.AddChild(item);
@@ -106,11 +111,12 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     }
                     else
                     {
-
+                        comparator.Compare(rpFinds.First(), item);
                     }
                 }
             }
-            
+            Console.WriteLine("{0} items have been ammedned from {1}.", comparator.amendments.Count, name);
+
             var gthr = new ItemGathererVisitor();
             rp.Accept(gthr);
             toBeAdded.AddRange(gthr.FoundItems);

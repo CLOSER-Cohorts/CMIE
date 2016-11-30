@@ -66,7 +66,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             {
                 var su = client.GetItem(
                         result.CompositeId,
-                        ChildReferenceProcessing.Populate) as StudyUnit;
+                        ChildReferenceProcessing.PopulateLatest) as StudyUnit;
                 foreach (var rp in su.ResourcePackages)
                 {
                     try
@@ -126,7 +126,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             {
                 toCommit.AddRange(scope.Value.toBeAdded);
             }
-            Console.WriteLine("{0} items...", toCommit.Count);
+            Console.WriteLine(" {0} items...", toCommit.Count);
             client.RegisterItems(toCommit, new CommitOptions());
         }
 

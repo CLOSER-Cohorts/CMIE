@@ -38,7 +38,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                 qcg.Concept = concept;
                 qcg.Label.Add("en-GB", concept.Label.Best + " Question Construct Group");
                 qcg.ItemName.Add("en-GB", concept.ItemName.Best);
-                qcg.UserIds.Add(new UserId("closerid", "topics-qcg-"+concept.ItemName.Best.ToLower().));
+                qcg.UserIds.Add(new UserId("closerid", "topics-qcg-"+concept.ItemName.Best.ToLower()));
                 qcs.ControlConstructGroups.Add(qcg);
                 allItems.Add(qcg);
 
