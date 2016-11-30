@@ -77,7 +77,6 @@ namespace CLOSER_Repository_Ingester
                         UpdateProperty<T, MultilingualString, string, string>(p, a, b);
                         UpdateProperty<T, CodeValue>(p, a, b);
                     }
-                    A.Version++;
                     return true;
                 }
             }

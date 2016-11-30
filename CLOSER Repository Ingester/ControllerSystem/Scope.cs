@@ -88,7 +88,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 DdiItemType.PhysicalInstance,
             };
 
-
+            bool updated = false;
             foreach (var wsRP in wsRPs)
             {
                 foreach (var item in wsRP.GetChildren())
@@ -111,11 +111,22 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     }
                     else
                     {
+                        updated = true;
                         comparator.Compare(rpFinds.First(), item);
                     }
                 }
             }
             Console.WriteLine("{0} items have been ammedned from {1}.", comparator.amendments.Count, name);
+
+            if (updated)
+            {
+                var dirtyGthr = new DirtyItemGatherer(false, true);
+                rp.Accept(dirtyGthr);
+                foreach (var item in dirtyGthr.DirtyItems)
+                {
+                    item.Version++;
+                }
+            }
 
             var gthr = new ItemGathererVisitor();
             rp.Accept(gthr);
