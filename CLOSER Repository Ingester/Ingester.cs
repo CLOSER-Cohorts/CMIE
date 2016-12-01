@@ -13,18 +13,16 @@ using CLOSER_Repository_Ingester.ControllerSystem;
 
 namespace CLOSER_Repository_Ingester
 {
-    class Ingester
+    class Ingester : WorkArea
     {
         string controlFilepath;
         Controller controller;
-        private List<IVersionable> workingSet;
 
         public void Init(string controlFilepath) 
         {
             MultilingualString.CurrentCulture = "en-GB";
             VersionableBase.DefaultAgencyId = "uk.closer";
             this.controlFilepath = controlFilepath;
-            workingSet = new List<IVersionable>();
         }
 
         public void SetBasePath(string basePath)
@@ -36,13 +34,14 @@ namespace CLOSER_Repository_Ingester
         {
             controller = new Controller(controlFilepath);
             controller.basePath = basePath;
+            actions = controller.globalActions;
 
             bool good = true;
             try
             {
                 controller.loadFile();
             } catch (Exception e) {
-                Console.WriteLine("{0}", e);
+                console.WriteLine("{0}", e);
                 good = false;
             }
             return good;
@@ -81,7 +80,7 @@ namespace CLOSER_Repository_Ingester
             }
             if (prepare == prepared)
             {
-                foreach (var action in controller.globalActions)
+                foreach (var action in actions)
                 {
                     try 
                     {
@@ -90,7 +89,7 @@ namespace CLOSER_Repository_Ingester
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("{0}", e.Message);
+                        console.WriteLine("{0}", e.Message);
                         continue;
                     }
                 }
@@ -107,21 +106,23 @@ namespace CLOSER_Repository_Ingester
                 {
                     facet.SearchTerms.Clear();
                     facet.SearchTerms.Add(wsI.ItemName.Best);
-                    SearchResponse response = client.Search(facet);
+                    var response = client.Search(facet);
                     foreach (var res in response.Results)
                     {
                         var rp = client.GetItem(
                         res.CompositeId,
                         ChildReferenceProcessing.PopulateLatest) as DdiInstance;
-                        var graphPopulator = new GraphPopulator(client);
-                        graphPopulator.ChildProcessing = ChildReferenceProcessing.PopulateLatest;
+                        var graphPopulator = new GraphPopulator(client)
+                        {
+                            ChildProcessing = ChildReferenceProcessing.PopulateLatest
+                        };
                         rp.Accept(graphPopulator);
                         var gatherer = new ItemGathererVisitor();
                         rp.Accept(gatherer);
                         repoItems.AddRange(gatherer.FoundItems);
                     }
                 }
-                var toBeAdded = workingSet;
+                toBeAdded = workingSet;
                 var toBeRemoved = new List<IVersionable>();
                 foreach (var repoItem in repoItems)
                 {
@@ -135,19 +136,12 @@ namespace CLOSER_Repository_Ingester
                         }
                         else
                         {
-                            IVersionable node = null;
-                            foreach (var item in toBeAdded)
-                            {
-                                if (item.UserIds.Count > 0)
-                                {
-                                    if (item.UserIds[0] == wsItem.UserIds[0])
-                                    {
-                                        node = item;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (node != null)
+                            var node = toBeAdded.Where(
+                                item => item.UserIds.Count > 0
+                            ).FirstOrDefault(
+                                item => item.UserIds[0] == wsItem.UserIds[0]
+                            );
+                            if (node != default(IVersionable))
                             {
                                 toBeAdded.Remove(node);
                             }
@@ -159,18 +153,19 @@ namespace CLOSER_Repository_Ingester
                     }
                 }
 
-                Console.WriteLine("Global: Commiting {0} items...", workingSet.Count);
+                console.WriteLine("Global: Commiting {0} items...", workingSet.Count);
                 client.RegisterItems(workingSet, new CommitOptions());
             }
             else
             {
-                Console.WriteLine("Failed to prepare build.");
+                console.WriteLine("Failed to prepare build.");
             }
+            console.Publish();
         }
 
         public void RunByGroup(bool prepare = false)
         {
-            bool prepared = false;
+            var prepared = false;
             if (prepare)
             {
                 prepared = Prepare();
@@ -180,25 +175,29 @@ namespace CLOSER_Repository_Ingester
                 foreach (var group in controller.groups)
                 {
                     group.Build();
+                    console.Publish();
                     group.CompareWithRepository();
 
-                    Console.WriteLine("{0}: About to commit to repository, do you want to continue? (y/N)", group.name);
-                    string response = Console.ReadLine().ToLower();
-                    if (response[0].Equals('y'))
+                    console.WriteLine("{0}: About to commit to repository, do you want to continue? (y/N)", group.name);
+                    console.Publish();
+                    var response = Console.ReadLine().ToLower();
+                    if (response.Length > 0 && response[0].Equals('y'))
                     {
-                        Console.Write("{0}: Committing", group.name);
+                        console.Write("{0}: Committing", group.name);
                         group.Commit();
-                        Console.WriteLine("{0}: Done.", group.name);
+                        console.WriteLine("{0}: Done.", group.name);
                     }
                     else
                     {
-                        Console.Write("{0}: No changes committed.", group.name);
+                        console.Write("{0}: No changes committed.", group.name);
                     }
+                    console.Publish();
                 }
             }
             else
             {
-                Console.WriteLine("Failed to prepare build.");
+                console.WriteLine("Failed to prepare build.");
+                console.Publish();
             }
         }
 

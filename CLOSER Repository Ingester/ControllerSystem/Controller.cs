@@ -30,10 +30,10 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
         public void loadFile(string filepath)
         {
-            string[] lines = File.ReadAllLines(filepath);
-            foreach (string line in lines)
+            var lines = File.ReadAllLines(filepath);
+            foreach (var line in lines)
             {
-                string trimmedLine = line.Trim();
+                var trimmedLine = line.Trim();
                 if (trimmedLine.Length == 0) continue;
                 if (trimmedLine[0] == '#') continue;
                 parseLine(trimmedLine);
@@ -42,7 +42,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
         private void parseLine(string line)
         {
-            string[] pieces = line.Split(new char[] { '\t' });
+            var pieces = line.Split(new char[] { '\t' });
             Group group;
 
             if (pieces.Length > 1)

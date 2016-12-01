@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
+
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Utility;
-using QuickGraph;
-using System.Reflection;
 
 namespace CLOSER_Repository_Ingester
 {
@@ -21,8 +20,6 @@ namespace CLOSER_Repository_Ingester
 
         public void Compare(IVersionable A, IVersionable B)
         {
-            var type = A.GetType();
-
             var gathererA = new ItemGathererVisitor();
             var gathererB = new ItemGathererVisitor();
             A.Accept(gathererA);
@@ -33,17 +30,17 @@ namespace CLOSER_Repository_Ingester
 
             foreach (var childA in childrenA)
             {
-                var childB = childrenB.Where(x => x.UserIds[0].Identifier == childA.UserIds[0].Identifier).FirstOrDefault();
+                var childB = childrenB.FirstOrDefault(x => x.UserIds[0].Identifier == childA.UserIds[0].Identifier);
                 if (childB != default(IVersionable))
                 {
                     var amendmended = false;
                     amendmended |= Compare<DescribableBase>(
-                        new string[] { "Label", "ItemName", "Description" },
+                        new [] { "Label", "ItemName", "Description" },
                         childA,
                         childB
                     );
                     amendmended |= Compare<QuestionActivity>(
-                        new string[] { "ResponseUnit" },
+                        new [] { "ResponseUnit" },
                         childA,
                         childB
                     );
@@ -58,7 +55,7 @@ namespace CLOSER_Repository_Ingester
         private bool Compare<T>(string[] ps, IVersionable A, IVersionable B)
         {
             var type = A.GetType();
-            if (typeof(T).IsInstanceOfType(A))
+            if (A is T)
             {
                 var a = (T) A;
                 var b = (T) B;

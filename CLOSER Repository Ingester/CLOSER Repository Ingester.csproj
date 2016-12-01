@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Comparator.cs" />
+    <Compile Include="ConsoleQueue.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTVLinking.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTopics.cs" />
     <Compile Include="ControllerSystem\Actions\LoadDVMapping.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
+    <Compile Include="WorkArea.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

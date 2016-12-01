@@ -11,26 +11,21 @@ using Algenta.Colectica.Model.Repository;
 
 namespace CLOSER_Repository_Ingester.ControllerSystem
 {
-    class Group
+    class Group : WorkArea
     {
         public string name { get; private set; }
         private ConcurrentDictionary<string, Scope> scopes;
-        private List<IAction> unscopedActions;
-        private List<IVersionable> workingSet;
-        private List<IVersionable> toBeAdded;
-        
+
         public Group(string name)
         {
             this.name = name;
             scopes = new ConcurrentDictionary<string, Scope>();
-            unscopedActions = new List<IAction>();
-            workingSet = new List<IVersionable>();
-            toBeAdded = new List<IVersionable>();
+            Init();
         }
 
         public void AddAction(IAction action)
         {
-            unscopedActions.Add(action);
+            actions.Add(action);
         }
 
         public void AddAction(string scope, IAction action)
@@ -44,15 +39,17 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
         public void Build()
         {
-            Parallel.ForEach<IAction>(unscopedActions, action =>
+            Parallel.ForEach<IAction>(actions, action =>
             {
                 action.Validate();
                 workingSet.AddRange(action.Build(workingSet));
             });
+            PublishConsole();
             Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
             {
                 scope.Value.Build();
             });
+            PublishConsole(scopes);
         }
 
         public void CompareWithRepository()
@@ -61,7 +58,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
             var facet = new SearchFacet();
             facet.ItemTypes.Add(DdiItemType.StudyUnit);
-            SearchResponse response = client.Search(facet);
+            var response = client.Search(facet);
             foreach (var result in response.Results)
             {
                 var su = client.GetItem(
@@ -88,7 +85,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     x.DublinCoreMetadata.Title.Best, scope.Value.name
                     ) == 0
                 );
-                if (wsRps.Count() > 0)
+                if (wsRps.Any())
                 {
                     scope.Value.rp = wsRps.First();
                     var bubbleOut = false;
@@ -96,7 +93,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     {
                         foreach (var su in g.StudyUnits)
                         {
-                            if (su.DataCollections.Where(x => x.ItemName.Best == scope.Key).Count() > 0)
+                            if (su.DataCollections.Count(x => x.ItemName.Best == scope.Key) > 0)
                             {
                                 scope.Value.su = su;
                                 var gatherer = new ItemGathererVisitor();
@@ -126,7 +123,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             {
                 toCommit.AddRange(scope.Value.toBeAdded);
             }
-            Console.WriteLine(" {0} items...", toCommit.Count);
+            console.WriteLine(" {0} items...", toCommit.Count);
             client.RegisterItems(toCommit, new CommitOptions());
         }
 

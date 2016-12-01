@@ -1,34 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Algenta.Colectica.Model;
+
 using Algenta.Colectica.Model.Utility;
 using Algenta.Colectica.Model.Repository;
-using Algenta.Colectica.Repository.Client;
 using Algenta.Colectica.Model.Ddi;
 
 namespace CLOSER_Repository_Ingester.ControllerSystem
 {
-    class Scope
+    class Scope : WorkArea
     {
         public string name { get; set; }
         public ResourcePackage rp { get; set; }
         public StudyUnit su { get; set; }
-        private List<IAction> actions;
-        private List<IVersionable> workingSet;
-        public List<IVersionable> toBeAdded { get; private set; }
-        private Comparator comparator;
+        private readonly Comparator comparator;
 
         public Scope(string _name)
         {
             name = _name;
-            actions = new List<IAction>();
-            workingSet = new List<IVersionable>();
-            toBeAdded = new List<IVersionable>();
             comparator = new Comparator();
+            Init();
         }
 
         public void AddAction(IAction _action)
@@ -38,7 +28,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
         public void Build()
         {
-            foreach (IAction action in actions)
+            foreach (var action in actions)
             {
                 try
                 {
@@ -59,13 +49,20 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             if (rp == default(ResourcePackage))
             {
                 //New resource package
-                rp = new ResourcePackage();
-                rp.DublinCoreMetadata.Title = new MultilingualString(name, "en-GB");
+                rp = new ResourcePackage
+                {
+                    DublinCoreMetadata =
+                    {
+                        Title = new MultilingualString(name, "en-GB")
+                    }
+                };
             }
 
             var client = Utility.GetClient();
-            var graphPopulator = new GraphPopulator(client);
-            graphPopulator.ChildProcessing = ChildReferenceProcessing.PopulateLatest;
+            var graphPopulator = new GraphPopulator(client)
+            {
+                ChildProcessing = ChildReferenceProcessing.PopulateLatest
+            };
             rp.Accept(graphPopulator);
             var gatherer = new ItemGathererVisitor();
             rp.Accept(gatherer);
@@ -88,13 +85,13 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 DdiItemType.PhysicalInstance,
             };
 
-            bool updated = false;
+            var updated = false;
             foreach (var wsRP in wsRPs)
             {
                 foreach (var item in wsRP.GetChildren())
                 {
                     var rpFinds = rpItems.Where(x => x.UserIds.Count > 0 ? item.UserIds[0].Identifier == x.UserIds[0].Identifier : false);
-                    if (rpFinds.Count() == 0)
+                    if (!rpFinds.Any())
                     {
                         rp.AddItem(item);
                         if (dc != null && rpBindings.Contains(item.ItemType))
@@ -116,7 +113,6 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     }
                 }
             }
-            Console.WriteLine("{0} items have been ammedned from {1}.", comparator.amendments.Count, name);
 
             if (updated)
             {
