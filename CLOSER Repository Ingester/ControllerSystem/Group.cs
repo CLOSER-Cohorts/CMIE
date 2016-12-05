@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -14,6 +15,17 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
     class Group : WorkArea
     {
         public string name { get; private set; }
+        public int numberItemsToCommit
+        {
+            get
+            {
+                var count = 0;
+                count += toBeAdded.Count;
+                foreach (var scope in scopes)
+                    count += scope.Value.toBeAdded.Count;
+                return count;
+            }
+        }
         private ConcurrentDictionary<string, Scope> scopes;
 
         public Group(string name)
@@ -41,15 +53,29 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         {
             Parallel.ForEach<IAction>(actions, action =>
             {
+                Console.WriteLine("{0}: Validating {1}", name, action.scope);
                 action.Validate();
                 workingSet.AddRange(action.Build(workingSet));
             });
             PublishConsole();
+            var progress = new ParallelProgressMonitor(scopes.Count);
             Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
             {
+                string text = String.Format("{0}: Building {1}", name, scope.Value.name);
+                progress.StartThread(
+                    Thread.CurrentThread.ManagedThreadId, 
+                    text
+                    );
                 scope.Value.Build();
+                progress.FinishThread(
+                    Thread.CurrentThread.ManagedThreadId,
+                    text.PadRight(40,'-') + "> done. (" + String.Format("{0} items)", scope.Value.counter[Counters.Total]).PadLeft(12)
+                    );
             });
-            PublishConsole(scopes);
+            foreach (var scope in scopes)
+            {
+                scope.Value.PublishConsole();
+            }
         }
 
         public void CompareWithRepository()
@@ -108,9 +134,24 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 }
             }
 
+            var progress = new ParallelProgressMonitor(scopes.Count);
             Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
             {
+                string text = String.Format("{0}: Comparing {1}", name, scope.Value.name);
+                progress.StartThread(
+                    Thread.CurrentThread.ManagedThreadId,
+                    text
+                    );
                 scope.Value.Compare();
+                progress.FinishThread(
+                    Thread.CurrentThread.ManagedThreadId,
+                    text.PadRight(40, '-') + 
+                    "> done." + 
+                    String.Format("{0} compared.", scope.Value.counter[Counters.Compared]).PadLeft(16) +
+                    String.Format("{0} updated.", scope.Value.counter[Counters.Updated]).PadLeft(16) +
+                    String.Format("{0} added.", scope.Value.counter[Counters.Added]).PadLeft(16) +
+                    String.Format("{0} removed.", scope.Value.counter[Counters.Removed]).PadLeft(16)
+                    );
             });
         }
 
@@ -123,7 +164,6 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             {
                 toCommit.AddRange(scope.Value.toBeAdded);
             }
-            console.WriteLine(" {0} items...", toCommit.Count);
             client.RegisterItems(toCommit, new CommitOptions());
         }
 

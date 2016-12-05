@@ -18,7 +18,7 @@ namespace CLOSER_Repository_Ingester
         }
 
 
-        public void Compare(IVersionable A, IVersionable B)
+        public int Compare(IVersionable A, IVersionable B)
         {
             var gathererA = new ItemGathererVisitor();
             var gathererB = new ItemGathererVisitor();
@@ -35,12 +35,12 @@ namespace CLOSER_Repository_Ingester
                 {
                     var amendmended = false;
                     amendmended |= Compare<DescribableBase>(
-                        new [] { "Label", "ItemName", "Description" },
+                        new[] { "Label", "ItemName", "Description" },
                         childA,
                         childB
                     );
                     amendmended |= Compare<QuestionActivity>(
-                        new [] { "ResponseUnit" },
+                        new[] { "ResponseUnit" },
                         childA,
                         childB
                     );
@@ -50,6 +50,7 @@ namespace CLOSER_Repository_Ingester
                     }
                 }
             }
+            return childrenB.Count;
         }
 
         private bool Compare<T>(string[] ps, IVersionable A, IVersionable B)

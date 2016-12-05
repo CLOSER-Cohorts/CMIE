@@ -16,13 +16,16 @@ namespace CLOSER_Repository_Ingester
     class Ingester : WorkArea
     {
         string controlFilepath;
+        bool keepGoing;
         Controller controller;
 
-        public void Init(string controlFilepath) 
+        public void Init(string controlFilepath, bool keepGoing) 
         {
             MultilingualString.CurrentCulture = "en-GB";
             VersionableBase.DefaultAgencyId = "uk.closer";
             this.controlFilepath = controlFilepath;
+            this.keepGoing = keepGoing;
+            base.Init();
         }
 
         public void SetBasePath(string basePath)
@@ -174,22 +177,39 @@ namespace CLOSER_Repository_Ingester
             {
                 foreach (var group in controller.groups)
                 {
+                    var startTime = DateTime.Now;
+                    Console.WriteLine("{0}: Building...", group.name);
                     group.Build();
-                    console.Publish();
+                    console.WriteLine("{0}: Done. ({1})", group.name, (DateTime.Now - startTime).ToString("%m' min. '%s' sec.'"));
+                    PublishConsole();
+                    startTime = DateTime.Now;
+                    Console.WriteLine("{0}: Comparing with repo...", group.name);
                     group.CompareWithRepository();
+                    console.WriteLine("{0}: Done. ({1})", group.name, (DateTime.Now - startTime).ToString("%m' min. '%s' sec.'"));
 
-                    console.WriteLine("{0}: About to commit to repository, do you want to continue? (y/N)", group.name);
-                    console.Publish();
-                    var response = Console.ReadLine().ToLower();
-                    if (response.Length > 0 && response[0].Equals('y'))
+                    console.WriteLine("{0}: {1} items to commit.", group.name, group.numberItemsToCommit);
+                    var response = "";
+                    if (!keepGoing)
                     {
-                        console.Write("{0}: Committing", group.name);
-                        group.Commit();
-                        console.WriteLine("{0}: Done.", group.name);
+                        console.WriteLine("{0}: About to commit to repository, do you want to continue? (y/N)", group.name);
+                        console.Publish();
+                        response = Console.ReadLine().ToLower();
                     }
                     else
                     {
-                        console.Write("{0}: No changes committed.", group.name);
+                        console.Publish();
+                    }
+                    
+                    if ((response.Length > 0 && response[0].Equals('y')) || keepGoing)
+                    {
+                        console.Write("{0}: Committing... ", group.name);
+                        console.Publish();
+                        group.Commit();
+                        console.WriteLine("Done.", group.name);
+                    }
+                    else
+                    {
+                        console.WriteLine("{0}: No changes committed.", group.name);
                     }
                     console.Publish();
                 }

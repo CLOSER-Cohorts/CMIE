@@ -24,7 +24,7 @@ namespace CLOSER_Repository_Ingester
             counter = new Dictionary<Counters, int>();
             counter[Counters.Total] =
                 counter[Counters.Compared] =
-                counter[Counters.Total] =
+                counter[Counters.Updated] =
                 counter[Counters.Added] =
                 counter[Counters.Removed] = 0;
         }
@@ -34,13 +34,14 @@ namespace CLOSER_Repository_Ingester
             console.Publish();
         }
 
-        public void PublishConsole(IDictionary<string, WorkArea> was)
+        public void PublishConsole<T>(T was) where T : IDictionary<string, object>
         {
             foreach (var wa in was)
             {
-                wa.Value.PublishConsole();
+                var x = (WorkArea)wa.Value;
+                x.PublishConsole();
             }
-            console.Publish();
+            PublishConsole();
         }
     }
 }

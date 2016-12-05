@@ -8,6 +8,7 @@ namespace CLOSER_Repository_Ingester
         {
             string buildDirectory = null;
             string controlFile = null;
+            var keepGoing = false;
             for (var i = 0; i < args.Length; i++)
             {
                 if (args[i] == "-b")
@@ -21,6 +22,10 @@ namespace CLOSER_Repository_Ingester
                     controlFile = args[i + 1];
                     i++;
                 }
+                if (args[i] == "-y")
+                {
+                    keepGoing = true;
+                }
             }
             if (controlFile == null)
             {
@@ -28,9 +33,13 @@ namespace CLOSER_Repository_Ingester
             }
             else
             {
+                Console.SetWindowSize(
+                    Math.Min(150, Console.LargestWindowWidth),
+                    Math.Min(60, Console.LargestWindowHeight)
+                    );
                 Ingester ingester = new Ingester();
 
-                ingester.Init(controlFile);
+                ingester.Init(controlFile, keepGoing);
 
                 if (ingester.Prepare(buildDirectory))
                 {

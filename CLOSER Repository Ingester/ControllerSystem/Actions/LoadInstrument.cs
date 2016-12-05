@@ -57,7 +57,6 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                     //Trace.WriteLine("   question construct with no source");
                 }
             }
-
             return allItems;
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using Algenta.Colectica.Model.Utility;
 using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Model.Ddi;
+using Algenta.Colectica.Model;
 
 namespace CLOSER_Repository_Ingester.ControllerSystem
 {
@@ -34,6 +35,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 {
                     action.Validate();
                     workingSet.AddRange(action.Build(workingSet));
+                    counter[Counters.Total] = workingSet.Count;
                 }
                 catch (Exception e)
                 {
@@ -67,6 +69,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             var gatherer = new ItemGathererVisitor();
             rp.Accept(gatherer);
             var rpItems = gatherer.FoundItems;
+            foreach (var item in rpItems) item.IsDirty = false;
 
             DataCollection dc = null;
             if (rp.DataCollections.Count == 1)
@@ -90,9 +93,11 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             {
                 foreach (var item in wsRP.GetChildren())
                 {
-                    var rpFinds = rpItems.Where(x => x.UserIds.Count > 0 ? item.UserIds[0].Identifier == x.UserIds[0].Identifier : false);
-                    if (!rpFinds.Any())
+                    item.IsDirty = false;
+                    var rpFind = rpItems.FirstOrDefault(x => x.UserIds.Count > 0 ? item.UserIds[0].Identifier == x.UserIds[0].Identifier : false);
+                    if (rpFind == default(IVersionable))
                     {
+                        counter[Counters.Added] += item.GetChildren().Count + 1;
                         rp.AddItem(item);
                         if (dc != null && rpBindings.Contains(item.ItemType))
                         {
@@ -108,8 +113,9 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     }
                     else
                     {
+                        rpFind.IsDirty = false;
                         updated = true;
-                        comparator.Compare(rpFinds.First(), item);
+                        counter[Counters.Compared] += comparator.Compare(rpFind, item);
                     }
                 }
             }
@@ -120,6 +126,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 rp.Accept(dirtyGthr);
                 foreach (var item in dirtyGthr.DirtyItems)
                 {
+                    counter[Counters.Updated]++;
                     item.Version++;
                 }
             }
