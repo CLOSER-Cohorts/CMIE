@@ -13,13 +13,13 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         public string name { get; set; }
         public ResourcePackage rp { get; set; }
         public StudyUnit su { get; set; }
-        private readonly Comparator comparator;
+        private Comparator comparator;
 
         public Scope(string _name)
         {
             name = _name;
-            comparator = new Comparator();
             Init();
+            comparator = new Comparator(workingSet);
         }
 
         public void AddAction(IAction _action)
@@ -78,8 +78,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             }
 
             var wsRPs = workingSet.OfType<ResourcePackage>();
-            Guid[] rpBindings = { 
-                DdiItemType.InstrumentScheme,
+            Guid[] dcBindings = { 
                 DdiItemType.Instrument
             };
             Guid[] suBindings = { 
@@ -99,10 +98,18 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     {
                         counter[Counters.Added] += item.GetChildren().Count + 1;
                         rp.AddItem(item);
-                        if (dc != null && rpBindings.Contains(item.ItemType))
+                        if (dc != null && dcBindings.Contains(item.ItemType))
                         {
                             dc.AddChild(item);
                             continue;
+                        }
+
+                        if (dc != null && item.ItemType == DdiItemType.InstrumentScheme)
+                        {
+                            foreach (var instrument in item.GetChildren())
+                            {
+                                dc.AddChild(instrument);
+                            }
                         }
                         
                         if (su != default(StudyUnit) && suBindings.Contains(item.ItemType))
