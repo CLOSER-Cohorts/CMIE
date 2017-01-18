@@ -49,7 +49,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             scopes[scope].AddAction(action);
         }
 
-        public void Build()
+        public void Build(bool include_globals = false)
         {
             Parallel.ForEach<IAction>(actions, action =>
             {
@@ -72,6 +72,11 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     text.PadRight(40,'-') + "> done. (" + String.Format("{0} items)", scope.Value.counter[Counters.Total]).PadLeft(12)
                     );
             });
+            if (include_globals)
+            {
+                workingSet.AddRange(ControllerSystem.Actions.LoadTVLinking.FinishedAllBuilds());
+            }
+            
             foreach (var scope in scopes)
             {
                 scope.Value.PublishConsole();
@@ -158,11 +163,54 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         public void Commit()
         {
             var client = Utility.GetClient();
+            var facet = new SetSearchFacet();
+            facet.ItemTypes.Add(DdiItemType.Group);
+            facet.ReverseTraversal = true;
             var toCommit = new List<IVersionable>();
             toCommit.AddRange(toBeAdded);
             foreach (var scope in scopes)
             {
                 toCommit.AddRange(scope.Value.toBeAdded);
+            }
+            var versioner = new Versioner();
+
+            var acceptedTypes = new List<Guid>() {
+                DdiItemType.ResourcePackage,
+                DdiItemType.DataCollection,
+                DdiItemType.InstrumentScheme,
+                DdiItemType.Instrument
+            };
+            var joints = toCommit.Where(x => acceptedTypes.Contains(x.ItemType));
+            var tops = new HashSet<Algenta.Colectica.Model.Ddi.Group>();
+            foreach (var joint in joints)
+            {
+                var set = client.SearchTypedSet(joint.CompositeId, facet);
+                foreach (var parent in set)
+                {
+                    var top = client.GetItem(
+                            parent.CompositeId,
+                            ChildReferenceProcessing.PopulateLatest
+                            ) as Algenta.Colectica.Model.Ddi.Group;
+                    tops.Add(top);
+                }
+            }
+
+            foreach (var top in tops)
+            {
+                toCommit.Add(top);
+                for (var i = 0; i < top.StudyUnits.Count; i++)
+                {
+                    toCommit.Add(top.StudyUnits[i]);
+                    foreach (var child in top.StudyUnits[i].GetChildren().ToList())
+                    {
+                        var bottom_joint = toCommit.FirstOrDefault(x => x.CompositeId == child.CompositeId);
+                        if (bottom_joint != default(IVersionable))
+                        {
+                            top.StudyUnits[i].ReplaceChild(child.CompositeId, bottom_joint);
+                        }
+                    }
+                }
+                versioner.IncrementDityItemAndParents(top);
             }
             client.RegisterItems(toCommit, new CommitOptions());
         }

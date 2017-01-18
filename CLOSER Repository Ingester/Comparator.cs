@@ -31,8 +31,12 @@ namespace CLOSER_Repository_Ingester
             var childrenA = gathererA.FoundItems.Where(x => x.UserIds.Count > 0).ToCollection();
             var childrenB = gathererB.FoundItems.Where(x => x.UserIds.Count > 0).ToCollection();
 
+            int compared = 0;
+
             foreach (var childA in childrenA)
             {
+                compared++;
+
                 var childB = childrenB.FirstOrDefault(x => x.UserIds[0].Identifier == childA.UserIds[0].Identifier);
                 if (childB != default(IVersionable))
                 {
@@ -88,6 +92,11 @@ namespace CLOSER_Repository_Ingester
                         childA,
                         childB
                     );
+                    amendmended |= Compare<Variable>(
+                        new[] { "SourceQuestions" },
+                        childA,
+                        childB
+                    );
 
                     if (childA is CustomSequenceActivity)
                     {
@@ -124,9 +133,9 @@ namespace CLOSER_Repository_Ingester
                                 IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == ccsB[i].UserIds[0].Identifier);
                                 seqA.AddChild(found);
                             }
+                            childA.IsDirty = true;
+                            amendmended = true;
                         }
-                        childA.IsDirty = true;
-                        amendmended = true;
                     }
 
                     if (amendmended)
@@ -135,7 +144,7 @@ namespace CLOSER_Repository_Ingester
                     }
                 }
             }
-            return childrenB.Count;
+            return compared;
         }
 
         private bool Compare<T>(string[] ps, object A, object B)
@@ -243,7 +252,7 @@ namespace CLOSER_Repository_Ingester
             amendmended |= Compare<DateTimeDomain>(new[] { "Label", "DateTimeType", "DateFormat" }, va, vb);
             amendmended |= Compare<Code>(new[] { "Value", "Category" }, va, vb);
             amendmended |= Compare<QuestionGridDimension>(new[] { "ShouldCodeBeDisplayed", "ShouldLabelBeDisplayed", "Roster", "CodeDomain" }, va, vb);
-            amendmended |= Compare<QuestionRoster>(new[] { "Label", "ShouldLabelBeDisplayed", "Roster" }, va, vb);
+//            amendmended |= Compare<QuestionRoster>(new[] { "Label", "ShouldLabelBeDisplayed", "Roster" }, va, vb);
             amendmended |= Compare<Condition>(new[] { "Description", "SourceCodeExpressions" }, va, vb);
             amendmended |= Compare<SourceCode>(new[] { "Code", "Language" }, va, vb);
             amendmended |= Compare<CustomIfElseBranchActivity>(new[] { "Condition" }, va, vb);

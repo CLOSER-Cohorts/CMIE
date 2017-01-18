@@ -107,8 +107,15 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                             group.AddAction(pieces[2], new LoadDVMapping(BuildFilePath(pieces[3])));
                             break;
 
-                        case "topics":
-                            group.AddAction(new LoadTopics(BuildFilePath(pieces[2])));
+                        case "tvlinking":
+                            if (pieces.Length > 3)
+                            {
+                                group.AddAction(pieces[2], new LoadTVLinking(BuildFilePath(pieces[3])));
+                            }
+                            else
+                            {
+                                group.AddAction(new LoadTVLinking(BuildFilePath(pieces[2])));
+                            }
                             break;
                     }
                 }

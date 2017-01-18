@@ -56,6 +56,7 @@ namespace CLOSER_Repository_Ingester
             {
                 group.Build();
             }
+            workingSet.AddRange(ControllerSystem.Actions.LoadTVLinking.FinishedAllBuilds());
         }
 
         public void CompareWithRepository()
@@ -179,7 +180,7 @@ namespace CLOSER_Repository_Ingester
                 {
                     var startTime = DateTime.Now;
                     Console.WriteLine("{0}: Building...", group.name);
-                    group.Build();
+                    group.Build(true);
                     console.WriteLine("{0}: Done. ({1})", group.name, (DateTime.Now - startTime).ToString("%m' min. '%s' sec.'"));
                     PublishConsole();
                     startTime = DateTime.Now;
@@ -189,7 +190,7 @@ namespace CLOSER_Repository_Ingester
 
                     console.WriteLine("{0}: {1} items to commit.", group.name, group.numberItemsToCommit);
                     var response = "";
-                    if (!keepGoing)
+                    if (!keepGoing && group.numberItemsToCommit != 0)
                     {
                         console.WriteLine("{0}: About to commit to repository, do you want to continue? (y/N)", group.name);
                         console.Publish();
@@ -199,8 +200,8 @@ namespace CLOSER_Repository_Ingester
                     {
                         console.Publish();
                     }
-                    
-                    if ((response.Length > 0 && response[0].Equals('y')) || keepGoing)
+
+                    if (((response.Length > 0 && response[0].Equals('y')) || keepGoing) && group.numberItemsToCommit > 0)
                     {
                         console.Write("{0}: Committing... ", group.name);
                         console.Publish();

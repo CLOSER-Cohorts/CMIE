@@ -65,7 +65,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             }
         }
 
-        public IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
+        public virtual IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
         {
             RunFile(Runner, ws);
             return new List<IVersionable>();

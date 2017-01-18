@@ -111,11 +111,19 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                                 dc.AddChild(instrument);
                             }
                         }
-                        
+
                         if (su != default(StudyUnit) && suBindings.Contains(item.ItemType))
                         {
                             su.AddChild(item);
                             continue;
+                        }
+
+                        item.IsDirty = true;
+                        var gthr = new ItemGathererVisitor();
+                        item.Accept(gthr);
+                        foreach (var i in gthr.FoundItems)
+                        {
+                            i.IsDirty = true;
                         }
                     }
                     else
@@ -127,20 +135,9 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 }
             }
 
-            if (updated)
-            {
-                var dirtyGthr = new DirtyItemGatherer(false, true);
-                rp.Accept(dirtyGthr);
-                foreach (var item in dirtyGthr.DirtyItems)
-                {
-                    counter[Counters.Updated]++;
-                    item.Version++;
-                }
-            }
-
-            var gthr = new ItemGathererVisitor();
-            rp.Accept(gthr);
-            toBeAdded.AddRange(gthr.FoundItems);
+            var allGthr = new ItemGathererVisitor();
+            rp.Accept(allGthr);
+            toBeAdded.AddRange(allGthr.FoundItems);
         }
     }
 }
