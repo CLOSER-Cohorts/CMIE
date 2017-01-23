@@ -31,7 +31,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             int vindex = parts.Length-1;
             string questionColumn = parts[qindex].Trim();
             string[] questionNameParts = questionColumn.Split(new char[] { '$' });     //remove grid cell info
-            questionName = questionNameParts[qindex];
+            questionName = questionNameParts[0];
             variableName = parts[vindex].Trim();
 
             if (questionName == "0" || variableName == "0") return;
@@ -46,10 +46,10 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                     return;
                 }
 
-                var foundVs = ws.OfType<VariableScheme>().Where(x => x.ItemName.Best == parts[3].Trim());
+                var foundVs = ws.OfType<VariableScheme>().Where(x => x.ItemName.Best == parts[2].Trim());
                 if (foundVs.Count() == 0)
                 {
-                    Console.WriteLine("Invalid variable scheme: {0}", parts[3]);
+                    Console.WriteLine("Invalid variable scheme: {0}", parts[2]);
                     counter[Counters.Skipped] += 1;
                     return;
                 }

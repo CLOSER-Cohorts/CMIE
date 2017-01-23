@@ -13,12 +13,12 @@ namespace CLOSER_Repository_Ingester
     public class Comparator
     {
         public List<IVersionable> amendments;
-        protected List<IVersionable> workingSet;
+        public List<IVersionable> repoSet;
 
-        public Comparator(List<IVersionable> _workingSet)
+        public Comparator(List<IVersionable> _repoSet)
         {
             amendments = new List<IVersionable>();
-            workingSet = _workingSet;
+            repoSet = _repoSet;
         }
 
         public int Compare(IVersionable A, IVersionable B)
@@ -93,7 +93,7 @@ namespace CLOSER_Repository_Ingester
                         childB
                     );
                     amendmended |= Compare<Variable>(
-                        new[] { "SourceQuestions" },
+                        new[] { "SourceQuestions", "SourceQuestionGrids", "SourceVariables" },
                         childA,
                         childB
                     );
@@ -129,7 +129,7 @@ namespace CLOSER_Repository_Ingester
                             }
                             for (var i = 0; i < ccsB.Count; i++)
                             {
-                                var tmp = workingSet.Where(x => x.UserIds.Count > 0).ToList();
+                                var tmp = repoSet.Where(x => x.UserIds.Count > 0).ToList();
                                 IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == ccsB[i].UserIds[0].Identifier);
                                 seqA.AddChild(found);
                             }
@@ -183,7 +183,11 @@ namespace CLOSER_Repository_Ingester
                         amendment |= CompareComplexPropertyCollection<T, ObservableCollection<QuestionGridDimension>, QuestionGridDimension>(p, a, b);
                         amendment |= CompareComplexPropertyCollection<T, SourceCodeCollection, SourceCode>(p, a, b);
                         amendment |= CompareComplexPropertyCollection<T, ObservableCollection<CustomIfElseBranchActivity>, CustomIfElseBranchActivity>(p, a, b);
+                        
                         amendedReference |= CompareReferenceProperty<T>(p, a, b);
+                        amendedReference |= CompareReferenceProperty<T, ObservableCollection<Question>, Question>(p, a, b);
+                        amendedReference |= CompareReferenceProperty<T, ObservableCollection<QuestionGrid>, QuestionGrid>(p, a, b);
+                        amendedReference |= CompareReferenceProperty<T, ObservableCollection<Variable>, Variable>(p, a, b);
                     }
                 }
                 if (amendment || amendedReference)
@@ -207,6 +211,9 @@ namespace CLOSER_Repository_Ingester
                         {
                             var p = type.GetProperty(prop);
                             UpdateReferenceProperty<T>(p, a, b);
+                            UpdateReferenceProperty<T, ObservableCollection<Question>, Question>(p, a, b);
+                            UpdateReferenceProperty<T, ObservableCollection<QuestionGrid>, QuestionGrid>(p, a, b);
+                            UpdateReferenceProperty<T, ObservableCollection<Variable>, Variable>(p, a, b);
                         }
                     }
                     return true;
@@ -244,6 +251,22 @@ namespace CLOSER_Repository_Ingester
             return va.UserIds.First().Identifier != vb.UserIds.First().Identifier;
         }
 
+        private bool CompareReferenceProperty<T, S, R>(PropertyInfo p, T a, T b) where R : IIdentifiable
+        {
+            if (p.PropertyType != typeof(S)) return false;
+            var va = (Collection<R>)p.GetValue(a, null);
+            var vb = (Collection<R>)p.GetValue(b, null);
+            if (va.Count != vb.Count) return true;
+            bool amendmended = false;
+            for (var i = 0; i < va.Count; i++)
+            {
+                if (va[i] == null && vb[i] == null) continue;
+                if (!(va[i].UserIds.Any() && vb[i].UserIds.Any())) continue;
+                amendmended |= va[i].UserIds.First().Identifier != vb[i].UserIds.First().Identifier;
+            }
+            return amendmended;
+        }
+
         private bool CompareComplexProperties<T>(T va, T vb)
         {
             bool amendmended = false;
@@ -256,6 +279,11 @@ namespace CLOSER_Repository_Ingester
             amendmended |= Compare<Condition>(new[] { "Description", "SourceCodeExpressions" }, va, vb);
             amendmended |= Compare<SourceCode>(new[] { "Code", "Language" }, va, vb);
             amendmended |= Compare<CustomIfElseBranchActivity>(new[] { "Condition" }, va, vb);
+            var question_properties = new[] { "EstimatedTime", "QuestionIntent", "QuestionText", "ResponseDomains" };
+            amendmended |= Compare<Question>(question_properties, va, vb);
+            var qgrid_properties = new[] { "Dimensions" };
+            amendmended |= Compare<QuestionGrid>(question_properties.Concat(qgrid_properties).ToArray(), va, vb);
+            amendmended |= Compare<Variable>(new[] {"SourceQuestions", "SourceQuestionGrids", "SourceVariables"}, va, vb);
             return amendmended;
         }
 
@@ -288,9 +316,29 @@ namespace CLOSER_Repository_Ingester
             IdentifiableBase vb = (IdentifiableBase)p.GetValue(b, null);
             if (vb == null) return;
             if (!(vb.UserIds.Any())) return;
-            var tmp = workingSet.Where(x => x.UserIds.Count > 0).ToList();
+            var tmp = repoSet.Where(x => x.UserIds.Count > 0).ToList();
             IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == vb.UserIds[0].Identifier);
             p.SetValue(a, found, null);
+        }
+
+        private void UpdateReferenceProperty<T, S, R>(PropertyInfo p, T a, T b) where R : VersionableBase
+        {
+            if (p.PropertyType != typeof(S)) return;
+            var va = (Collection<R>)p.GetValue(a, null);
+            var vb = (Collection<R>)p.GetValue(b, null);
+            for (var i = 0; i < va.Count; i++)
+            {
+                ((IVersionable)va[i]).IsDirty = true;
+                ((IVersionable)a).RemoveChild(((VersionableBase)va[i]).CompositeId);
+            }
+            if (!vb.Any()) return;
+            var tmp = repoSet.Where(x => x.UserIds.Count > 0).ToList();
+            for (var i = 0; i < vb.Count; i++)
+            {
+                IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == vb[i].UserIds[0].Identifier);
+                found.IsDirty = true;
+                va.Add((R)found);
+            }
         }
 
         private void UpdateProperty<T,S>(PropertyInfo p, T a, T b)

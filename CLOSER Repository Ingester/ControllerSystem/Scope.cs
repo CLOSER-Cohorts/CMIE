@@ -68,7 +68,8 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             rp.Accept(graphPopulator);
             var gatherer = new ItemGathererVisitor();
             rp.Accept(gatherer);
-            var rpItems = gatherer.FoundItems;
+            var rpItems = gatherer.FoundItems.ToList();
+            comparator.repoSet = rpItems;
             foreach (var item in rpItems) item.IsDirty = false;
 
             DataCollection dc = null;

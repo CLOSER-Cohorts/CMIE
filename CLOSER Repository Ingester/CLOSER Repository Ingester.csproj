@@ -100,6 +100,7 @@
   <ItemGroup>
     <Compile Include="Comparator.cs" />
     <Compile Include="ConsoleQueue.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadTQLinking.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTVLinking.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTopics.cs" />
     <Compile Include="ControllerSystem\Actions\LoadDVMapping.cs" />

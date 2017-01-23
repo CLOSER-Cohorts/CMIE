@@ -107,6 +107,10 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                             group.AddAction(pieces[2], new LoadDVMapping(BuildFilePath(pieces[3])));
                             break;
 
+                        case "tqlinking":
+                            group.AddAction(pieces[2], new LoadTQLinking(BuildFilePath(pieces[3])));
+                            break;
+
                         case "tvlinking":
                             if (pieces.Length > 3)
                             {

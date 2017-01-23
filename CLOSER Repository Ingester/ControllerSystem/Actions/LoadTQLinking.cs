@@ -11,26 +11,26 @@ using Algenta.Colectica.Model.Ddi.Serialization;
 
 namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 {
-    class LoadTVLinking : TXTFileAction
+    class LoadTQLinking : TXTFileAction
     {
         string filepath;
-        static VariableScheme vs;
+        static ControlConstructScheme ccs;
 
         protected override int[] numberOfColumns
         {
             get { return new int[]{2}; }
         }
 
-        public LoadTVLinking(string _filepath)
+        public LoadTQLinking(string _filepath)
         {
             Init(_filepath);
-            if (vs == default(VariableScheme))
+            if (ccs == default(ControlConstructScheme))
             {
                 var client = Utility.GetClient();
                 var facet = new SearchFacet();
-                facet.ItemTypes.Add(DdiItemType.VariableScheme);
+                facet.ItemTypes.Add(DdiItemType.ControlConstructScheme);
                 facet.SearchTargets.Add(DdiStringType.Name);
-                facet.SearchTerms.Add("Topic Variable Groups");
+                facet.SearchTerms.Add("Topic Question Construct Groups");
                 facet.SearchLatestVersion = true;
                 SearchResponse response = client.Search(facet);
 
@@ -38,15 +38,15 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                 {
                     ChildProcessing = ChildReferenceProcessing.PopulateLatest,
                 };
-                graphPopulator.TypesToPopulate.Add(DdiItemType.Variable);
-                graphPopulator.TypesToPopulate.Add(DdiItemType.VariableGroup);
+                graphPopulator.TypesToPopulate.Add(DdiItemType.QuestionConstruct);
+                graphPopulator.TypesToPopulate.Add(DdiItemType.ControlConstructGroup);
 
                 if (response.Results.Count == 1)
                 {
-                    vs = client.GetItem(
+                    ccs = client.GetItem(
                         response.Results[0].CompositeId,
-                        ChildReferenceProcessing.PopulateLatest) as VariableScheme;
-                    vs.Accept(new GraphPopulator(client));
+                        ChildReferenceProcessing.PopulateLatest) as ControlConstructScheme;
+                    ccs.Accept(new GraphPopulator(client));
                 }
             }
         }
@@ -59,20 +59,20 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 
         public static IEnumerable<IVersionable> FinishedAllBuilds(bool clear_vs_reference = true)
         {
-            if (vs == default(VariableScheme))
+            if (ccs == default(ControlConstructScheme))
             {
                 return new List<IVersionable>();
             }
             else
             {
                 var gthr = new ItemGathererVisitor();
-                vs.Accept(gthr);
+                ccs.Accept(gthr);
 
                 var foundItems = gthr.FoundItems;
 
                 if (clear_vs_reference)
                 {
-                    vs = default(VariableScheme);
+                    ccs = default(ControlConstructScheme);
                 }
 
                 return foundItems;
@@ -81,28 +81,28 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 
         public override void Runner(string[] parts, IEnumerable<IVersionable> ws)
         {
-            string vref = parts[0].Trim();
+            string qref = parts[0].Trim();
             string tref = parts[1].Trim();
 
             if (tref == "0") return;
 
-            var variable = ws.OfType<Variable>().FirstOrDefault(x => x.ItemName.Best == vref);
+            var question = ws.OfType<QuestionActivity>().FirstOrDefault(x => x.ItemName.Best == qref);
 
-            if (variable != default(Variable))
+            if (question != default(QuestionActivity))
             {
-                var vg = vs.VariableGroups.FirstOrDefault(x => x.ItemName.Best == tref);
-                if (vg != default(VariableGroup))
+                var ccg = ccs.ControlConstructGroups.FirstOrDefault(x => x.ItemName.Best == tref);
+                if (ccg != default(ControlConstructGroup))
                 {
-                    var in_group = vg.GetChildren().OfType<Variable>().Any(x => x.ItemName.Best == variable.ItemName.Best);
+                    var in_group = ccg.GetChildren().OfType<QuestionActivity>().Any(x => x.ItemName.Best == question.ItemName.Best);
                     if (!in_group)
                     {
-                        var old_vgs = vs.VariableGroups.Where(x => x.GetChildren().OfType<Variable>().Any(y => y.ItemName.Best == variable.ItemName.Best)).ToList();
-                        for (var i = 0; i < old_vgs.Count; i++ )
+                        var old_ccgs = ccs.ControlConstructGroups.Where(x => x.GetChildren().OfType<QuestionActivity>().Any(y => y.ItemName.Best == question.ItemName.Best)).ToList();
+                        for (var i = 0; i < old_ccgs.Count; i++)
                         {
-                            var to_be_removed = old_vgs[i].GetChildren().OfType<Variable>().FirstOrDefault(x => x.ItemName.Best == variable.ItemName.Best);
-                            old_vgs[i].RemoveChild(to_be_removed);
+                            var to_be_removed = old_ccgs[i].GetChildren().OfType<QuestionActivity>().FirstOrDefault(x => x.ItemName.Best == question.ItemName.Best);
+                            old_ccgs[i].RemoveChild(to_be_removed);
                         }
-                        vg.AddChild(variable);
+                        ccg.AddChild(question);
                     }
                 }
             }

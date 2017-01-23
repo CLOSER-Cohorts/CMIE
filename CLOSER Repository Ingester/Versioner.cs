@@ -12,12 +12,12 @@ namespace CLOSER_Repository_Ingester
     class Versioner
     {
         private Dictionary<IVersionable, List<IVersionable>> parents;
-        private List<Guid> incremented;
+        private List<IVersionable> incremented;
 
         public Versioner()
         {
             parents = new Dictionary<IVersionable, List<IVersionable>>();
-            incremented = new List<Guid>();
+            incremented = new List<IVersionable>();
         }
 
         public void IncrementDityItemAndParents(IVersionable item)
@@ -76,10 +76,10 @@ namespace CLOSER_Repository_Ingester
 
         private void Increment(IVersionable item)
         {
-            if (!incremented.Contains(item.Identifier))
+            if (!incremented.Contains(item))
             {
                 item.Version++;
-                incremented.Add(item.Identifier);
+                incremented.Add(item);
             }
         }
     }
