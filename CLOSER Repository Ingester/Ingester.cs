@@ -105,6 +105,7 @@ namespace CLOSER_Repository_Ingester
                 //Compare
                 var repoItems = new List<IVersionable>();
                 var wsIs = workingSet.OfType<DdiInstance>();
+                var countint = wsIs.Count();
 
                 foreach (var wsI in wsIs)
                 {

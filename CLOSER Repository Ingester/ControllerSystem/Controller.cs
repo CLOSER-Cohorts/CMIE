@@ -30,6 +30,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
 
         public void loadFile(string filepath)
         {
+            Console.WriteLine("Started loading {0}", filepath);
             var lines = File.ReadAllLines(filepath);
             foreach (var line in lines)
             {
@@ -37,7 +38,9 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 if (trimmedLine.Length == 0) continue;
                 if (trimmedLine[0] == '#') continue;
                 parseLine(trimmedLine);
+                Console.WriteLine("Parsed lined: {0}", trimmedLine);
             }
+            Console.WriteLine("Finished loading {0}", filepath);
         }
 
         private void parseLine(string line)
@@ -74,7 +77,14 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                     switch (pieces[0].ToLower())
                     {
                         case "instrument":
-                            group.AddAction(pieces[2], new LoadInstrument(BuildFilePath(pieces[3])));
+                            if (pieces.Length > 4)
+                            {
+                                group.AddAction(pieces[2], new LoadInstrument(BuildFilePath(pieces[3]), pieces[4]));
+                            }
+                            else
+                            {
+                                group.AddAction(pieces[2], new LoadInstrument(BuildFilePath(pieces[3])));
+                            }
                             break;
 
                         case "studysweep":
@@ -120,6 +130,27 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                             {
                                 group.AddAction(new LoadTVLinking(BuildFilePath(pieces[2])));
                             }
+                            break;
+
+                        case "images":
+                            string dirName, dirPath, ccsName;
+                            if (pieces.Length > 4)
+                            {
+                                dirName = pieces[4];
+                                dirPath = BuildFilePath(pieces[4]);
+                                ccsName = pieces[3];
+                            }
+                            else
+                            {
+                                dirName = pieces[3];
+                                dirPath = BuildFilePath(pieces[3]);
+                                ccsName = pieces[2] + "_ccs01";
+                            }
+                            group.AddAction(pieces[2], new AttachExternalAids(ccsName, dirName, dirPath));
+                            break;
+
+                        case "pdf":
+                            group.AddAction(pieces[2], new AttachExternalInstrument(pieces[3], BuildFilePath(pieces[4])));
                             break;
                     }
                 }

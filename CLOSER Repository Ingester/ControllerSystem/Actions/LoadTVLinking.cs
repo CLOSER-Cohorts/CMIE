@@ -38,7 +38,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                 {
                     ChildProcessing = ChildReferenceProcessing.PopulateLatest,
                 };
-                graphPopulator.TypesToPopulate.Add(DdiItemType.Variable);
+                //graphPopulator.TypesToPopulate.Add(DdiItemType.Variable);
                 graphPopulator.TypesToPopulate.Add(DdiItemType.VariableGroup);
 
                 if (response.Results.Count == 1)
@@ -66,6 +66,8 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             else
             {
                 var gthr = new ItemGathererVisitor();
+                gthr.TypesToFind.Add(DdiItemType.VariableScheme);
+                gthr.TypesToFind.Add(DdiItemType.VariableGroup);
                 vs.Accept(gthr);
 
                 var foundItems = gthr.FoundItems;
@@ -96,7 +98,20 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                     var in_group = vg.GetChildren().OfType<Variable>().Any(x => x.ItemName.Best == variable.ItemName.Best);
                     if (!in_group)
                     {
-                        var old_vgs = vs.VariableGroups.Where(x => x.GetChildren().OfType<Variable>().Any(y => y.ItemName.Best == variable.ItemName.Best)).ToList();
+                        var old_vgs = new List<VariableGroup>();
+                        for (var j = 0; j < vs.VariableGroups.Count; j++)
+                        {
+                            foreach (var v in vs.VariableGroups[j].ItemsList)
+                            {
+                                if (v is Variable)
+                                {
+                                    if (((DescribableBase)v).ItemName.Best == variable.ItemName.Best)
+                                    {
+                                        old_vgs.Add(vs.VariableGroups[j]);
+                                    }
+                                }
+                            }
+                        }
                         for (var i = 0; i < old_vgs.Count; i++ )
                         {
                             var to_be_removed = old_vgs[i].GetChildren().OfType<Variable>().FirstOrDefault(x => x.ItemName.Best == variable.ItemName.Best);

@@ -24,6 +24,16 @@
             var info = client.GetRepositoryInfo();
             </example> 
         </member>
+        <member name="P:Algenta.Colectica.Repository.Client.WcfRepositoryClient.Name">
+            <summary>
+            Gets the name of the repository.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Repository.Client.WcfRepositoryClient.ClientType">
+            <summary>
+            Gets the type of the client. For this class, the client will always be <c>Remote</c>.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Repository.Client.WcfRepositoryClient.#ctor(Algenta.Colectica.Model.Repository.RepositoryConnectionInfo)">
             <summary>
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Repository.Client.WcfRepositoryClient"/> class.
@@ -71,7 +81,7 @@
         </member>
         <member name="M:Algenta.Colectica.Repository.Client.WcfRepositoryClient.GetRepositoryItemDescription(System.Guid,System.String,System.Int64)">
             <summary>
-            Gets a description of a repository item. The <see cref="T:Algenta.Colectica.Model.Repository.RepositoryItemMetadata"/> description
+            Gets a description of a repository item. The <see cref="T:Algenta.Colectica.Model.Repository.RepositoryItemMetadata" /> description
             contains identification, naming, and summary information, but not the entire contents of the item.
             </summary>
             <param name="id">The identifier of the item for which a description will be retrieved.</param>
@@ -100,7 +110,7 @@
         </member>
         <member name="M:Algenta.Colectica.Repository.Client.WcfRepositoryClient.GetRepositoryItemDescriptions(System.Collections.ObjectModel.Collection{Algenta.Colectica.Model.Utility.IdentifierTriple})">
             <summary>
-            Gets descriptions of multiple repository items. The <see cref="T:Algenta.Colectica.Model.Repository.RepositoryItemMetadata"/> descriptions
+            Gets descriptions of multiple repository items. The <see cref="T:Algenta.Colectica.Model.Repository.RepositoryItemMetadata" /> descriptions
             contain identification, naming, and summary information, but not the entire contents of the item.
             </summary>
             <param name="identifiers">The identifiers for which descriptions will be retrieved.</param>
@@ -149,7 +159,7 @@
         <member name="M:Algenta.Colectica.Repository.Client.WcfRepositoryClient.GetRepositoryItems(System.Collections.ObjectModel.Collection{Algenta.Colectica.Model.Utility.IdentifierTriple})">
             <summary>
             Gets a list of undeserialized items from the repository. To retrieve deserialized
-            <see cref="T:Algenta.Colectica.Model.IVersionable"/> objects, use the <c>GetItems</c> method.
+            <see cref="T:Algenta.Colectica.Model.IVersionable" /> objects, use the <c>GetItems</c> method.
             </summary>
             <param name="identifiers">The identifiers to retrieve.</param>
             <returns>
@@ -175,7 +185,7 @@
             <summary>
             Gets a list of the latest versions of undeserialized items from the repository.
             To retrieve deserialized
-            <see cref="T:Algenta.Colectica.Model.IVersionable"/> objects, use the <c>GetLatestItems</c> method.
+            <see cref="T:Algenta.Colectica.Model.IVersionable" /> objects, use the <c>GetLatestItems</c> method.
             </summary>
             <param name="identifiers">The identifiers of the items to retrieve.</param>
             <returns>
@@ -195,7 +205,7 @@
         <member name="M:Algenta.Colectica.Repository.Client.WcfRepositoryClient.GetRepositoryItem(System.Guid,System.String,System.Int64)">
             <summary>
             Gets an undeserialized item from the repository. To retrieve a deserialized
-            <see cref="T:Algenta.Colectica.Model.IVersionable"/> object, use the <c>GetItem</c> method.
+            <see cref="T:Algenta.Colectica.Model.IVersionable" /> object, use the <c>GetItem</c> method.
             </summary>
             <param name="id">The identifier of the item to retrieve.</param>
             <param name="agency">The agency of the item to retrieve.</param>
@@ -348,7 +358,7 @@
             <summary>
             Gets the latest version of an undeserialized item from the repository.
             To retrieve a deserialized
-            <see cref="T:Algenta.Colectica.Model.IVersionable"/> object, use the <c>GetLatestItem</c> method.
+            <see cref="T:Algenta.Colectica.Model.IVersionable" /> object, use the <c>GetLatestItem</c> method.
             </summary>
             <param name="id">The identifier of the item to retrieve.</param>
             <param name="agency">The agency of the item to retrieve.</param>
@@ -479,16 +489,6 @@
             </summary>
             <param name="loggedEvent"></param>
         </member>
-        <member name="P:Algenta.Colectica.Repository.Client.WcfRepositoryClient.Name">
-            <summary>
-            Gets the name of the repository.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Repository.Client.WcfRepositoryClient.ClientType">
-            <summary>
-            Gets the type of the client. For this class, the client will always be <c>Remote</c>.
-            </summary>
-        </member>
         <member name="T:Algenta.Colectica.Repository.Client.Util">
             <summary>
             Provides extension methods for working with repository clients.
@@ -512,7 +512,7 @@
             <summary>
             When overridden in a derived class, validates the X.509 certificate.
             </summary>
-            <param name="certificate">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2"/> that represents the X.509 certificate to validate.</param>
+            <param name="certificate">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> that represents the X.509 certificate to validate.</param>
             <exception cref="T:System.ArgumentNullException">certificate</exception>
         </member>
     </members>

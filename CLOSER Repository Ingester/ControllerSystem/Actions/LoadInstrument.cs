@@ -10,9 +10,12 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 {
     class LoadInstrument : DDIFileAction
     {
-        public LoadInstrument(string filepath)
+        private string external_path;
+
+        public LoadInstrument(string filepath, string external_path = null)
         {
             this.filepath = filepath;
+            this.external_path = external_path;
         }
 
         public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
@@ -57,6 +60,13 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                     //Trace.WriteLine("   question construct with no source");
                 }
             }
+
+            if (external_path != null)
+            {
+                var instrument = allItems.OfType<Instrument>().FirstOrDefault();
+                AttachExternalInstrument.Attach(instrument, external_path);
+            }
+
             return allItems;
         }
     }

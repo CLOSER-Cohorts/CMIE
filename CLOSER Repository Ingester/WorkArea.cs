@@ -10,7 +10,7 @@ namespace CLOSER_Repository_Ingester
     {
         public enum Counters {Total, Compared, Updated, Added, Removed};
         public Dictionary<Counters, int> counter { get; protected set; }
-        protected List<IVersionable> workingSet { get; set;  }
+        public List<IVersionable> workingSet;
         public List<IVersionable> toBeAdded { get; protected set; }
         protected List<IAction> actions;
         protected ConsoleQueue console;

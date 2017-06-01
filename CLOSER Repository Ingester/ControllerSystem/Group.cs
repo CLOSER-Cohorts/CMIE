@@ -53,25 +53,53 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         {
             Parallel.ForEach<IAction>(actions, action =>
             {
+                if (action is TXTFileAction) return;
                 Console.WriteLine("{0}: Validating {1}", name, action.scope);
                 action.Validate();
                 workingSet.AddRange(action.Build(workingSet));
             });
             PublishConsole();
             var progress = new ParallelProgressMonitor(scopes.Count);
-            Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
+            foreach (var scope in scopes)
             {
                 string text = String.Format("{0}: Building {1}", name, scope.Value.name);
                 progress.StartThread(
-                    Thread.CurrentThread.ManagedThreadId, 
+                    Thread.CurrentThread.ManagedThreadId,
                     text
                     );
                 scope.Value.Build();
                 progress.FinishThread(
                     Thread.CurrentThread.ManagedThreadId,
-                    text.PadRight(40,'-') + "> done. (" + String.Format("{0} items)", scope.Value.counter[Counters.Total]).PadLeft(12)
+                    text.PadRight(40, '-') + "> done. (" + String.Format("{0} items)", scope.Value.counter[Counters.Total]).PadLeft(12)
                     );
+            }
+            var globalWS = new List<IVersionable>();
+            globalWS.AddRange(workingSet);
+            foreach (var scope in scopes)
+            {
+                globalWS.AddRange(scope.Value.workingSet);
+            }
+            Parallel.ForEach<IAction>(actions, action =>
+            {
+                if (!(action is TXTFileAction)) return;
+                Console.WriteLine("{0}: Validating {1}", name, action.scope);
+                action.Validate();
+                workingSet.AddRange(action.Build(globalWS));
             });
+            PublishConsole();
+            //Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
+            //{
+            //    string text = String.Format("{0}: Building {1}", name, scope.Value.name);
+            //    progress.StartThread(
+            //        Thread.CurrentThread.ManagedThreadId, 
+            //        text
+            //        );
+            //    scope.Value.Build();
+            //    progress.FinishThread(
+            //        Thread.CurrentThread.ManagedThreadId,
+            //        text.PadRight(40,'-') + "> done. (" + String.Format("{0} items)", scope.Value.counter[Counters.Total]).PadLeft(12)
+            //        );
+            //});
             if (include_globals)
             {
                 workingSet.AddRange(ControllerSystem.Actions.LoadTVLinking.FinishedAllBuilds());
@@ -88,7 +116,10 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
         {
             var client = Utility.GetClient();
 
-            var facet = new SearchFacet();
+            var facet = new SearchFacet() 
+            { 
+                SearchLatestVersion = true
+            };
             facet.ItemTypes.Add(DdiItemType.StudyUnit);
             var response = client.Search(facet);
             foreach (var result in response.Results)
@@ -96,13 +127,13 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 var su = client.GetItem(
                         result.CompositeId,
                         ChildReferenceProcessing.PopulateLatest) as StudyUnit;
-                foreach (var rp in su.ResourcePackages)
+                foreach (var dc in su.DataCollections)
                 {
                     try
                     {
-                        var scope = scopes[rp.ItemName.Best];
+                        var scope = scopes[dc.ItemName.Best];
                         scope.su = su;
-                        scope.rp = rp;
+                        scope.rp = su.ResourcePackages.Where(x => x.ItemName.Best == dc.ItemName.Best).FirstOrDefault();
                     } catch(KeyNotFoundException)
                     {
                     }
@@ -138,38 +169,101 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                         if (bubbleOut) break;
                     }
                 }
+                else
+                {
+                    var rp = new ResourcePackage();
+                    rp.DublinCoreMetadata.Title["en-GB"] = scope.Key;
+                    scope.Value.su.AddChild(rp);
+                    toBeAdded.Add(scope.Value.su);
+                    rp.AddChild(scope.Value.su.DataCollections.First(x => x.ItemName.Best == scope.Key));
+                    scope.Value.rp = rp;
+                }
             }
 
-            facet.ItemTypes.Clear();
-            facet.ItemTypes.Add(DdiItemType.QuestionConstruct);
-            response = client.Search(facet);
             var ccgs = workingSet.OfType<ControlConstructGroup>();
-            foreach (var result in response.Results)
+            if (ccgs.Count() > 1)
             {
-                var item = client.GetItem(result.CompositeId) as QuestionActivity;
-                var ccg = ccgs.FirstOrDefault(x => x.GetChildren().Any(y => ((DescribableBase)y).UserIds[0].Identifier == item.UserIds[0].Identifier));
-                if (ccg != null)
+                facet.ItemTypes.Clear();
+                facet.SearchTargets.Clear();
+                facet.ItemTypes.Add(DdiItemType.QuestionConstruct);
+                facet.SearchTargets.Add(DdiStringType.UserId);
+                foreach (var ccg in ccgs)
                 {
-                    var local_qc = ccg.GetChildren().First(x => ((DescribableBase)x).UserIds[0].Identifier == item.UserIds[0].Identifier);
-                    ccg.ReplaceChild(local_qc.CompositeId, item);
+                    var qcs = ccg.GetChildren().OfType<QuestionActivity>().ToList();
+                    foreach (var qc in ccg.GetChildren().OfType<QuestionActivity>())
+                    {
+                        facet.SearchTerms.Clear();
+                        facet.SearchTerms.Add(qc.UserIds.First().Identifier);
+
+                        response = client.Search(facet);
+                        if (response.Results.Count > 1)
+                        {
+                            Console.WriteLine("{0} question constrcuts found during CCG syncing for the question '{1}'", response.Results.Count, qc.UserIds.First().Identifier);
+                        }
+                        else if (response.Results.Count < 1)
+                        {
+                            Console.WriteLine("No question constructs were found for the CCG syncing matching '{0}'", qc.UserIds.First().Identifier);
+                        }
+                        else
+                        {
+                            var remote_qc = client.GetItem(response.Results.First().CompositeId) as IVersionable;
+                            if (remote_qc != default(IVersionable))
+                            {
+                                ccg.ReplaceChild(qc.CompositeId, remote_qc);
+                            }
+                        }
+                    }
                 }
             }
 
-            facet.ItemTypes.Clear();
-            facet.ItemTypes.Add(DdiItemType.Variable);
-            response = client.Search(facet);
             var vgs = workingSet.OfType<VariableGroup>();
-            foreach (var result in response.Results)
+            if (vgs.Count() > 0) 
             {
-                var item = client.GetItem(result.CompositeId) as Variable;
-                var vg = vgs.FirstOrDefault(x => x.GetChildren().Any(y => ((DescribableBase)y).ItemName.Best == item.ItemName.Best));
-                if (vg != null)
+                facet.ItemTypes.Clear();
+                facet.ItemTypes.Add(DdiItemType.Variable);
+                foreach (var vg in vgs)
                 {
-                    var local_v = vg.GetChildren().First(x => ((DescribableBase)x).ItemName.Best == item.ItemName.Best);
-                    vg.ReplaceChild(local_v.CompositeId, item);
+                    foreach (var variable in vg.GetChildren().OfType<Variable>())
+                    {
+
+                        facet.SearchTerms.Clear();
+                        facet.SearchTargets.Clear();
+                        bool closer_id_found = false;
+                        foreach (var user_id in variable.UserIds)
+                        {
+                            if (user_id.Type == "closer:id")
+                            {
+                                closer_id_found = true;
+                                facet.SearchTerms.Add(user_id.Identifier);
+                                facet.SearchTargets.Add(DdiStringType.UserId);
+                                break;
+                            }
+                        }
+                        if (!closer_id_found) 
+                        {
+                            facet.SearchTerms.Add(variable.ItemName.Best);
+                            facet.SearchTargets.Add(DdiStringType.Name);
+                        }
+                        response = client.Search(facet);
+                        if (response.Results.Count > 1)
+                        {
+                            Console.WriteLine("{0} variables found during variable group syncing for the variable '{1}:{2}'", response.Results.Count , name, variable.ItemName.Best);
+                        }
+                        else if (response.Results.Count < 1)
+                        {
+                            Console.WriteLine("No variables were found for the variable grouping syncing matching '{0}:{1}'", name, variable.ItemName.Best);
+                        }
+                        else
+                        {
+                            var remote_variable = client.GetItem(response.Results.First().CompositeId) as IVersionable;
+                            if (remote_variable != default(IVersionable))
+                            {
+                                vg.ReplaceChild(variable.CompositeId, remote_variable);
+                            }
+                        }
+                    }
                 }
             }
-
 
             var progress = new ParallelProgressMonitor(scopes.Count);
             Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>
@@ -220,7 +314,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 DdiItemType.ControlConstructScheme
             };
             var joints = toCommit.Where(x => acceptedTypes.Contains(x.ItemType)).ToList();
-            var tops = new HashSet<IVersionable>();
+            var tops = new Dictionary<IdentifierTriple,IVersionable>();
             foreach (var joint in joints)
             {
                 var set = client.SearchTypedSet(joint.CompositeId, facet);
@@ -232,28 +326,37 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                             ) as IVersionable;
                     if (top != null)
                     {
-                        tops.Add(top);
+                        tops[top.CompositeId] = top;
                     }
                 }
             }
 
             foreach (var top in tops)
             {
-                toCommit.Add(top);
-                var one_down = top.GetChildren().ToList();
+                toCommit.Add(top.Value);
+                var one_down = top.Value.GetChildren().ToList();
                 for (var i = 0; i < one_down.Count; i++)
                 {
                     toCommit.Add(one_down[i]);
-                    foreach (var child in one_down[i].GetChildren().ToList())
+                    IVersionable su_joint;
+                    if ((su_joint = toCommit.FirstOrDefault(x => one_down[i].CompositeId.Identifier == x.CompositeId.Identifier)) != default(IVersionable))
                     {
-                        var bottom_joint = toCommit.FirstOrDefault(x => x.CompositeId == child.CompositeId);
-                        if (bottom_joint != default(IVersionable))
+                        top.Value.ReplaceChild(one_down[i].CompositeId, su_joint);
+                    }
+                    else
+                    {
+                        foreach (var child in one_down[i].GetChildren().ToList())
                         {
-                            one_down[i].ReplaceChild(child.CompositeId, bottom_joint);
+                            var bottom_joint = toCommit.FirstOrDefault(x => x.CompositeId == child.CompositeId);
+                            if (bottom_joint != default(IVersionable))
+                            {
+                                one_down[i].ReplaceChild(child.CompositeId, bottom_joint);
+                            }
+
                         }
                     }
                 }
-                versioner.IncrementDityItemAndParents(top);
+                versioner.IncrementDityItemAndParents(top.Value);
             }
             client.RegisterItems(toCommit, new CommitOptions());
         }

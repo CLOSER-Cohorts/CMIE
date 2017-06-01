@@ -19,6 +19,16 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
         {
             Collection<IVersionable> allItems = getAllItems();
 
+            var pi = allItems.OfType<PhysicalInstance>().FirstOrDefault();
+            if (pi != default(PhysicalInstance))
+            {
+                foreach (var dr in allItems.OfType<DataRelationship>())
+                {
+                    pi.DataRelationships.Add(dr);
+                }
+                pi.RecordLayouts.Clear();
+            }
+
             return allItems;
         }
     }

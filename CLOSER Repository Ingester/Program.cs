@@ -40,10 +40,12 @@ namespace CLOSER_Repository_Ingester
                 Ingester ingester = new Ingester();
 
                 ingester.Init(controlFile, keepGoing);
+                Console.WriteLine("Ingester has been initalised");
 
                 if (ingester.Prepare(buildDirectory))
                 {
-                    ingester.RunGlobalActions();
+                    Console.WriteLine("Ingester has been prepared.");
+                    //ingester.RunGlobalActions();
                     ingester.RunByGroup();
                 }
                 else

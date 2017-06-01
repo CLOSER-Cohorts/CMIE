@@ -31,6 +31,9 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             allItems.Add(qcs);
             allItems.Add(vs);
 
+            var concept_lookup_q = new Dictionary<Concept, ControlConstructGroup>();
+            var concept_lookup_v = new Dictionary<Concept, VariableGroup>();
+
             foreach (var concept in allItems.OfType<Concept>().ToList())
             {
                 var qcg = new ControlConstructGroup();
@@ -39,6 +42,14 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                 qcg.Label.Add("en-GB", concept.Label.Best + " Question Construct Group");
                 qcg.ItemName.Add("en-GB", concept.ItemName.Best);
                 qcg.UserIds.Add(new UserId("closerid", "topics-qcg-"+concept.ItemName.Best.ToLower()));
+
+                concept_lookup_q[concept] = qcg;
+
+                foreach (var parent_concept in concept.SubclassOf)
+                {
+                    concept_lookup_q[parent_concept].ChildGroups.Add(qcg);
+                }
+
                 qcs.ControlConstructGroups.Add(qcg);
                 allItems.Add(qcg);
 
@@ -47,6 +58,14 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                 vg.Concept = concept;
                 vg.Label.Add("en-GB", concept.Label.Best + " Variable Group");
                 vg.ItemName.Add("en-GB", concept.ItemName.Best);
+
+                concept_lookup_v[concept] = vg;
+
+                foreach (var parent_concept in concept.SubclassOf)
+                {
+                    concept_lookup_v[parent_concept].ChildGroups.Add(vg);
+                }
+
                 vs.VariableGroups.Add(vg);
                 allItems.Add(vg);
             }

@@ -36,9 +36,8 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 
                 var graphPopulator = new GraphPopulator(client)
                 {
-                    ChildProcessing = ChildReferenceProcessing.PopulateLatest,
+                    ChildProcessing = ChildReferenceProcessing.PopulateLatest
                 };
-                graphPopulator.TypesToPopulate.Add(DdiItemType.QuestionConstruct);
                 graphPopulator.TypesToPopulate.Add(DdiItemType.ControlConstructGroup);
 
                 if (response.Results.Count == 1)
@@ -66,6 +65,8 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
             else
             {
                 var gthr = new ItemGathererVisitor();
+                gthr.TypesToFind.Add(DdiItemType.ControlConstructScheme);
+                gthr.TypesToFind.Add(DdiItemType.ControlConstructGroup);
                 ccs.Accept(gthr);
 
                 var foundItems = gthr.FoundItems;
@@ -81,12 +82,25 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
 
         public override void Runner(string[] parts, IEnumerable<IVersionable> ws)
         {
-            string qref = parts[0].Trim();
-            string tref = parts[1].Trim();
+            string qref = parts[parts.Length - 2].Trim();
+            string tref = parts[parts.Length - 1].Trim();
 
             if (tref == "0") return;
 
-            var question = ws.OfType<QuestionActivity>().FirstOrDefault(x => x.ItemName.Best == qref);
+            var scopedWS = ws;
+
+            if (parts.Length > 2)
+            {
+                var gthr = new ItemGathererVisitor();
+                var ccs = scopedWS.OfType<ControlConstructScheme>().FirstOrDefault(x => x.ItemName.Best == parts[0].Trim());
+                if (ccs != default(ControlConstructScheme))
+                {
+                    ccs.Accept(gthr);
+                    scopedWS = gthr.FoundItems;
+                }
+            }
+
+            var question = scopedWS.OfType<QuestionActivity>().FirstOrDefault(x => x.ItemName.Best == qref);
 
             if (question != default(QuestionActivity))
             {
@@ -96,7 +110,21 @@ namespace CLOSER_Repository_Ingester.ControllerSystem.Actions
                     var in_group = ccg.GetChildren().OfType<QuestionActivity>().Any(x => x.ItemName.Best == question.ItemName.Best);
                     if (!in_group)
                     {
-                        var old_ccgs = ccs.ControlConstructGroups.Where(x => x.GetChildren().OfType<QuestionActivity>().Any(y => y.ItemName.Best == question.ItemName.Best)).ToList();
+                        var old_ccgs = new List<ControlConstructGroup>();
+                        for (var j = 0; j < ccs.ControlConstructGroups.Count; j++ )
+                        {
+                            var children = ccs.ControlConstructGroups[j].ItemsList;
+                            for (var i = 0; i < children.Count; i++)
+                            {
+                                if (children[i] is QuestionActivity)
+                                {
+                                    if (((DescribableBase)children[i]).ItemName.Best == question.ItemName.Best)
+                                    {
+                                        old_ccgs.Add(ccs.ControlConstructGroups[j]);
+                                    }
+                                }
+                            }
+                        }
                         for (var i = 0; i < old_ccgs.Count; i++)
                         {
                             var to_be_removed = old_ccgs[i].GetChildren().OfType<QuestionActivity>().FirstOrDefault(x => x.ItemName.Best == question.ItemName.Best);

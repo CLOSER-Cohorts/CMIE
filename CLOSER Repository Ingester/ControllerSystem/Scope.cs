@@ -39,6 +39,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("{0}", e.StackTrace);
                     Console.WriteLine("{0}", e.Message);
                 }
             }
@@ -70,7 +71,9 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             rp.Accept(gatherer);
             var rpItems = gatherer.FoundItems.ToList();
             comparator.repoSet = rpItems;
+
             foreach (var item in rpItems) item.IsDirty = false;
+
 
             DataCollection dc = null;
             if (rp.DataCollections.Count == 1)
@@ -79,6 +82,7 @@ namespace CLOSER_Repository_Ingester.ControllerSystem
             }
 
             var wsRPs = workingSet.OfType<ResourcePackage>();
+
             Guid[] dcBindings = { 
                 DdiItemType.Instrument
             };

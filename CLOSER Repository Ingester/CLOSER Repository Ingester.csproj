@@ -67,27 +67,33 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Algenta.Colectica.Model">
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\Algenta.Colectica.Model.dll</HintPath>
+    <Reference Include="Algenta.Colectica.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.Model.dll</HintPath>
     </Reference>
-    <Reference Include="Algenta.Colectica.Model.Ddi">
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\Algenta.Colectica.Model.Ddi.dll</HintPath>
+    <Reference Include="Algenta.Colectica.Model.Ddi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.Model.Ddi.dll</HintPath>
     </Reference>
-    <Reference Include="Algenta.Colectica.Repository.Client">
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\Algenta.Colectica.Repository.Client.dll</HintPath>
+    <Reference Include="Algenta.Colectica.Repository.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.Repository.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Algenta.Colectica.ViewModel">
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\Algenta.Colectica.ViewModel.dll</HintPath>
+    <Reference Include="Algenta.Colectica.ViewModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.ViewModel.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph">
-      <HintPath>D:\Program Files (x86)\Colectica\Colectica SDK\5.1.5358\bin\QuickGraph.dll</HintPath>
+    <Reference Include="QuickGraph, Version=3.2.40122.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\QuickGraph.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -100,6 +106,8 @@
   <ItemGroup>
     <Compile Include="Comparator.cs" />
     <Compile Include="ConsoleQueue.cs" />
+    <Compile Include="ControllerSystem\Actions\AttachExternalAids.cs" />
+    <Compile Include="ControllerSystem\Actions\AttachExternalInstrument.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTQLinking.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTVLinking.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTopics.cs" />

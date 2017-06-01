@@ -36,71 +36,6 @@
             Designate that an item is based on a previous item or items. Useful for branching, merging, and duplicating across agencies.
             </summary>
         </member>
-        <member name="T:Algenta.Colectica.Model.NotificationObject">
-            <summary>
-            Base class for items that support property notification.
-            </summary>
-            <remarks>
-            This class provides basic support for implementing the <see cref="T:System.ComponentModel.INotifyPropertyChanged"/> interface and for
-            marshalling execution to the UI thread.
-            </remarks>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.RaisePropertyChanged(System.String)">
-            <summary>
-            Raises this object's PropertyChanged event for each of the properties.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.RaisePropertyChanged(System.String[])">
-            <summary>
-            Raises this object's PropertyChanged event for each of the properties.
-            </summary>
-            <param name="propertyNames">The properties that have a new value.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.RaisePropertyChanged``1(System.Linq.Expressions.Expression{System.Func{``0}})">
-            <summary>
-            Raises this object's PropertyChanged event.
-            </summary>
-            <typeparam name="T">The type of the property that has a new value</typeparam>
-            <param name="propertyExpression">A Lambda expression representing the property that has a new value.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.OnPropertyChanged(System.String)">
-            <summary>
-            Raises the <see cref="E:Algenta.Colectica.Model.NotificationObject.PropertyChanged"/> event.
-            </summary>
-            <param name="propertyName">Name of the property.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.ResumePropertyEvents">
-            <summary>
-            Resumes issuing property events.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.SuspendPropertyEvents">
-            <summary>
-            Suspends issuing property events.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.NotificationObject.PropagateChildChanges(System.Collections.Specialized.INotifyCollectionChanged,System.String)">
-            <summary>
-            Propagates the child change events for a collection of items. Each existing item is monitored
-            for changes, and when a change occurs a PropertyChanged event is raised for this 
-            <see cref="T:Algenta.Colectica.Model.IdentifiableBase"/> object. Newly added items are also monitored.
-            </summary>
-            <param name="collection">The collection to monitor for changes.</param>
-            <param name="name">The name of the property, used to raise PropertyChanged events for propagation.</param>
-        </member>
-        <member name="E:Algenta.Colectica.Model.NotificationObject.PropertyChanged">
-            <summary>
-            Indicates that a property's value has changed.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.NotificationObject.PropertyEventsSuspended">
-            <summary>
-            Gets a value indicating whether property events are suspended.
-            </summary>
-            <value>
-            	<c>true</c> if property events are suspended; otherwise, <c>false</c>.
-            </value>
-        </member>
         <member name="P:Algenta.Colectica.Model.BasedOn.Description">
             <summary>
             Description to document the relationship to the previous version of the item
@@ -120,36 +55,6 @@
             <summary>
             Bootstraps the MEF container used to manage Colectica application extensibility.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Bootstrapper.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Bootstrapper"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Bootstrapper.ConfigureAggregateCatalog">
-            <summary>
-            Configures the MEF aggregate catalog, loading addins from the core
-            Colectica assemblies, the Addins directory under the installed location,
-            and the %appdata%\Algenta\Colectica\Addins directory.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Bootstrapper.InitializeContainer">
-            <summary>
-            Initializes the MEF container and composes the application.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Bootstrapper.InitializeIdentifierService">
-            <summary>
-            Initializes the first loaded identifier service as the active identifier service.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Bootstrapper.GetInstance``1">
-            <summary>
-            Uses the MEF container to create an instance of an object of the specified type. 
-            This method should be avoided in favor of [Import] or [ImportMany] style injection.
-            </summary>
-            <typeparam name="T">The type of object to instantiate.</typeparam>
-            <returns></returns>
         </member>
         <member name="P:Algenta.Colectica.Model.Bootstrapper.AggregateCatalog">
             <summary>
@@ -181,12 +86,42 @@
             Gets the one and only bootstrapper instance.
             </summary>
         </member>
+        <member name="M:Algenta.Colectica.Model.Bootstrapper.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Bootstrapper"/> class.
+            </summary>
+        </member>
         <member name="P:Algenta.Colectica.Model.Bootstrapper.UiTaskScheduler">
             <summary>
             Gets or sets the User interface task scheduler, which can be used to 
             create continuations from <see cref="T:System.Threading.Tasks.Task"/> objects that will run
             on the user interface thread.
             </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Bootstrapper.ConfigureAggregateCatalog">
+            <summary>
+            Configures the MEF aggregate catalog, loading addins from the core
+            Colectica assemblies, the Addins directory under the installed location,
+            and the %appdata%\Algenta\Colectica\Addins directory.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Bootstrapper.InitializeContainer">
+            <summary>
+            Initializes the MEF container and composes the application.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Bootstrapper.InitializeIdentifierService">
+            <summary>
+            Initializes the first loaded identifier service as the active identifier service.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Bootstrapper.GetInstance``1">
+            <summary>
+            Uses the MEF container to create an instance of an object of the specified type. 
+            This method should be avoided in favor of [Import] or [ImportMany] style injection.
+            </summary>
+            <typeparam name="T">The type of object to instantiate.</typeparam>
+            <returns></returns>
         </member>
         <member name="T:Algenta.Colectica.Model.IAddinManifest">
             <summary>
@@ -360,17 +295,6 @@
             Represents the basic Dublin Core metadata elements.
             </summary>
         </member>
-        <member name="M:Algenta.Colectica.Model.DublinCore.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.DublinCore"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.DublinCore.OnPropertyChanged(System.String)">
-            <summary>
-            Called when [property changed].
-            </summary>
-            <param name="propertyName">Name of the property.</param>
-        </member>
         <member name="P:Algenta.Colectica.Model.DublinCore.HasValue">
             <summary>
             Gets a value indicating whether this object has any content in any property.
@@ -515,10 +439,21 @@
             The type.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.DublinCore.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.DublinCore"/> class.
+            </summary>
+        </member>
         <member name="E:Algenta.Colectica.Model.DublinCore.PropertyChanged">
             <summary>
             Occurs when a property value changes.
             </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.DublinCore.OnPropertyChanged(System.String)">
+            <summary>
+            Called when [property changed].
+            </summary>
+            <param name="propertyName">Name of the property.</param>
         </member>
         <member name="T:Algenta.Colectica.Model.InternationalIdentifier">
             <summary>
@@ -541,6 +476,71 @@
             automatic difference detectors.
             </summary>
         </member>
+        <member name="T:Algenta.Colectica.Model.NotificationObject">
+            <summary>
+            Base class for items that support property notification.
+            </summary>
+            <remarks>
+            This class provides basic support for implementing the <see cref="T:System.ComponentModel.INotifyPropertyChanged"/> interface and for
+            marshalling execution to the UI thread.
+            </remarks>
+        </member>
+        <member name="E:Algenta.Colectica.Model.NotificationObject.PropertyChanged">
+            <summary>
+            Indicates that a property's value has changed.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.RaisePropertyChanged(System.String)">
+            <summary>
+            Raises this object's PropertyChanged event for each of the properties.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.RaisePropertyChanged(System.String[])">
+            <summary>
+            Raises this object's PropertyChanged event for each of the properties.
+            </summary>
+            <param name="propertyNames">The properties that have a new value.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.RaisePropertyChanged``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+            Raises this object's PropertyChanged event.
+            </summary>
+            <typeparam name="T">The type of the property that has a new value</typeparam>
+            <param name="propertyExpression">A Lambda expression representing the property that has a new value.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.OnPropertyChanged(System.String)">
+            <summary>
+            Raises the <see cref="E:Algenta.Colectica.Model.NotificationObject.PropertyChanged"/> event.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.ResumePropertyEvents">
+            <summary>
+            Resumes issuing property events.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.SuspendPropertyEvents">
+            <summary>
+            Suspends issuing property events.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.NotificationObject.PropertyEventsSuspended">
+            <summary>
+            Gets a value indicating whether property events are suspended.
+            </summary>
+            <value>
+            	<c>true</c> if property events are suspended; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.NotificationObject.PropagateChildChanges(System.Collections.Specialized.INotifyCollectionChanged,System.String)">
+            <summary>
+            Propagates the child change events for a collection of items. Each existing item is monitored
+            for changes, and when a change occurs a PropertyChanged event is raised for this 
+            <see cref="T:Algenta.Colectica.Model.IdentifiableBase"/> object. Newly added items are also monitored.
+            </summary>
+            <param name="collection">The collection to monitor for changes.</param>
+            <param name="name">The name of the property, used to raise PropertyChanged events for propagation.</param>
+        </member>
         <member name="T:Algenta.Colectica.Model.PropertySupport">
             <summary>
              Provides support for extracting property information based on a property expression.
@@ -551,7 +551,7 @@
             Extracts the property name from a property expression.
             </summary>
             <typeparam name="T">The object type containing the property specified in the expression.</typeparam>
-            <param name="propertyExpression">The property expression (e.g. p =&gt; p.PropertyName)</param>
+            <param name="propertyExpression">The property expression (e.g. p => p.PropertyName)</param>
             <returns>The name of the property.</returns>
             <exception cref="T:System.ArgumentNullException">Thrown if the <paramref name="propertyExpression"/> is null.</exception>
             <exception cref="T:System.ArgumentException">Thrown when the expression is:<br/>
@@ -563,92 +563,6 @@
         <member name="T:Algenta.Colectica.Model.OtherMaterial">
             <summary>
             Represents external resources referenced by another item.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.IdentifiableBase">
-            <summary>
-            Defines identification information for an item. Implements <see cref="T:Algenta.Colectica.Model.IIdentifiable"/>.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.IIdentifiable">
-            <summary>
-            Defines identification information for an item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IIdentifiable.AgencyId">
-            <summary>
-            Gets or sets the agency identifier.
-            </summary>
-            <value>
-            The agency identifier.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IIdentifiable.Identifier">
-            <summary>
-            Gets or sets the universally unique identifier.
-            </summary>
-            <value>
-            The identifier.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IIdentifiable.UserIds">
-            <summary>
-            Gets the user-specified identifiers.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.IdentifiableBase.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.IdentifiableBase"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.IdentifiableBase.GetUserIdValue(System.String)">
-            <summary>
-            Gets the user value of the user identifier of the specified type.
-            </summary>
-            <param name="type">The type of user identifier for which the value is returned.</param>
-            <returns>The value of the user identifier with the specified type.</returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IdentifiableBase.DefaultAgencyId">
-            <summary>
-            Gets or sets the default agency ID to be used when creating new <c>VersionableBase</c>-derived instances.
-            </summary>
-            <value>
-            The default agency id.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IdentifiableBase.AgencyId">
-            <summary>
-            Gets or sets the agency identifier of the item.
-            </summary>
-            <value>
-            The agency identifier of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IdentifiableBase.Identifier">
-            <summary>
-            Gets or sets the universally unique identifier of the item.
-            </summary>
-            <value>
-            The identifier of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IdentifiableBase.UserIds">
-            <summary>
-            Gets the user-specified identifiers.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.IDublinCoreDescribable">
-            <summary>
-            Defines a <see cref="T:Algenta.Colectica.Model.DublinCore"/> property that provides citation information for a metadata item.
-            </summary>
-            <remarks>
-            The IDublinCoreDescribable interface should be implemented by classes that provide Dublin Core metadata.
-            This type of citation is commonly found in DDI 3 item types.
-            </remarks>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IDublinCoreDescribable.DublinCoreMetadata">
-            <summary>
-            Gets the Dublin Core metadata.
             </summary>
         </member>
         <member name="M:Algenta.Colectica.Model.OtherMaterial.#ctor">
@@ -725,6 +639,28 @@
             set of <see cref="T:Algenta.Colectica.Model.IVersionable"/> items.
             </summary>
         </member>
+        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.Edges">
+            <summary>
+            Gets the edges of the graph.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.ReverseTraversal">
+            <summary>
+            Gets or sets a value indicating whether the set is defined
+            as all items under the target item, or all items that contain the 
+            target item in their set.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.Roots">
+            <summary>
+            Gets the identifiers of the root items that define the set.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.Predicate">
+            <summary>
+            Gets or sets the relationship predicate to be followed to form the set. See <see cref="T:Algenta.Colectica.Model.Repository.RelationshipPredicates"/>.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Repository.AdjacencyMatrix.GetAllItemsSet">
             <summary>
             Gets all the items in the set.
@@ -768,28 +704,6 @@
             <param name="id">The item for which parents will be returned.</param>
             <returns>The parents of the specified item.</returns>
         </member>
-        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.Edges">
-            <summary>
-            Gets the edges of the graph.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.ReverseTraversal">
-            <summary>
-            Gets or sets a value indicating whether the set is defined
-            as all items under the target item, or all items that contain the 
-            target item in their set.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.Roots">
-            <summary>
-            Gets the identifiers of the root items that define the set.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.AdjacencyMatrix.Predicate">
-            <summary>
-            Gets or sets the relationship predicate to be followed to form the set. See <see cref="T:Algenta.Colectica.Model.Repository.RelationshipPredicates"/>.
-            </summary>
-        </member>
         <member name="T:Algenta.Colectica.Model.Repository.Relationship">
             <summary>
             Represents a relationship between two identified items.
@@ -811,20 +725,6 @@
             set of <see cref="T:Algenta.Colectica.Model.IVersionable"/> items. In addition to each node's identifier,
             each node indicates its item type.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.TypedAdjacencyMatrix.GetSetList(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Gets a list of identifiers of all items in the set.
-            </summary>
-            <param name="root">The root of the set.</param>
-            <returns>A list of all items in the set.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.TypedAdjacencyMatrix.GetSet(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Gets the set of all items.
-            </summary>
-            <param name="root">The root.</param>
-            <returns></returns>
         </member>
         <member name="P:Algenta.Colectica.Model.Repository.TypedAdjacencyMatrix.Edges">
             <summary>
@@ -848,6 +748,20 @@
             Gets or sets the relationship predicate to be followed to form the set. See <see cref="T:Algenta.Colectica.Model.Repository.RelationshipPredicates"/>.
             </summary>
         </member>
+        <member name="M:Algenta.Colectica.Model.Repository.TypedAdjacencyMatrix.GetSetList(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Gets a list of identifiers of all items in the set.
+            </summary>
+            <param name="root">The root of the set.</param>
+            <returns>A list of all items in the set.</returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.TypedAdjacencyMatrix.GetSet(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Gets the set of all items.
+            </summary>
+            <param name="root">The root.</param>
+            <returns></returns>
+        </member>
         <member name="T:Algenta.Colectica.Model.Repository.TypedRelationship">
             <summary>
             Represents a relationship between two identified items, and includes
@@ -868,94 +782,6 @@
             <summary>
             A visitor that populates the items in a graph with information from a repository.
             </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Utility.VersionableVisitorBase">
-            <summary>
-            Provides a base class from which implementers of <see cref="T:Algenta.Colectica.Model.Utility.IVersionableVisitor"/> may derive.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Utility.IVersionableVisitor">
-            <summary>
-            Represents a visitor that can visit an IVisitable item.
-            See http://en.wikipedia.org/wiki/Visitor_pattern for information about the Visitor Pattern.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.HaveVisited(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Determines whether an item with the specified identifier has already been visited.
-            </summary>
-            <param name="id">The unique identifier.</param>
-            <returns><c>true</c> if the item has already been visited; otherwise<c>false</c>.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.RegisterVisit(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Registers the visit.
-            </summary>
-            <param name="id">The unique identifier.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Called first when visiting an item, before visiting the item's children.
-            </summary>
-            <param name="item">The item.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.EndVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Called after visiting all children of an item.
-            </summary>
-            <param name="item">The item.</param>
-        </member>
-        <member name="F:Algenta.Colectica.Model.Utility.VersionableVisitorBase.depth">
-            <summary>
-            A stack representing the current location of the visitor in the item graph.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.HaveVisited(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Determines whether an item with the specified identifier has already been visited.
-            </summary>
-            <param name="id">The unique identifier.</param>
-            <returns>
-              <c>true</c> if the item has already been visited; otherwise<c>false</c>.
-            </returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.RegisterVisit(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Registers the visit.
-            </summary>
-            <param name="id">The unique identifier.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Called first when visiting an item, before visiting the item's children.
-            </summary>
-            <param name="item">The item.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.EndVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Called after visiting all children of an item.
-            </summary>
-            <param name="item">The item.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.GraphPopulator.#ctor(Algenta.Colectica.Model.Repository.RepositoryClientBase)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.GraphPopulator"/> class.
-            </summary>
-            <param name="baseClient">The repository client used to populate items.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.GraphPopulator.ShouldPopulateType(System.Guid)">
-            <summary>
-            Returns whether items of the specified type should be populated.
-            </summary>
-            <param name="type">The item type.</param>
-            <returns><c>true</c> if items of the specified type should be populated; otherwise <c>false</c>.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.GraphPopulator.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Called first when visiting an item, before visiting the item's children.
-            Attempts to populate the item from the repository.
-            </summary>
-            <param name="item">The item being visited.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.Repository.GraphPopulator.MissingItems">
             <summary>
@@ -980,10 +806,30 @@
             Gets or sets the method used to process children.
             </summary>
         </member>
+        <member name="M:Algenta.Colectica.Model.Repository.GraphPopulator.#ctor(Algenta.Colectica.Model.Repository.RepositoryClientBase)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.GraphPopulator"/> class.
+            </summary>
+            <param name="baseClient">The repository client used to populate items.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.GraphPopulator.ShouldPopulateType(System.Guid)">
+            <summary>
+            Returns whether items of the specified type should be populated.
+            </summary>
+            <param name="type">The item type.</param>
+            <returns><c>true</c> if items of the specified type should be populated; otherwise <c>false</c>.</returns>
+        </member>
         <member name="P:Algenta.Colectica.Model.Repository.GraphPopulator.VisitedItems">
             <summary>
             Gets the items that have been visited.
             </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.GraphPopulator.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Called first when visiting an item, before visiting the item's children.
+            Attempts to populate the item from the repository.
+            </summary>
+            <param name="item">The item being visited.</param>
         </member>
         <member name="T:Algenta.Colectica.Model.Repository.IPostCommitHook">
             <summary>
@@ -1153,6 +999,26 @@
         <member name="T:Algenta.Colectica.Model.Repository.RepositoryClientBase">
             <summary>
             Provides a base class for all repository clients, and implements several helper methods.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryClientBase.Name">
+            <summary>
+            Gets the name of the repository.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryClientBase.ClientType">
+            <summary>
+            Gets the type of the client.
+            </summary>
+        </member>
+        <member name="E:Algenta.Colectica.Model.Repository.RepositoryClientBase.ConnectionInfoChanged">
+            <summary>
+            Occurs when connection information changed.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryClientBase.ConnectionInfo">
+            <summary>
+            Gets or sets the connection information.
             </summary>
         </member>
         <member name="M:Algenta.Colectica.Model.Repository.RepositoryClientBase.#ctor">
@@ -1525,6 +1391,11 @@
             <param name="ids">The identifiers of the items to get from the repository.</param>
             <returns>A collection of repository items.</returns>
         </member>
+        <member name="E:Algenta.Colectica.Model.Repository.RepositoryClientBase.ProgressChanged">
+            <summary>
+            Occurs when progress of an operation has changed.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Repository.RepositoryClientBase.GetRepresentation(Algenta.Colectica.Model.IVersionable,System.Guid)">
             <summary>
             Gets the XML representation of the item.
@@ -1806,31 +1677,6 @@
             Releases unmanaged and - optionally - managed resources.
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryClientBase.Name">
-            <summary>
-            Gets the name of the repository.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryClientBase.ClientType">
-            <summary>
-            Gets the type of the client.
-            </summary>
-        </member>
-        <member name="E:Algenta.Colectica.Model.Repository.RepositoryClientBase.ConnectionInfoChanged">
-            <summary>
-            Occurs when connection information changed.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryClientBase.ConnectionInfo">
-            <summary>
-            Gets or sets the connection information.
-            </summary>
-        </member>
-        <member name="E:Algenta.Colectica.Model.Repository.RepositoryClientBase.ProgressChanged">
-            <summary>
-            Occurs when progress of an operation has changed.
-            </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Repository.ChildReferenceProcessing">
             <summary>
@@ -2128,42 +1974,6 @@
             Provides information about the number of items in a repository.
             </summary>
         </member>
-        <member name="T:Algenta.Colectica.Model.Repository.RepositoryInfo">
-            <summary>
-            Represents information about an authenticated user's connection to a repository.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.RepositoryInfo.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryInfo"/> class.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.Citation">
-            <summary>
-            Gets or sets the citation for the repository.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.Repositories">
-            <summary>
-            Gets a dictionary of agencies for which the repository is authoritative. The key
-            is the agency identifier, and the value is a friendly name for the agency.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.CanRead">
-            <summary>
-            Gets or sets a value indicating whether the authenticated user can read from the repository.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.CanAdministrator">
-            <summary>
-            Gets or sets a value indicating whether the authenticated user can administer the repository.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.CanWrite">
-            <summary>
-            Gets or sets a value indicating whether the authenticated user can write to the repository.
-            </summary>
-        </member>
         <member name="M:Algenta.Colectica.Model.Repository.RepositoryStatistics.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryStatistics"/> class.
@@ -2332,8 +2142,8 @@
         </member>
         <member name="P:Algenta.Colectica.Model.Repository.RelationshipFacet.ReverseTraversal">
             <summary>
-            Gets or sets a value indicating whether relationships are traversed toward chilren (true)
-            or parents (false).
+            Gets or sets a value indicating whether relationships are traversed toward children (false)
+            or parents (true).
             </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Repository.IRepositoryItemIdentity">
@@ -2369,42 +2179,6 @@
         <member name="T:Algenta.Colectica.Model.Repository.RepositoryItemMetadata">
             <summary>
             Contains metadata about an item stored in a repository.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.ISummaryText">
-            <summary>
-            Provides summary fields for an item.
-            </summary>
-            <remarks>
-            These fields are useful for specifying text to be displayed in search results.
-            </remarks>
-        </member>
-        <member name="P:Algenta.Colectica.Model.ISummaryText.Summary">
-            <summary>
-            Gets the summary text.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.ISummaryText.ItemName">
-            <summary>
-            Gets the name of the item.
-            </summary>
-            <value>
-            The name of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.ISummaryText.Label">
-            <summary>
-            Gets the label.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.ISummaryText.Description">
-            <summary>
-            Gets the description.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.ISummaryText.VersionRationale">
-            <summary>
-            Gets the log message specified when this version of the item was created.
             </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Repository.RepositoryItemMetadata.ItemType">
@@ -2576,450 +2350,6 @@
             Gets or sets the rating.
             </summary>
         </member>
-        <member name="T:Algenta.Colectica.Model.DescribableBase">
-            <summary>
-            Provides information to describe a metadata item. Implements the <see cref="T:Algenta.Colectica.Model.IDescribable"/> interface.
-            </summary>
-            <remarks>
-            The IDescribable interface should be implemented by classes that provide name-label-description information.
-            This information is commonly found in DDI 3 item types.
-            </remarks>
-        </member>
-        <member name="T:Algenta.Colectica.Model.VersionableBase">
-            <summary>
-            Defines the basic identification of a repository-managed item: agency identifier, identifier, and item version.
-            Implements the <see cref="T:Algenta.Colectica.Model.IVersionable"/> interface.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.IVersionable">
-            <summary>
-            Defines the basic identification of a repository-managed item: agency identifier, identifier, and item version.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Utility.IVisitable">
-            <summary>
-            Defines an Accept method, to be implemented by classes that can be visited by an <see cref="T:Algenta.Colectica.Model.Utility.IVersionableVisitor"/>
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.IVisitable.Accept(Algenta.Colectica.Model.Utility.IVersionableVisitor)">
-            <summary>
-            Accepts the specified visitor.
-            </summary>
-            <param name="visitor">The visitor.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.IVersionable.GetChildren">
-            <summary>
-            Gets a collection of this item's children.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.IVersionable.AddChild(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Adds the child.
-            </summary>
-            <param name="child">The child.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.IVersionable.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Removes the specified child.
-            </summary>
-            <param name="child">The child to be removed.</param>
-            <returns>The number of children removed from the item.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.IVersionable.ReplaceChild(Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Replaces the child.
-            </summary>
-            <param name="toReplace">The identifier of the child to replace.</param>
-            <param name="child">The new child.</param>
-            <returns>The number of children replaced.</returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.IsDirty">
-            <summary>
-            Gets or sets a value indicating whether this instance has unsaved changes.
-            </summary>
-            <value>
-              <c>true</c> if this instance has unsaved changes; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.IsPopulated">
-            <summary>
-            Gets or sets a value indicating whether this instance's information is populated.
-            </summary>
-            <value>
-            	<c>true</c> if this instance is populated; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.IsPublished">
-            <summary>
-            Gets or sets a value indicating whether this instance is published.
-            </summary>
-            <value>
-            	<c>true</c> if this instance is published; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.ChildrenDereferenced">
-            <summary>
-            Gets or sets a value indicating whether the item's children have been dereferenced.
-            </summary>
-            <value>
-              <c>true</c> if the item's children have been dereferenced; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.Version">
-            <summary>
-            Gets or sets the version of the item.
-            </summary>
-            <value>
-            The version of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.VersionDate">
-            <summary>
-            Gets or sets the <see cref="T:System.DateTime"/> this version of the item was created.
-            </summary>
-            <value>
-            The <see cref="T:System.DateTime"/> this version was created.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.CompositeId">
-            <summary>
-            Gets or sets the item's composite identifier, consisting of the agency identifier, identifier, and version.
-            </summary>
-            <value>
-            The item's composite identifier.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.UserAttributes">
-            <summary>
-            Gets a collection of custom user defined key value pairs for this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.OtherMaterials">
-            <summary>
-            Gets a collection of other material fields defined for this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.Attachments">
-            <summary>
-            Gets a collection of file URIs stored in the File Storage Service attached to this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.BasedOn">
-            <summary>
-            Gets a collection that describes previous items on which this item is based
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.VersionResponsibility">
-            <summary>
-            Gets or sets the name of the user who created this version of the item.
-            </summary>
-            <value>
-            The name of the user who created this version of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.VersionRationale">
-            <summary>
-            Gets the log message given by the user who created this version of the item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IVersionable.ChildTypesAccepted">
-            <summary>
-            Gets the child types that may be added to this item type.
-            </summary>
-            <value>
-            The child types that may be added to this item type.
-            </value>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.Accept(Algenta.Colectica.Model.Utility.IVersionableVisitor)">
-            <summary>
-            Accepts the specified visitor.
-            </summary>
-            <param name="visitor">The visitor.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.VersionableBase"/> class. 
-            Sets the <c>AgencyId</c> to the value of <c>DefaultAgencyId</c>.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.GetChildren">
-            <summary>
-            Gets the identifiers of the item's children.
-            </summary>
-            <returns>The identifiers of the item's children.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.ManageCollection(System.Collections.Specialized.INotifyCollectionChanged,System.String)">
-            <summary>
-            Watch collections for changes and relay the change notification upwards.
-            </summary>
-            <param name="collection"></param>
-            <param name="name"></param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.GetManagedCollectionItems">
-            <summary>
-            Gets the items inside of all managed collection.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.RemoveChild(Algenta.Colectica.Model.IVersionable,System.Collections.IList[])">
-            <summary>
-            Removes the specified child from any of the provided lists.
-            </summary>
-            <param name="itemToRemove">The item to remove.</param>
-            <param name="lists">The lists from which the child should be removed.</param>
-            <returns></returns>
-            <exception cref="T:System.ArgumentNullException">itemToRemove</exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple,System.Collections.IList[])">
-            <summary>
-            Removes the child with the specified identifier from any of the provided lists.
-            </summary>
-            <param name="itemToRemove">The identifier of the item to remove.</param>
-            <param name="lists">The lists.</param>
-            <returns></returns>
-            <exception cref="T:System.ArgumentNullException">itemToRemove</exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.ReplaceChild(Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Replaces the child with the specified identifier with the provided item.
-            </summary>
-            <param name="toReplace">The identifier of the child to replace.</param>
-            <param name="child">The new child.</param>
-            <returns>
-            The number of children replaced.
-            </returns>
-            <exception cref="T:System.ArgumentNullException">child</exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Removes the specified child.
-            </summary>
-            <param name="child">The child to be removed.</param>
-            <returns>
-            The number of children removed from the item.
-            </returns>
-            <exception cref="T:System.ArgumentNullException">child</exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.AddChild(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Adds the provided child to this item.
-            </summary>
-            <param name="child">The item to be added as a child of this item.</param>
-            <exception cref="T:System.NotImplementedException"></exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.TryReplaceChild``1(System.Func{``0},System.Action{``0},Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Tries the replace child.
-            </summary>
-            <typeparam name="T">The type of item being replaced</typeparam>
-            <param name="getter">A function to get the item that will be replaced.</param>
-            <param name="setter">A function to set the item that will be replaced.</param>
-            <param name="toReplace">To identifier of the item to replace.</param>
-            <param name="child">The child that will replace the previous child.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.VersionableBase.ToString">
-            <summary>
-            Returns a <see cref="T:System.String"/> that represents this instance.
-            </summary>
-            <returns>
-            A <see cref="T:System.String"/> that represents this instance.
-            </returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.ItemType">
-            <summary>
-            Gets the universally unique identifier representing the item's type.
-            </summary>
-            <value>
-            The identifier representing the item's type.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.IsDirty">
-            <summary>
-            Gets or sets a value indicating whether this instance has unsaved changes.
-            </summary>
-            <value>
-            <c>true</c> if this instance has unsaved changes; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.IsPublished">
-            <summary>
-            Gets or sets a value indicating whether this instance is published.
-            </summary>
-            <value>
-            <c>true</c> if this instance is published; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.ChildrenDereferenced">
-            <summary>
-            Gets or sets a value indicating whether the item's children have been dereferenced.
-            </summary>
-            <value>
-            <c>true</c> if the item's children have been dereferenced; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.IsPopulated">
-            <summary>
-            Gets or sets a value indicating whether this instance's information is populated.
-            </summary>
-            <value>
-            <c>true</c> if this instance is populated; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.Version">
-            <summary>
-            Gets or sets the version.
-            </summary>
-            <value>
-            The version.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.VersionDate">
-            <summary>
-            Gets or sets the <see cref="T:System.DateTime"/> this version of the item was created.
-            </summary>
-            <value>
-            The <see cref="T:System.DateTime"/> this version was created.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.VersionResponsibility">
-            <summary>
-            Gets or sets the name of the user who created this version of the item.
-            </summary>
-            <value>
-            The name of the user who created this version of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.VersionRationale">
-            <summary>
-            Gets the log message given by the user who created this version of the item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.CompositeId">
-            <summary>
-            Gets or sets the item's composite id, consisting of the agency identifier, identifier, and version.
-            </summary>
-            <value>
-            The item's composite identifier.
-            </value>
-            <exception cref="T:System.ArgumentNullException">value</exception>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.CustomFields">
-            <summary>
-            Gets a collection of custom fields defined for this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.UserAttributes">
-            <summary>
-            Gets a collection of user defined fields defined for this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.OtherMaterials">
-            <summary>
-            Gets a collection of Other Material fields defined for this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.BasedOn">
-            <summary>
-            Gets a collection that describes previous items on which this item is based
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.Attachments">
-            <summary>
-            Gets a collection of file URIs stored in the File Storage Service attached to this item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.DisplayLabel">
-            <summary>
-            Gets the display label.
-            </summary>
-            <value>
-            The display label.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.ManagedCollections">
-            <summary>
-            Gets the managed collections.
-            </summary>
-            <value>
-            The managed collections.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.VersionableBase.ChildTypesAccepted">
-            <summary>
-            Gets the child types that may be added to this item type.
-            </summary>
-            <value>
-            The child types that may be added to this item type.
-            </value>
-        </member>
-        <member name="T:Algenta.Colectica.Model.IDescribable">
-            <summary>
-            Defines properties that describe a metadata item.
-            </summary>
-            <remarks>
-            The IDescribable interface should be implemented by classes that provide name-label-description information.
-            This information is commonly found in DDI 3 item types.
-            </remarks>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IDescribable.ItemName">
-            <summary>
-            Gets the name of the item.
-            </summary>
-            <value>
-            The name of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IDescribable.Label">
-            <summary>
-            Gets the label.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IDescribable.Description">
-            <summary>
-            Gets the description.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.IDescribable.DisplayLabel">
-            <summary>
-            Gets the display label.
-            </summary>
-            <remarks>
-            The display label returns text to be displayed in a user interface or in generated documentation.
-            </remarks>
-        </member>
-        <member name="M:Algenta.Colectica.Model.DescribableBase.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.DescribableBase"/> class.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.DescribableBase.ItemName">
-            <summary>
-            Gets the name of the item.
-            </summary>
-            <value>
-            The name of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.DescribableBase.Label">
-            <summary>
-            Gets the label.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.DescribableBase.Description">
-            <summary>
-            Gets the description.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.DescribableBase.DisplayLabel">
-            <summary>
-            Gets the display label.
-            </summary>
-            <remarks>
-            The display label returns text to be displayed in a user interface or in generated documentation.
-            </remarks>
-        </member>
         <member name="T:Algenta.Colectica.Model.Repository.CommitOptions">
             <summary>
             Provides options to be used when committing items to the repository.
@@ -3136,33 +2466,6 @@
             in the repository was attempted to be registered.
             </summary>
         </member>
-        <member name="T:Algenta.Colectica.Model.Repository.RepositoryError">
-            <summary>
-            Represents a repository error message.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.RepositoryError.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryError"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.RepositoryError.#ctor(System.String,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryError"/> class.
-            </summary>
-            <param name="errorCode">The error code.</param>
-            <param name="message">The error message.</param>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryError.ErrorCode">
-            <summary>
-            Gets or sets the error code.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Repository.RepositoryError.Message">
-            <summary>
-            Gets or sets the error message.
-            </summary>
-        </member>
         <member name="M:Algenta.Colectica.Model.Repository.RepositoryConflict.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryConflict"/> class.
@@ -3201,6 +2504,69 @@
         <member name="P:Algenta.Colectica.Model.Repository.RepositoryConflict.CompositeId">
             <summary>
             Gets or sets the composite identifier of the conflicted item.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Repository.RepositoryError">
+            <summary>
+            Represents a repository error message.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.RepositoryError.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryError"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.RepositoryError.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryError"/> class.
+            </summary>
+            <param name="errorCode">The error code.</param>
+            <param name="message">The error message.</param>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryError.ErrorCode">
+            <summary>
+            Gets or sets the error code.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryError.Message">
+            <summary>
+            Gets or sets the error message.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Repository.RepositoryInfo">
+            <summary>
+            Represents information about an authenticated user's connection to a repository.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.RepositoryInfo.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.RepositoryInfo"/> class.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.Citation">
+            <summary>
+            Gets or sets the citation for the repository.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.Repositories">
+            <summary>
+            Gets a dictionary of agencies for which the repository is authoritative. The key
+            is the agency identifier, and the value is a friendly name for the agency.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.CanRead">
+            <summary>
+            Gets or sets a value indicating whether the authenticated user can read from the repository.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.CanAdministrator">
+            <summary>
+            Gets or sets a value indicating whether the authenticated user can administer the repository.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Repository.RepositoryInfo.CanWrite">
+            <summary>
+            Gets or sets a value indicating whether the authenticated user can write to the repository.
             </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Repository.SearchFacet">
@@ -3411,6 +2777,11 @@
             The subtitle.
             </summary>
         </member>
+        <member name="F:Algenta.Colectica.Model.Repository.DdiStringType.UserId">
+            <summary>
+            The subtitle.
+            </summary>
+        </member>
         <member name="T:Algenta.Colectica.Model.Repository.SearchResultOrdering">
             <summary>
             Defines the ordering of search results
@@ -3471,47 +2842,6 @@
             An individual search result.
             </summary>
         </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.GetChildren">
-            <summary>
-            Gets a collection of this item's children.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.SearchResult"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.AddChild(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Unimplemented, and present for historical purposes.
-            </summary>
-            <exception cref="T:System.NotImplementedException"></exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Unimplemented, and present for historical purposes.
-            </summary>
-            <exception cref="T:System.NotImplementedException"></exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.RemoveChild(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Unimplemented, and present for historical purposes.
-            </summary>
-            <exception cref="T:System.NotImplementedException"></exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.ReplaceChild(Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Unimplemented, and present for historical purposes.
-            </summary>
-            <exception cref="T:System.NotImplementedException"></exception>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.Accept(Algenta.Colectica.Model.Utility.IVersionableVisitor)">
-            <summary>
-            Unimplemented, and present for historical purposes.
-            </summary>
-            <exception cref="T:System.NotImplementedException"></exception>
-        </member>
         <member name="P:Algenta.Colectica.Model.Repository.SearchResult.IsDirty">
             <summary>
             Gets or sets a value indicating whether this instance has unsaved changes.
@@ -3524,6 +2854,12 @@
             <summary>
             Gets a collection of user defined fields defined for this item.
             </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.GetChildren">
+            <summary>
+            Gets a collection of this item's children.
+            </summary>
+            <returns></returns>
         </member>
         <member name="P:Algenta.Colectica.Model.Repository.SearchResult.ChildrenDereferenced">
             <summary>
@@ -3540,6 +2876,11 @@
             <value>
             <c>true</c> if this instance is populated; otherwise, <c>false</c>.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Repository.SearchResult"/> class.
+            </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Repository.SearchResult.Summary">
             <summary>
@@ -3610,7 +2951,37 @@
             Gets a collection that describes previous items on which this item is based
             </summary>
         </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.AddChild(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Unimplemented, and present for historical purposes.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Unimplemented, and present for historical purposes.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.RemoveChild(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Unimplemented, and present for historical purposes.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.ReplaceChild(Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Unimplemented, and present for historical purposes.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
         <member name="P:Algenta.Colectica.Model.Repository.SearchResult.ChildTypesAccepted">
+            <summary>
+            Unimplemented, and present for historical purposes.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Repository.SearchResult.Accept(Algenta.Colectica.Model.Utility.IVersionableVisitor)">
             <summary>
             Unimplemented, and present for historical purposes.
             </summary>
@@ -3622,30 +2993,337 @@
             </summary>
             <exception cref="T:System.NotImplementedException"></exception>
         </member>
+        <member name="T:Algenta.Colectica.Model.ISummaryText">
+            <summary>
+            Provides summary fields for an item.
+            </summary>
+            <remarks>
+            These fields are useful for specifying text to be displayed in search results.
+            </remarks>
+        </member>
+        <member name="P:Algenta.Colectica.Model.ISummaryText.Summary">
+            <summary>
+            Gets the summary text.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.ISummaryText.ItemName">
+            <summary>
+            Gets the name of the item.
+            </summary>
+            <value>
+            The name of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.ISummaryText.Label">
+            <summary>
+            Gets the label.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.ISummaryText.Description">
+            <summary>
+            Gets the description.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.ISummaryText.VersionRationale">
+            <summary>
+            Gets the log message specified when this version of the item was created.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.DescribableBase">
+            <summary>
+            Provides information to describe a metadata item. Implements the <see cref="T:Algenta.Colectica.Model.IDescribable" /> interface.
+            </summary>
+            <remarks>
+            The IDescribable interface should be implemented by classes that provide name-label-description information.
+            This information is commonly found in DDI 3 item types.
+            </remarks>
+        </member>
+        <member name="P:Algenta.Colectica.Model.DescribableBase.ItemName">
+            <summary>
+            Gets the name of the item.
+            </summary>
+            <value>
+            The name of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.DescribableBase.Label">
+            <summary>
+            Gets the label.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.DescribableBase.Description">
+            <summary>
+            Gets the description.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.DescribableBase.DisplayLabel">
+            <summary>
+            Gets the display label.
+            </summary>
+            <remarks>
+            The display label returns text to be displayed in a user interface or in generated documentation.
+            </remarks>
+        </member>
+        <member name="M:Algenta.Colectica.Model.DescribableBase.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.DescribableBase"/> class.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.IdentifiableBase">
+            <summary>
+            Defines identification information for an item. Implements <see cref="T:Algenta.Colectica.Model.IIdentifiable"/>.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IdentifiableBase.DefaultAgencyId">
+            <summary>
+            Gets or sets the default agency ID to be used when creating new <c>VersionableBase</c>-derived instances.
+            </summary>
+            <value>
+            The default agency id.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IdentifiableBase.AgencyId">
+            <summary>
+            Gets or sets the agency identifier of the item.
+            </summary>
+            <value>
+            The agency identifier of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IdentifiableBase.Identifier">
+            <summary>
+            Gets or sets the universally unique identifier of the item.
+            </summary>
+            <value>
+            The identifier of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IdentifiableBase.UserIds">
+            <summary>
+            Gets the user-specified identifiers.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.IdentifiableBase.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.IdentifiableBase"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.IdentifiableBase.GetUserIdValue(System.String)">
+            <summary>
+            Gets the user value of the user identifier of the specified type.
+            </summary>
+            <param name="type">The type of user identifier for which the value is returned.</param>
+            <returns>The value of the user identifier with the specified type.</returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.IDescribable">
+            <summary>
+            Defines properties that describe a metadata item.
+            </summary>
+            <remarks>
+            The IDescribable interface should be implemented by classes that provide name-label-description information.
+            This information is commonly found in DDI 3 item types.
+            </remarks>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IDescribable.ItemName">
+            <summary>
+            Gets the name of the item.
+            </summary>
+            <value>
+            The name of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IDescribable.Label">
+            <summary>
+            Gets the label.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IDescribable.Description">
+            <summary>
+            Gets the description.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IDescribable.DisplayLabel">
+            <summary>
+            Gets the display label.
+            </summary>
+            <remarks>
+            The display label returns text to be displayed in a user interface or in generated documentation.
+            </remarks>
+        </member>
+        <member name="T:Algenta.Colectica.Model.IDublinCoreDescribable">
+            <summary>
+            Defines a <see cref="T:Algenta.Colectica.Model.DublinCore"/> property that provides citation information for a metadata item.
+            </summary>
+            <remarks>
+            The IDublinCoreDescribable interface should be implemented by classes that provide Dublin Core metadata.
+            This type of citation is commonly found in DDI 3 item types.
+            </remarks>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IDublinCoreDescribable.DublinCoreMetadata">
+            <summary>
+            Gets the Dublin Core metadata.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.IIdentifiable">
+            <summary>
+            Defines identification information for an item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IIdentifiable.AgencyId">
+            <summary>
+            Gets or sets the agency identifier.
+            </summary>
+            <value>
+            The agency identifier.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IIdentifiable.Identifier">
+            <summary>
+            Gets or sets the universally unique identifier.
+            </summary>
+            <value>
+            The identifier.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IIdentifiable.UserIds">
+            <summary>
+            Gets the user-specified identifiers.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.IVersionable">
+            <summary>
+            Defines the basic identification of a repository-managed item: agency identifier, identifier, and item version.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.IsDirty">
+            <summary>
+            Gets or sets a value indicating whether this instance has unsaved changes.
+            </summary>
+            <value>
+              <c>true</c> if this instance has unsaved changes; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.IsPopulated">
+            <summary>
+            Gets or sets a value indicating whether this instance's information is populated.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is populated; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.IsPublished">
+            <summary>
+            Gets or sets a value indicating whether this instance is published.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is published; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.ChildrenDereferenced">
+            <summary>
+            Gets or sets a value indicating whether the item's children have been dereferenced.
+            </summary>
+            <value>
+              <c>true</c> if the item's children have been dereferenced; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.Version">
+            <summary>
+            Gets or sets the version of the item.
+            </summary>
+            <value>
+            The version of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.VersionDate">
+            <summary>
+            Gets or sets the <see cref="T:System.DateTime"/> this version of the item was created.
+            </summary>
+            <value>
+            The <see cref="T:System.DateTime"/> this version was created.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.CompositeId">
+            <summary>
+            Gets or sets the item's composite identifier, consisting of the agency identifier, identifier, and version.
+            </summary>
+            <value>
+            The item's composite identifier.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.UserAttributes">
+            <summary>
+            Gets a collection of custom user defined key value pairs for this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.OtherMaterials">
+            <summary>
+            Gets a collection of other material fields defined for this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.Attachments">
+            <summary>
+            Gets a collection of file URIs stored in the File Storage Service attached to this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.BasedOn">
+            <summary>
+            Gets a collection that describes previous items on which this item is based
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.VersionResponsibility">
+            <summary>
+            Gets or sets the name of the user who created this version of the item.
+            </summary>
+            <value>
+            The name of the user who created this version of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.VersionRationale">
+            <summary>
+            Gets the log message given by the user who created this version of the item.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.IVersionable.GetChildren">
+            <summary>
+            Gets a collection of this item's children.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.IVersionable.AddChild(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Adds the child.
+            </summary>
+            <param name="child">The child.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.IVersionable.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Removes the specified child.
+            </summary>
+            <param name="child">The child to be removed.</param>
+            <returns>The number of children removed from the item.</returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.IVersionable.ReplaceChild(Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Replaces the child.
+            </summary>
+            <param name="toReplace">The identifier of the child to replace.</param>
+            <param name="child">The new child.</param>
+            <returns>The number of children replaced.</returns>
+        </member>
+        <member name="P:Algenta.Colectica.Model.IVersionable.ChildTypesAccepted">
+            <summary>
+            Gets the child types that may be added to this item type.
+            </summary>
+            <value>
+            The child types that may be added to this item type.
+            </value>
+        </member>
         <member name="T:Algenta.Colectica.Model.CustomField">
             <summary>
             Provides the ability to add information to an existing <see cref="T:Algenta.Colectica.Model.IVersionable"/> item type, 
             beyond the information built into the item type.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.CustomField.OnPropertyChanged(System.String)">
-            <summary>
-            Raises the <see cref="E:Algenta.Colectica.Model.CustomField.PropertyChanged"/> event.
-            </summary>
-            <param name="propertyName">Name of the property.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.CustomField.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.CustomField"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.CustomField.#ctor(System.Guid,System.String,Algenta.Colectica.Model.Utility.MultilingualString)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.CustomField"/> class.
-            </summary>
-            <param name="definedTypeId">The identifier of the <see cref="T:Algenta.Colectica.Model.CustomFieldDefinition"/> on which the custom field is based.</param>
-            <param name="fieldTitle">The title of the custom field.</param>
-            <param name="value">The value of the custom field.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.CustomField.Title">
             <summary>
@@ -3686,6 +3364,12 @@
             <summary>
             Occurs when a property value changes.
             </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.CustomField.OnPropertyChanged(System.String)">
+            <summary>
+            Raises the <see cref="E:Algenta.Colectica.Model.CustomField.PropertyChanged" /> event.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.CustomField.HasValue">
             <summary>
@@ -3735,6 +3419,14 @@
             The related item unique identifier value.
             </value>
         </member>
+        <member name="P:Algenta.Colectica.Model.CustomField.MultipleRelatedItemIdsValue">
+            <summary>
+            Gets or sets the related item unique identifier value.
+            </summary>
+            <value>
+            The related item unique identifier value.
+            </value>
+        </member>
         <member name="P:Algenta.Colectica.Model.CustomField.MultilingualStringValue">
             <summary>
             Gets the multilingual string value stored in the custom field.
@@ -3752,6 +3444,19 @@
             <value>
             	<c>true</c> if this instance is based on a defined custom field type; otherwise, <c>false</c>.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.CustomField.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.CustomField"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.CustomField.#ctor(System.Guid,System.String,Algenta.Colectica.Model.Utility.MultilingualString)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.CustomField"/> class.
+            </summary>
+            <param name="definedTypeId">The identifier of the <see cref="T:Algenta.Colectica.Model.CustomFieldDefinition"/> on which the custom field is based.</param>
+            <param name="fieldTitle">The title of the custom field.</param>
+            <param name="value">The value of the custom field.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.CustomField.DisplayLabel">
             <summary>
@@ -3791,15 +3496,15 @@
             The relationship
             </summary>
         </member>
+        <member name="F:Algenta.Colectica.Model.CustomFieldType.MultipleRelationship">
+            <summary>
+            multiple relationships
+            </summary>
+        </member>
         <member name="T:Algenta.Colectica.Model.CustomFieldDefinition">
             <summary>
             Provides information describing a <see cref="T:Algenta.Colectica.Model.CustomField"/> that may be reused 
             across by many items and users.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.CustomFieldDefinition.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.CustomFieldDefinition"/> class.
             </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.CustomFieldDefinition.DefinedTypeId">
@@ -3814,6 +3519,11 @@
             <value>
             The identifier of the type of <see cref="T:Algenta.Colectica.Model.IVersionable"/>item to which the custom field applies.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.CustomFieldDefinition.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.CustomFieldDefinition"/> class.
+            </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.CustomFieldDefinition.Title">
             <summary>
@@ -3896,20 +3606,6 @@
             <param name="item">The item.</param>
             <returns></returns>
         </member>
-        <member name="M:Algenta.Colectica.Model.CodeValue.op_Implicit(System.String)~Algenta.Colectica.Model.CodeValue">
-            <summary>
-            Allows automatically casting a <c>string</c> to a <c>CodeValue</c>.
-            </summary>
-            <param name="value">The string to cast.</param>
-            <returns>The CodeValue</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.CodeValue.op_Explicit(Algenta.Colectica.Model.CodeValue)~System.String">
-            <summary>
-            Allows manually casting a <c>CodeValue</c> to a <c>string</c>.
-            </summary>
-            <param name="codeValue">The CodeValue to cast.</param>
-            <returns>The string.</returns>
-        </member>
         <member name="P:Algenta.Colectica.Model.CodeValue.Value">
             <summary>
             Gets or sets the value.
@@ -3966,22 +3662,24 @@
             The code list urn.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.CodeValue.op_Implicit(System.String)~Algenta.Colectica.Model.CodeValue">
+            <summary>
+            Allows automatically casting a <c>string</c> to a <c>CodeValue</c>.
+            </summary>
+            <param name="value">The string to cast.</param>
+            <returns>The CodeValue</returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.CodeValue.op_Explicit(Algenta.Colectica.Model.CodeValue)~System.String">
+            <summary>
+            Allows manually casting a <c>CodeValue</c> to a <c>string</c>.
+            </summary>
+            <param name="codeValue">The CodeValue to cast.</param>
+            <returns>The string.</returns>
+        </member>
         <member name="T:Algenta.Colectica.Model.UserId">
             <summary>
             Defines a user-defined identifier for an item, which does not need to be universally unique.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.UserId.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.UserId"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.UserId.#ctor(System.String,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.UserId"/> class.
-            </summary>
-            <param name="type">The type of the identifier.</param>
-            <param name="id">The identifier.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.UserId.Type">
             <summary>
@@ -4003,6 +3701,18 @@
             <value>
             The identifier.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.UserId.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.UserId"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.UserId.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.UserId"/> class.
+            </summary>
+            <param name="type">The type of the identifier.</param>
+            <param name="id">The identifier.</param>
         </member>
         <member name="T:Algenta.Colectica.Model.UserIdCollection">
             <summary>
@@ -4029,16 +3739,16 @@
             Represents a collection of <see cref="T:Algenta.Colectica.Model.IVersionable"/> items that are children of some other <see cref="T:Algenta.Colectica.Model.IVersionable"/> item.
             </summary>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ChildItemCollection.NonConcreteReferences">
+            <summary>
+            Child items that are referenced but never instantiated as a child in the object model.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.ChildItemCollection.GetAllRelationships">
             <summary>
             Get all relationships that can be either instantiated in the model or are non concrete references.
             </summary>
             <returns>Typed identifiers of all referenced items.</returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ChildItemCollection.NonConcreteReferences">
-            <summary>
-            Child items that are referenced but never instantiated as a child in the object model.
-            </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.DoNotPropagateAttribute">
             <summary>
@@ -4073,12 +3783,6 @@
             Represents a visitor that counts the items under an <see cref="T:Algenta.Colectica.Model.IVersionable"/> item.
             </summary>
         </member>
-        <member name="M:Algenta.Colectica.Model.Utility.ItemCounter.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Called first when visiting an item, before visiting the item's children.
-            </summary>
-            <param name="item">The item.</param>
-        </member>
         <member name="P:Algenta.Colectica.Model.Utility.ItemCounter.CountsByType">
             <summary>
             Gets the count of each type of item.
@@ -4089,6 +3793,12 @@
             Gets the count of each type of item, sorted in descending order.
             </summary>
         </member>
+        <member name="M:Algenta.Colectica.Model.Utility.ItemCounter.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Called first when visiting an item, before visiting the item's children.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
         <member name="T:Algenta.Colectica.Model.Utility.GraphPruningVisitor">
             <summary>
             Remove items from a set.
@@ -4098,12 +3808,6 @@
             <summary>
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.GraphPruningVisitor"/> class.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.GraphPruningVisitor.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Begins to visit an item, removing items according to the configuration of this instance.
-            </summary>
-            <param name="item">The item being visited.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.GraphPruningVisitor.ItemTypes">
             <summary>
@@ -4128,6 +3832,12 @@
             <value>
             The number children removed.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.GraphPruningVisitor.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Begins to visit an item, removing items according to the configuration of this instance.
+            </summary>
+            <param name="item">The item being visited.</param>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.ItemPruningType">
             <summary>
@@ -4163,26 +3873,6 @@
             Manages metadata languages used in the Colectica user interface.
             </summary>
         </member>
-        <member name="M:Algenta.Colectica.Model.Utility.CultureManager.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.CultureManager"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.CultureManager.GetCultureString">
-            <summary>
-            Gets a string serialization of the list of cultures that are configured to be
-            displayed in the user interface.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.CultureManager.LoadFromString(System.String,System.String)">
-            <summary>
-            Loads cultures to be displayed in the user interface from a string, which may have been used to
-            store the configured cultures between application settings.
-            </summary>
-            <param name="cultureString">The culture string.</param>
-            <param name="defaultCultureName">Name of the default culture.</param>
-        </member>
         <member name="P:Algenta.Colectica.Model.Utility.CultureManager.Instance">
             <summary>
             Provides access to the singleton object.
@@ -4203,6 +3893,26 @@
             <value>
             The sort order.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.CultureManager.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.CultureManager"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.CultureManager.GetCultureString">
+            <summary>
+            Gets a string serialization of the list of cultures that are configured to be
+            displayed in the user interface.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.CultureManager.LoadFromString(System.String,System.String)">
+            <summary>
+            Loads cultures to be displayed in the user interface from a string, which may have been used to
+            store the configured cultures between application settings.
+            </summary>
+            <param name="cultureString">The culture string.</param>
+            <param name="defaultCultureName">Name of the default culture.</param>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.DirtyItemGatherer">
             <summary>
@@ -4227,25 +3937,20 @@
             <param name="gatherEvenIfNotDirty">if set to <c>true</c> gather items even if they are not dirty.</param>
             <param name="markParentsDirty">if set to <c>true</c>, mark parents of a dirty item to be dirty as well.</param>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.DirtyItemGatherer.DirtyItems">
+            <summary>
+            The list of items in the model that have been changed.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.DirtyItemGatherer.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
             <summary>
             Begins the visit item.
             </summary>
             <param name="item">The item.</param>
         </member>
-        <member name="P:Algenta.Colectica.Model.Utility.DirtyItemGatherer.DirtyItems">
-            <summary>
-            The list of items in the model that have been changed.
-            </summary>
-        </member>
         <member name="T:Algenta.Colectica.Model.Utility.FragmentInstance">
             <summary>
             A collection of <see cref="T:Algenta.Colectica.Model.IVersionable"/> items.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.FragmentInstance.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.FragmentInstance"/> class.
             </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.FragmentInstance.Items">
@@ -4264,6 +3969,11 @@
             The top level items.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.Utility.FragmentInstance.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.FragmentInstance"/> class.
+            </summary>
+        </member>
         <member name="T:Algenta.Colectica.Model.Utility.HarmonizationResult">
             <summary>
             Describes the results of a deserialization process.
@@ -4272,6 +3982,31 @@
         <member name="M:Algenta.Colectica.Model.Utility.HarmonizationResult.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.HarmonizationResult"/> class.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Errors">
+            <summary>
+            Gets a collection of errors.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Warnings">
+            <summary>
+            Gets a collection of warnings.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Messages">
+            <summary>
+            Gets a collection of messages.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Success">
+            <summary>
+            Gets or sets a value indicating whether the process succeeded.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.ItemsRenamed">
+            <summary>
+            Gets or sets the number of items that were renamed during the process.
             </summary>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.HarmonizationResult.AddError(System.String,System.Xml.XmlNode)">
@@ -4340,31 +4075,6 @@
             <param name="lineNumber">The line number to which the message applies.</param>
             <param name="xpath">The XPath of the XML node that triggered the message.</param>
         </member>
-        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Errors">
-            <summary>
-            Gets a collection of errors.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Warnings">
-            <summary>
-            Gets a collection of warnings.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Messages">
-            <summary>
-            Gets a collection of messages.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.Success">
-            <summary>
-            Gets or sets a value indicating whether the process succeeded.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.ItemsRenamed">
-            <summary>
-            Gets or sets the number of items that were renamed during the process.
-            </summary>
-        </member>
         <member name="P:Algenta.Colectica.Model.Utility.HarmonizationResult.ResultMessages">
             <summary>
             Returns the collected warning and error exceptions as a series of ResultMessages
@@ -4374,14 +4084,6 @@
             <summary>
             Describes an error that occurred during deserialization.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.HarmonizationError.ToString">
-            <summary>
-            Returns a <see cref="T:System.String"/> that represents this instance.
-            </summary>
-            <returns>
-            A <see cref="T:System.String"/> that represents this instance.
-            </returns>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.HarmonizationError.Message">
             <summary>
@@ -4402,6 +4104,14 @@
             <summary>
             Gets or sets the type of the error.
             </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.HarmonizationError.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.MessageType">
             <summary>
@@ -4428,6 +4138,16 @@
             Represents a cache of repository items.
             </summary>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ItemCache.Item(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Gets or sets the <see cref="T:Algenta.Colectica.Model.IVersionable"/> with the specified identifier.
+            </summary>
+            <value>
+            The <see cref="T:Algenta.Colectica.Model.IVersionable"/>.
+            </value>
+            <param name="index">The identifier of the item.</param>
+            <returns></returns>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.ItemCache.ContainsItem(Algenta.Colectica.Model.Utility.IdentifierTriple)">
             <summary>
             Determines whether the cache contains an entry for the specified identifier.
@@ -4451,16 +4171,6 @@
             <param name="triple">The identifier triple of the item to retrieve.</param>
             <param name="item">The item.</param>
             <returns><c>true</c>if the item was succesfully retrieved; otherwise <c>false</c>.</returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ItemCache.Item(Algenta.Colectica.Model.Utility.IdentifierTriple)">
-            <summary>
-            Gets or sets the <see cref="T:Algenta.Colectica.Model.IVersionable"/> with the specified identifier.
-            </summary>
-            <value>
-            The <see cref="T:Algenta.Colectica.Model.IVersionable"/>.
-            </value>
-            <param name="index">The identifier of the item.</param>
-            <returns></returns>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.EventArgs`1">
             <summary>
@@ -4715,6 +4425,22 @@
             formatter.
             </summary>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ItemFormatPool.Instance">
+            <summary>
+            Gets the one and only singleton instance of this class.
+            </summary>
+            <value>
+            The one and only instance.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ItemFormatPool.ItemFormatters">
+            <summary>
+            Gets the item formatters from MEF.
+            </summary>
+            <value>
+            The item formatters.
+            </value>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.ItemFormatPool.Initialize">
             <summary>
             Initializes this instance.
@@ -4773,21 +4499,21 @@
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.ItemFormatPool.GetItem(System.Guid,System.String,System.Collections.ObjectModel.Collection{Algenta.Colectica.Model.Utility.Note},Algenta.Colectica.Model.Utility.ItemCache,System.Guid)">
             <summary>
-            Instantiates an <see cref="T:Algenta.Colectica.Model.IVersionable"/> item by deserializing the provided representantation.
+            Instantiates an <see cref="T:Algenta.Colectica.Model.IVersionable" /> item by deserializing the provided representantation.
             </summary>
             <param name="itemType">The type of the item to be created.</param>
             <param name="representation">The representation: usually an xml element.</param>
             <param name="itemNotes">The item notes.</param>
             <param name="itemCache">The item cache.</param>
-            <param name="format">The format of the representation to be created, generally taken from <see cref="T:Algenta.Colectica.Model.Repository.RepositoryFormats"/>.</param>
+            <param name="format">The format of the representation to be created, generally taken from <see cref="T:Algenta.Colectica.Model.Repository.RepositoryFormats" />.</param>
             <returns>
-            The instantiated <see cref="T:Algenta.Colectica.Model.IVersionable"/> item.
+            The instantiated <see cref="T:Algenta.Colectica.Model.IVersionable" /> item.
             </returns>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.ItemFormatPool.GetTextExtract(Algenta.Colectica.Model.IVersionable)">
             <summary>
             Gets a list of the 
-            <see cref="T:Algenta.Colectica.Model.Repository.ItemTextExtract"/> extracts from the specified item.
+            <see cref="T:Algenta.Colectica.Model.Repository.ItemTextExtract" /> extracts from the specified item.
             These extracts are used for full text indexing.
             </summary>
             <param name="item">The item from which extracts are created.</param>
@@ -4843,37 +4569,10 @@
               <c>true</c> if an image can be provided; otherwise <c>false</c>.
             </returns>
         </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ItemFormatPool.Instance">
-            <summary>
-            Gets the one and only singleton instance of this class.
-            </summary>
-            <value>
-            The one and only instance.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ItemFormatPool.ItemFormatters">
-            <summary>
-            Gets the item formatters from MEF.
-            </summary>
-            <value>
-            The item formatters.
-            </value>
-        </member>
         <member name="T:Algenta.Colectica.Model.Utility.ItemGathererVisitor">
             <summary>
             Visitor used to gather items.
             </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.ItemGathererVisitor.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.ItemGathererVisitor"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.ItemGathererVisitor.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Begins the visit item.
-            </summary>
-            <param name="item">The item.</param>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.ItemGathererVisitor.TypesToFind">
             <summary>
@@ -4912,6 +4611,59 @@
             The found items.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.Utility.ItemGathererVisitor.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.ItemGathererVisitor"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.ItemGathererVisitor.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Begins the visit item.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Utility.IVersionableVisitor">
+            <summary>
+            Represents a visitor that can visit an IVisitable item.
+            See http://en.wikipedia.org/wiki/Visitor_pattern for information about the Visitor Pattern.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.HaveVisited(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Determines whether an item with the specified identifier has already been visited.
+            </summary>
+            <param name="id">The unique identifier.</param>
+            <returns><c>true</c> if the item has already been visited; otherwise<c>false</c>.</returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.RegisterVisit(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Registers the visit.
+            </summary>
+            <param name="id">The unique identifier.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Called first when visiting an item, before visiting the item's children.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.IVersionableVisitor.EndVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Called after visiting all children of an item.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Utility.IVisitable">
+            <summary>
+            Defines an Accept method, to be implemented by classes that can be visited by an <see cref="T:Algenta.Colectica.Model.Utility.IVersionableVisitor"/>
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.IVisitable.Accept(Algenta.Colectica.Model.Utility.IVersionableVisitor)">
+            <summary>
+            Accepts the specified visitor.
+            </summary>
+            <param name="visitor">The visitor.</param>
+        </member>
         <member name="T:Algenta.Colectica.Model.Utility.Levenshtein">
             <summary>
             Provides a method to computer the Levenshtein distance between two strings.
@@ -4937,21 +4689,6 @@
             A singleton class that provides methods for logging through log4net.
             </summary>
         </member>
-        <member name="M:Algenta.Colectica.Model.Utility.Logger.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.Logger"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.Logger.PauseLogging">
-            <summary>
-            Pauses the logging.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.Logger.ResumeLogging">
-            <summary>
-            Resumes the logging.
-            </summary>
-        </member>
         <member name="P:Algenta.Colectica.Model.Utility.Logger.Instance">
             <summary>
             Provides access to the singleton object.
@@ -4969,6 +4706,108 @@
             <value>
             The name of the log.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.Logger.#ctor(System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.Logger"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.Logger.InitializeWithoutAppConfig">
+            <summary>
+            Initialize the logging in situations where app.config is not available (e.g., ASP.NET 5).
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.Logger.PauseLogging">
+            <summary>
+            Pauses the logging.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.Logger.ResumeLogging(System.Boolean)">
+            <summary>
+            Resumes the logging.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Utility.MetadataValidationResult">
+            <summary>
+            Represents the result of a metadata validation check.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.ValidationCheckName">
+            <summary>
+            Gets the name of the metadata validation check.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.IsApplicable">
+            <summary>
+            Returns a value indicating whether a validation
+            check is applicable to an item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.IsValid">
+            <summary>
+            Gets a value indicating whether an item passed 
+            a validation check.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.Level">
+            <summary>
+            Gets the severity level of the result.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.Message">
+            <summary>
+            Gets the message text of the result.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.Details">
+            <summary>
+            Gets extended details about the result.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MetadataValidationResult.RelatedItem">
+            <summary>
+            Gets information about the item to which the result refers.
+            </summary>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Utility.OtherMaterialsModel">
+            <summary>
+            Represents information about an <see cref="T:Algenta.Colectica.Model.OtherMaterial"/> object, used to 
+            generate documentation for a list of OtherMaterial items.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.OtherMaterialsModel.GenericHeader">
+            <summary>
+            Gets or sets the header text to use for <see cref="T:Algenta.Colectica.Model.OtherMaterial"/>
+            that do not have a type of material specified.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.OtherMaterialsModel.Groups">
+            <summary>
+            Gets a list of groups of <see cref="T:Algenta.Colectica.Model.OtherMaterial"/> objects.
+            One group is created for each unique type of material.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.OtherMaterialsModel.#ctor(System.Collections.Generic.IList{Algenta.Colectica.Model.OtherMaterial})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.OtherMaterialsModel"/> class.
+            </summary>
+            <param name="otherMaterials">A list of materials.</param>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Utility.OtherMaterialsGroup">
+            <summary>
+            Represents a list of <see cref="T:Algenta.Colectica.Model.OtherMaterial"/> objects, grouped
+            by the type of material they represent.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.OtherMaterialsGroup.MaterialType">
+            <summary>
+            Gets the type of material represented by each member of this group.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.OtherMaterialsGroup.OtherMaterials">
+            <summary>
+            Gets the list of <see cref="T:Algenta.Colectica.Model.OtherMaterial"/> objects that form the group.
+            </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.PopulationResult">
             <summary>
@@ -5010,6 +4849,29 @@
             Provides information about an item that could not be located in the repository.
             </summary>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.ParentList">
+            <summary>
+            The list that contains the missing item.
+            </summary>
+            <remarks>
+            This may be null if the UnpopulatedProperty has a value.
+            </remarks>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.UnpopulatedProperty">
+            <summary>
+            The property that is unpopulated.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.RequiredType">
+            <summary>
+            The type of item that should exist, if known.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.UnfoundItemIdentifier">
+            <summary>
+            The identifier of the item that could not be found.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.UnfoundChild.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.UnfoundChild"/> class.
@@ -5038,29 +4900,6 @@
             <param name="unpopulatedProperty">The unpopulated property.</param>
             <param name="requiredType">Type of the required.</param>
         </member>
-        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.ParentList">
-            <summary>
-            The list that contains the missing item.
-            </summary>
-            <remarks>
-            This may be null if the UnpopulatedProperty has a value.
-            </remarks>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.UnpopulatedProperty">
-            <summary>
-            The property that is unpopulated.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.RequiredType">
-            <summary>
-            The type of item that should exist, if known.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.UnfoundItemIdentifier">
-            <summary>
-            The identifier of the item that could not be found.
-            </summary>
-        </member>
         <member name="P:Algenta.Colectica.Model.Utility.UnfoundChild.Label">
             <summary>
             Gets the label describing the unfound item.
@@ -5069,6 +4908,24 @@
         <member name="T:Algenta.Colectica.Model.Utility.ProgressMonitor">
             <summary>
             Provides a way for background workers to report their progress.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ProgressMonitor.TaskName">
+            <summary>
+            Gets or sets the name of the task for which progress is being monitored.
+            </summary>
+            <value>
+            The name of the task.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ProgressMonitor.IsBounded">
+            <summary>
+            Gets or sets a value indicating whether the amount of work to be completed is known.
+            </summary>
+        </member>
+        <member name="E:Algenta.Colectica.Model.Utility.ProgressMonitor.ProgressChanged">
+            <summary>
+            Occurs when progress has changed.
             </summary>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.ProgressMonitor.ReportProgress(System.Object)">
@@ -5091,24 +4948,6 @@
             <param name="complete">The amount of work already complete.</param>
             <param name="total">The total work to be completed.</param>
             <param name="userState">A user-defined object.</param>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ProgressMonitor.TaskName">
-            <summary>
-            Gets or sets the name of the task for which progress is being monitored.
-            </summary>
-            <value>
-            The name of the task.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ProgressMonitor.IsBounded">
-            <summary>
-            Gets or sets a value indicating whether the amount of work to be completed is known.
-            </summary>
-        </member>
-        <member name="E:Algenta.Colectica.Model.Utility.ProgressMonitor.ProgressChanged">
-            <summary>
-            Occurs when progress has changed.
-            </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.RegistrationStatus">
             <summary>
@@ -5148,26 +4987,6 @@
         <member name="T:Algenta.Colectica.Model.Utility.RegistrationInformation">
             <summary>
             Represents information about the Colectica installation.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.RegistrationInformation"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.Populate">
-            <summary>
-            Populates this instance.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.SanitizeXmlString(System.String)">
-            <summary>
-            Remove illegal XML characters from a string.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.IsLegalXmlChar(System.Int32)">
-            <summary>
-            Whether a given character is allowed by XML 1.0.
             </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.RegistrationInformation.CpuId">
@@ -5287,9 +5106,39 @@
               <c>true</c> if signed; otherwise, <c>false</c>.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.RegistrationInformation"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.Populate">
+            <summary>
+            Populates this instance.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.SanitizeXmlString(System.String)">
+            <summary>
+            Remove illegal XML characters from a string.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.RegistrationInformation.IsLegalXmlChar(System.Int32)">
+            <summary>
+            Whether a given character is allowed by XML 1.0.
+            </summary>
+        </member>
         <member name="T:Algenta.Colectica.Model.Utility.ResultMessage">
             <summary>
             Represents an error, warning, or informational message to be displayed to the user.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ResultMessage.Type">
+            <summary>
+            Gets or sets the type of the message.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.ResultMessage.Text">
+            <summary>
+            Gets or sets the text of the message.
             </summary>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.ResultMessage.#ctor">
@@ -5309,16 +5158,6 @@
             Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.ResultMessage"/> class.
             </summary>
             <param name="error">A <see cref="T:Algenta.Colectica.Model.Utility.HarmonizationError"/> object for which a message will be created.</param>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ResultMessage.Type">
-            <summary>
-            Gets or sets the type of the message.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.ResultMessage.Text">
-            <summary>
-            Gets or sets the text of the message.
-            </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.ResultMessage.DisplayMessage">
             <summary>
@@ -5365,6 +5204,34 @@
             <param name="identifier">The identifier triple.</param>
             <param name="itemType">The type of the item.</param>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.Identifier">
+            <summary>
+            Gets the identifier of the item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.Version">
+            <summary>
+            Gets the version of the item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.AgencyId">
+            <summary>
+            Gets the agency identifier of the item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.ItemType">
+            <summary>
+            Gets the type of the item.
+            </summary>
+            <value>
+            The type of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.CompositeId">
+            <summary>
+            Gets the composite identifier triple of the item.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.TypedIdTriple.ToString">
             <summary>
             Returns a <see cref="T:System.String"/> that represents this instance.
@@ -5395,11 +5262,11 @@
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.TypedIdTriple.Equals(System.Object)">
             <summary>
-            Determines whether the specified <see cref="T:System.Object"/>, is equal to this instance.
+            Determines whether the specified <see cref="T:System.Object" />, is equal to this instance.
             </summary>
-            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <param name="obj">The <see cref="T:System.Object" /> to compare with this instance.</param>
             <returns>
-              <c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+              <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.
             </returns>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.TypedIdTriple.GetHashCode">
@@ -5409,34 +5276,6 @@
             <returns>
             A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
             </returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.Identifier">
-            <summary>
-            Gets the identifier of the item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.Version">
-            <summary>
-            Gets the version of the item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.AgencyId">
-            <summary>
-            Gets the agency identifier of the item.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.ItemType">
-            <summary>
-            Gets the type of the item.
-            </summary>
-            <value>
-            The type of the item.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.TypedIdTriple.CompositeId">
-            <summary>
-            Gets the composite identifier triple of the item.
-            </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.CsvParser">
             <summary>
@@ -5486,6 +5325,21 @@
             <param name="version">The version of the item.</param>
             <param name="agencyId">The agency identifier.</param>
         </member>
+        <member name="P:Algenta.Colectica.Model.Utility.IdentifierTriple.Identifier">
+            <summary>
+            Gets the item identifier.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.IdentifierTriple.Version">
+            <summary>
+            Gets the item version.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.IdentifierTriple.AgencyId">
+            <summary>
+            Gets the agency identifier.
+            </summary>
+        </member>
         <member name="M:Algenta.Colectica.Model.Utility.IdentifierTriple.ToString">
             <summary>
             Returns a <see cref="T:System.String"/> that represents this instance.
@@ -5516,11 +5370,11 @@
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.IdentifierTriple.Equals(System.Object)">
             <summary>
-            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            Determines whether the specified <see cref="T:System.Object" /> is equal to this instance.
             </summary>
-            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <param name="obj">The <see cref="T:System.Object" /> to compare with this instance.</param>
             <returns>
-              <c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+              <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.
             </returns>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.IdentifierTriple.GetHashCode">
@@ -5547,21 +5401,6 @@
             <param name="b">The identifier to compare.</param>
             <returns><c>true</c> if the identifiers are equal; otherwise <c>false</c>.</returns>
         </member>
-        <member name="P:Algenta.Colectica.Model.Utility.IdentifierTriple.Identifier">
-            <summary>
-            Gets the item identifier.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.IdentifierTriple.Version">
-            <summary>
-            Gets the item version.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.IdentifierTriple.AgencyId">
-            <summary>
-            Gets the agency identifier.
-            </summary>
-        </member>
         <member name="T:Algenta.Colectica.Model.Utility.IdentifierExtensions">
             <summary>
             Contains extension methods for working with identified items.
@@ -5578,6 +5417,23 @@
         <member name="T:Algenta.Colectica.Model.Utility.MultilingualString">
             <summary>
             Represents a string that may defined in multiple languages.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.Item(System.String)">
+            <summary>
+            Gets or sets the value associated with the specified language.
+            </summary>
+            <param name="key">The key.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.CurrentCulture">
+            <summary>
+            Gets or sets the current default culture, which can be accessed with the <c>Current</c> property.
+            </summary>
+        </member>
+        <member name="E:Algenta.Colectica.Model.Utility.MultilingualString.CurrentCultureChanged">
+            <summary>
+            Occurs when the current culture is changed.
             </summary>
         </member>
         <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.#ctor">
@@ -5597,157 +5453,6 @@
             </summary>
             <param name="value">A value to be assigned for the specified culture.</param>
             <param name="culture">The culture to which the specified value should be applied.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetString(System.String)">
-            <summary>
-            Gets the string for the specified culture and the default audience.
-            </summary>
-            <param name="culture">The culture.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetString(System.String,System.String,System.Boolean)">
-            <summary>
-            Gets the string for the specified language and audience.
-            </summary>
-            <param name="culture">The culture.</param>
-            <param name="audience">The audience.</param>
-            <param name="useFirstAudienceIgnoringAudienceName">if set to <c>true</c> [use first audience ignoring audience name].</param>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetStringsForAudience(System.String)">
-            <summary>
-            Gets a dictionary (language -> content) for the specified audience.
-            </summary>
-            <param name="audience"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.SetStringForDefaultAudience(System.String,System.String)">
-            <summary>
-            Sets the string for specified language and the default audience.
-            </summary>
-            <param name="culture">The culture.</param>
-            <param name="value">The value.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.SetString(System.String,System.String,System.String)">
-            <summary>
-            Sets the string for the specified language and the specified audience.
-            </summary>
-            <param name="culture">The language.</param>
-            <param name="audience">The audience.</param>
-            <param name="value">The text.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetAudiences">
-            <summary>
-            Gets all audiences for which content is defined.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.RemoveAudience(System.String)">
-            <summary>
-            Removes the text for the specified audience.
-            </summary>
-            <param name="audience"></param>
-            <returns>Returns true if text for the audience was removed; otherwise false.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetPlainTextForLanguage(System.String)">
-            <summary>
-            Gets the plain text for the specified language.
-            </summary>
-            <param name="lang">The language.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetPlainText(System.String)">
-            <summary>
-            Converts the specified string to plain text, removing any HTML formatting.
-            </summary>
-            <param name="str">The string.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.OnPropertyChanged(System.String)">
-            <summary>
-            Raises the <see cref="E:Algenta.Colectica.Model.Utility.MultilingualString.PropertyChanged"/> event.
-            </summary>
-            <param name="propertyName">Name of the property.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.ResumePropertyEvents">
-            <summary>
-            Resumes issuing property events.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.SuspendPropertyEvents">
-            <summary>
-            Suspends issuing property events.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.Copy(Algenta.Colectica.Model.Utility.MultilingualString)">
-            <summary>
-            Copies the values from the specified source into this instance. Replaces any existing information in this instance.
-            </summary>
-            <param name="source">The source.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.Merge(Algenta.Colectica.Model.Utility.MultilingualString,System.Boolean)">
-            <summary>
-            Merges the values in the specified source with this instance. If this instance already contains 
-            a value for a culture, the values may be joined with <see cref="P:System.Environment.NewLine"/>.
-            </summary>
-            <param name="source">The source.</param>
-            <param name="append">if set to <c>true</c> append the values; otherwise, only keep the existing value.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.AppendTo(System.String,System.String)">
-            <summary>
-            Appends the specified value to the specified culture.
-            </summary>
-            <param name="culture">The culture.</param>
-            <param name="value">The value.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.AppendTo(System.String,System.String,System.String)">
-            <summary>
-            Appends the specified value to the specified culture using the specified separator.
-            </summary>
-            <param name="culture">The culture.</param>
-            <param name="value">The value.</param>
-            <param name="seperator">The seperator.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.ToString31Serialization">
-            <summary>
-            Returns a string containing a DDI 3 XML representation of the <c>MultilingualString</c>.
-            </summary>
-            <returns>The DDI 3 XML serialization</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.ToXElement31Serialization">
-            <summary>
-            Converts the string to it's DDI 3.1 XML representation.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.FromString31Serialization(System.String)">
-            <summary>
-            Builds the <c>MultilingualString</c> from a DDI 3.1 XML representation.
-            </summary>
-            <param name="serialization">The DDI 3 XML serialization.</param>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.FromString31Serialization(System.Xml.Linq.XElement)">
-            <summary>
-            Populates this instance from a DDI 3.1 XML representation.
-            </summary>
-            <param name="root">The root.</param>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.Item(System.String)">
-            <summary>
-            Gets or sets the value associated with the specified language.
-            </summary>
-            <param name="key">The key.</param>
-            <returns></returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.CurrentCulture">
-            <summary>
-            Gets or sets the current default culture, which can be accessed with the <c>Current</c> property.
-            </summary>
-        </member>
-        <member name="E:Algenta.Colectica.Model.Utility.MultilingualString.CurrentCultureChanged">
-            <summary>
-            Occurs when the current culture is changed.
-            </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.KeysWithValues">
             <summary>
@@ -5829,6 +5534,57 @@
             <c>true</c> if the string content for has multiple audiences; otherwise, <c>false</c>.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetString(System.String)">
+            <summary>
+            Gets the string for the specified culture and the default audience.
+            </summary>
+            <param name="culture">The culture.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetString(System.String,System.String,System.Boolean)">
+            <summary>
+            Gets the string for the specified language and audience.
+            </summary>
+            <param name="culture">The culture.</param>
+            <param name="audience">The audience.</param>
+            <param name="useFirstAudienceIgnoringAudienceName">if set to <c>true</c> [use first audience ignoring audience name].</param>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetStringsForAudience(System.String)">
+            <summary>
+            Gets a dictionary (language -> content) for the specified audience.
+            </summary>
+            <param name="audience"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.SetStringForDefaultAudience(System.String,System.String)">
+            <summary>
+            Sets the string for specified language and the default audience.
+            </summary>
+            <param name="culture">The culture.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.SetString(System.String,System.String,System.String)">
+            <summary>
+            Sets the string for the specified language and the specified audience.
+            </summary>
+            <param name="culture">The language.</param>
+            <param name="audience">The audience.</param>
+            <param name="value">The text.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetAudiences">
+            <summary>
+            Gets all audiences for which content is defined.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.RemoveAudience(System.String)">
+            <summary>
+            Removes the text for the specified audience.
+            </summary>
+            <param name="audience"></param>
+            <returns>Returns true if text for the audience was removed; otherwise false.</returns>
+        </member>
         <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.CurrentPlainText">
             <summary>
             Gets or sets the current plain text.
@@ -5837,9 +5593,39 @@
             The current plain text.
             </value>
         </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetPlainTextForLanguage(System.String)">
+            <summary>
+            Gets the plain text for the specified language.
+            </summary>
+            <param name="lang">The language.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.GetPlainText(System.String)">
+            <summary>
+            Converts the specified string to plain text, removing any HTML formatting.
+            </summary>
+            <param name="str">The string.</param>
+            <returns></returns>
+        </member>
         <member name="E:Algenta.Colectica.Model.Utility.MultilingualString.PropertyChanged">
             <summary>
             Occurs when a property value changes.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.OnPropertyChanged(System.String)">
+            <summary>
+            Raises the <see cref="E:Algenta.Colectica.Model.Utility.MultilingualString.PropertyChanged"/> event.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.ResumePropertyEvents">
+            <summary>
+            Resumes issuing property events.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.SuspendPropertyEvents">
+            <summary>
+            Suspends issuing property events.
             </summary>
         </member>
         <member name="P:Algenta.Colectica.Model.Utility.MultilingualString.PropertyEventsSuspended">
@@ -5849,6 +5635,59 @@
             <value>
             	<c>true</c> if property events are suspended; otherwise, <c>false</c>.
             </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.Copy(Algenta.Colectica.Model.Utility.MultilingualString)">
+            <summary>
+            Copies the values from the specified source into this instance. Replaces any existing information in this instance.
+            </summary>
+            <param name="source">The source.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.Merge(Algenta.Colectica.Model.Utility.MultilingualString,System.Boolean)">
+            <summary>
+            Merges the values in the specified source with this instance. If this instance already contains 
+            a value for a culture, the values may be joined with <see cref="P:System.Environment.NewLine"/>.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="append">if set to <c>true</c> append the values; otherwise, only keep the existing value.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.AppendTo(System.String,System.String)">
+            <summary>
+            Appends the specified value to the specified culture.
+            </summary>
+            <param name="culture">The culture.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.AppendTo(System.String,System.String,System.String)">
+            <summary>
+            Appends the specified value to the specified culture using the specified separator.
+            </summary>
+            <param name="culture">The culture.</param>
+            <param name="value">The value.</param>
+            <param name="seperator">The seperator.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.ToString31Serialization">
+            <summary>
+            Returns a string containing a DDI 3 XML representation of the <c>MultilingualString</c>.
+            </summary>
+            <returns>The DDI 3 XML serialization</returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.ToXElement31Serialization">
+            <summary>
+            Converts the string to it's DDI 3.1 XML representation.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.FromString31Serialization(System.String)">
+            <summary>
+            Builds the <c>MultilingualString</c> from a DDI 3.1 XML representation.
+            </summary>
+            <param name="serialization">The DDI 3 XML serialization.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.MultilingualString.FromString31Serialization(System.Xml.Linq.XElement)">
+            <summary>
+            Populates this instance from a DDI 3.1 XML representation.
+            </summary>
+            <param name="root">The root.</param>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.Note">
             <summary>
@@ -5938,11 +5777,6 @@
             that relationship is not allowed in the base content model.
             </summary>
         </member>
-        <member name="M:Algenta.Colectica.Model.Utility.RelatedItemAnnotation.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.RelatedItemAnnotation"/> class.
-            </summary>
-        </member>
         <member name="P:Algenta.Colectica.Model.Utility.RelatedItemAnnotation.CompositeId">
             <summary>
             Gets or sets the identifier of the related item.
@@ -5961,6 +5795,11 @@
         <member name="P:Algenta.Colectica.Model.Utility.RelatedItemAnnotation.Annotation">
             <summary>
             Gets or sets a comment describing the annotation.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.RelatedItemAnnotation.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Utility.RelatedItemAnnotation"/> class.
             </summary>
         </member>
         <member name="T:Algenta.Colectica.Model.Utility.NoteExtensions">
@@ -6066,6 +5905,43 @@
             Gets a unique identifier for the Colectica software.
             </summary>
         </member>
+        <member name="T:Algenta.Colectica.Model.Utility.VersionableVisitorBase">
+            <summary>
+            Provides a base class from which implementers of <see cref="T:Algenta.Colectica.Model.Utility.IVersionableVisitor"/> may derive.
+            </summary>
+        </member>
+        <member name="F:Algenta.Colectica.Model.Utility.VersionableVisitorBase.depth">
+            <summary>
+            A stack representing the current location of the visitor in the item graph.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.HaveVisited(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Determines whether an item with the specified identifier has already been visited.
+            </summary>
+            <param name="id">The unique identifier.</param>
+            <returns>
+              <c>true</c> if the item has already been visited; otherwise<c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.RegisterVisit(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Registers the visit.
+            </summary>
+            <param name="id">The unique identifier.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.BeginVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Called first when visiting an item, before visiting the item's children.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Utility.VersionableVisitorBase.EndVisitItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Called after visiting all children of an item.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
         <member name="T:Algenta.Colectica.Model.Utility.XhtmlToMarkdown">
             <summary>
             Utility to convert XHtml to Markdown text
@@ -6097,6 +5973,442 @@
             <param name="element">a valid xhtml tree</param>
             <returns></returns>
         </member>
+        <member name="T:Algenta.Colectica.Model.Validation.IValidationRule">
+            <summary>
+            Defines a method to validate an arbitrary object and return a result.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.IValidationRule.Validate(System.Object)">
+            <summary>
+            Validates the specified object.
+            </summary>
+            <param name="value">The object to be validated.</param>
+            <returns>The result of the validation.</returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Validation.ValidationCheckResult">
+            <summary>
+            Represents the result of a validation check.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Validation.ValidationCheckResult.IsValid">
+            <summary>
+            Gets or sets a value indicating whether the object is valid.
+            </summary>
+            <value>
+              <c>true</c> if the value is valid; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Validation.ValidationCheckResult.Message">
+            <summary>
+            Gets or sets a message providing details about why an object is invalid.
+            </summary>
+            <value>
+            The message.
+            </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.ValidationCheckResult.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Validation.ValidationCheckResult"/> class.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.ValidationCheckResult.#ctor(System.Boolean,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Validation.ValidationCheckResult"/> class.
+            </summary>
+            <param name="isValid">Whether the checked object is valid.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Validation.NumericValidationRule">
+            <summary>
+            Provides a validation method that determines whether the input object is a numeric value.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.NumericValidationRule.Validate(System.Object)">
+            <summary>
+            Validates that the specified value is a valid number.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>
+            The result of the validation.
+            </returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Validation.TimeSpanValidationRule">
+            <summary>
+            Provides a validation method that determines whether the input object is a TimeSpan value.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.TimeSpanValidationRule.Validate(System.Object)">
+            <summary>
+            Validates that the specified value is a valid TimeSpan.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>
+            The result of the validation.
+            </returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Validation.LatitudeValidationRule">
+            <summary>
+            Provides a validation method that determines whether the input object is a valid latitude on Earth.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.LatitudeValidationRule.Validate(System.Object)">
+            <summary>
+            Validates that the specified value is a valid latitude on Earth.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>
+            The result of the validation.
+            </returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Validation.LongitudeValidationRule">
+            <summary>
+            Provides a validation method that determines whether the input object is a valid longitude on Earth.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.LongitudeValidationRule.Validate(System.Object)">
+            <summary>
+            Validates that the specified value is a valid longitude on Earth.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>
+            The result of the validation.
+            </returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Validation.UriValidationRule">
+            <summary>
+            Provides a validation method that determines whether the input object is a valid URI.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Validation.UriValidationRule.Validate(System.Object)">
+            <summary>
+            Validates that the specified value is a valid URI.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>
+            The result of the validation.
+            </returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.VersionableBase">
+            <summary>
+            Defines the basic identification of a repository-managed item: agency identifier, identifier, and item version.
+            Implements the <see cref="T:Algenta.Colectica.Model.IVersionable"/> interface.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.Accept(Algenta.Colectica.Model.Utility.IVersionableVisitor)">
+            <summary>
+            Accepts the specified visitor.
+            </summary>
+            <param name="visitor">The visitor.</param>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.ItemType">
+            <summary>
+            Gets the universally unique identifier representing the item's type.
+            </summary>
+            <value>
+            The identifier representing the item's type.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.IsDirty">
+            <summary>
+            Gets or sets a value indicating whether this instance has unsaved changes.
+            </summary>
+            <value>
+            <c>true</c> if this instance has unsaved changes; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.IsPublished">
+            <summary>
+            Gets or sets a value indicating whether this instance is published.
+            </summary>
+            <value>
+            <c>true</c> if this instance is published; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.ChildrenDereferenced">
+            <summary>
+            Gets or sets a value indicating whether the item's children have been dereferenced.
+            </summary>
+            <value>
+            <c>true</c> if the item's children have been dereferenced; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.IsPopulated">
+            <summary>
+            Gets or sets a value indicating whether this instance's information is populated.
+            </summary>
+            <value>
+            <c>true</c> if this instance is populated; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.Version">
+            <summary>
+            Gets or sets the version.
+            </summary>
+            <value>
+            The version.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.VersionDate">
+            <summary>
+            Gets or sets the <see cref="T:System.DateTime" /> this version of the item was created.
+            </summary>
+            <value>
+            The <see cref="T:System.DateTime" /> this version was created.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.VersionResponsibility">
+            <summary>
+            Gets or sets the name of the user who created this version of the item.
+            </summary>
+            <value>
+            The name of the user who created this version of the item.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.VersionRationale">
+            <summary>
+            Gets the log message given by the user who created this version of the item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.CompositeId">
+            <summary>
+            Gets or sets the item's composite id, consisting of the agency identifier, identifier, and version.
+            </summary>
+            <value>
+            The item's composite identifier.
+            </value>
+            <exception cref="T:System.ArgumentNullException">value</exception>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.CustomFields">
+            <summary>
+            Gets a collection of custom fields defined for this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.UserAttributes">
+            <summary>
+            Gets a collection of user defined fields defined for this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.OtherMaterials">
+            <summary>
+            Gets a collection of Other Material fields defined for this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.BasedOn">
+            <summary>
+            Gets a collection that describes previous items on which this item is based
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.Attachments">
+            <summary>
+            Gets a collection of file URIs stored in the File Storage Service attached to this item.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.DisplayLabel">
+            <summary>
+            Gets the display label.
+            </summary>
+            <value>
+            The display label.
+            </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.VersionableBase" /> class. 
+            Sets the <c>AgencyId</c> to the value of <c>DefaultAgencyId</c>.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.GetChildren">
+            <summary>
+            Gets the identifiers of the item's children.
+            </summary>
+            <returns>The identifiers of the item's children.</returns>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.ManagedCollections">
+            <summary>
+            Gets the managed collections.
+            </summary>
+            <value>
+            The managed collections.
+            </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.ManageCollection(System.Collections.Specialized.INotifyCollectionChanged,System.String)">
+            <summary>
+            Watch collections for changes and relay the change notification upwards.
+            </summary>
+            <param name="collection"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.GetManagedCollectionItems">
+            <summary>
+            Gets the items inside of all managed collection.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.RemoveChild(Algenta.Colectica.Model.IVersionable,System.Collections.IList[])">
+            <summary>
+            Removes the specified child from any of the provided lists.
+            </summary>
+            <param name="itemToRemove">The item to remove.</param>
+            <param name="lists">The lists from which the child should be removed.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">itemToRemove</exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple,System.Collections.IList[])">
+            <summary>
+            Removes the child with the specified identifier from any of the provided lists.
+            </summary>
+            <param name="itemToRemove">The identifier of the item to remove.</param>
+            <param name="lists">The lists.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">itemToRemove</exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.ReplaceChild(Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Replaces the child with the specified identifier with the provided item.
+            </summary>
+            <param name="toReplace">The identifier of the child to replace.</param>
+            <param name="child">The new child.</param>
+            <returns>
+            The number of children replaced.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">child</exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.RemoveChild(Algenta.Colectica.Model.Utility.IdentifierTriple)">
+            <summary>
+            Removes the specified child.
+            </summary>
+            <param name="child">The child to be removed.</param>
+            <returns>
+            The number of children removed from the item.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">child</exception>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.AddChild(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Adds the provided child to this item.
+            </summary>
+            <param name="child">The item to be added as a child of this item.</param>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="P:Algenta.Colectica.Model.VersionableBase.ChildTypesAccepted">
+            <summary>
+            Gets the child types that may be added to this item type.
+            </summary>
+            <value>
+            The child types that may be added to this item type.
+            </value>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.TryReplaceChild``1(System.Func{``0},System.Action{``0},Algenta.Colectica.Model.Utility.IdentifierTriple,Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Tries the replace child.
+            </summary>
+            <typeparam name="T">The type of item being replaced</typeparam>
+            <param name="getter">A function to get the item that will be replaced.</param>
+            <param name="setter">A function to set the item that will be replaced.</param>
+            <param name="toReplace">To identifier of the item to replace.</param>
+            <param name="child">The child that will replace the previous child.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.VersionableBase.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Workflow.IGraphModifier">
+            <summary>
+            Provides a method that Colectica Workflow implementers can use to completely remove
+            items that are being processed by the Colectica Workflow server.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.IGraphModifier.Name">
+            <summary>
+            Gets the name of the graph modifier.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.IGraphModifier.Description">
+            <summary>
+            Gets a description that indicates how the graph modifier acts.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Workflow.IGraphModifier.ModifyGraph(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Modifies the children of the specified item.
+            </summary>
+            <param name="item">The item to be modified.</param>
+            <returns><c>true</c> if the item graph was modified in any way; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Workflow.IItemModifier">
+            <summary>
+            Provides methods that Colectica Workflow item filters can use to remove
+            content from an item that is being processed by the Colectica Workflow server.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.IItemModifier.Name">
+            <summary>
+            Gets the name of the filter.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.IItemModifier.Description">
+            <summary>
+            Gets a description of the filter.
+            </summary>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Workflow.IItemModifier.SupportsItem(System.Guid)">
+            <summary>
+            Determines whether this filter is capable of filtering information from an
+            item of the specified type.
+            </summary>
+            <param name="itemType">The type of item to determine if this filter is 
+            capable of filtering.</param>
+            <returns><c>true</c> if this filter can filter information from an item of
+            the specified type; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:Algenta.Colectica.Model.Workflow.IItemModifier.ModifyItem(Algenta.Colectica.Model.IVersionable)">
+            <summary>
+            Modifies the item according to appropriate business rules.
+            </summary>
+            <param name="item">The item to be modified.</param>
+            <returns><c>true</c> if the item was modified in any way; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="T:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo">
+            <summary>
+            Represents information required to connect to a Colectica Workflow server.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.Url">
+            <summary>
+            Gets or sets the URL of the Colectica Workflow server.
+            </summary>
+            <value>
+            The URL of the Colectica Workflow server.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.AuthenticationMethod">
+            <summary>
+            Gets or sets the authentication method used to connect to the workflow server.
+            </summary>
+            <value>
+            The authentication method used to connect to the workflow server.
+            </value>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.UserName">
+            <summary>
+            Gets or sets the username used to connect to the workflow server, when <c>AuthenticationMethod</c> is set to <c>UserName</c>.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.Password">
+            <summary>
+            Gets or sets the password used to connect to the workflow server, when <c>AuthenticationMethod</c> is set to <c>UserName</c>.
+            </summary>
+        </member>
+        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.DisplayLabel">
+            <summary>
+            Gets a label to be displayed when the instance is shown in a list.
+            </summary>
+        </member>
         <member name="T:net.xmlcatalog.SimpleUrlResolver">
             <summary>
             API for simple URI resolver classes that try a single resolution strategy,
@@ -6120,6 +6432,26 @@
         <member name="F:net.xmlcatalog.StringMatchUrlResolver.log">
             <summary>
             Log4net logger.
+            </summary>
+        </member>
+        <member name="T:net.xmlcatalog.StringMatchUrlResolver.StringMatchType">
+            <summary>
+            Enumeration of the different types of string match.
+            </summary>
+        </member>
+        <member name="F:net.xmlcatalog.StringMatchUrlResolver.StringMatchType.MatchAll">
+            <summary>
+            Perform a full string match and replace.
+            </summary>
+        </member>
+        <member name="F:net.xmlcatalog.StringMatchUrlResolver.StringMatchType.MatchSuffix">
+            <summary>
+            Perform a suffix match and replace.
+            </summary>
+        </member>
+        <member name="F:net.xmlcatalog.StringMatchUrlResolver.StringMatchType.RewritePrefix">
+            <summary>
+            Perform a prefix match and rewrite.
             </summary>
         </member>
         <member name="F:net.xmlcatalog.StringMatchUrlResolver.MatchType">
@@ -6166,26 +6498,6 @@
             <returns>A System.Uri, or null if the resolver can't match the URI</returns>
             <param name="baseUri">Base URI for relative URIs</param>
             <param name="relativeUri">An absolute or relative URI</param>
-        </member>
-        <member name="T:net.xmlcatalog.StringMatchUrlResolver.StringMatchType">
-            <summary>
-            Enumeration of the different types of string match.
-            </summary>
-        </member>
-        <member name="F:net.xmlcatalog.StringMatchUrlResolver.StringMatchType.MatchAll">
-            <summary>
-            Perform a full string match and replace.
-            </summary>
-        </member>
-        <member name="F:net.xmlcatalog.StringMatchUrlResolver.StringMatchType.MatchSuffix">
-            <summary>
-            Perform a suffix match and replace.
-            </summary>
-        </member>
-        <member name="F:net.xmlcatalog.StringMatchUrlResolver.StringMatchType.RewritePrefix">
-            <summary>
-            Perform a prefix match and rewrite.
-            </summary>
         </member>
         <member name="T:net.xmlcatalog.XmlBaseStack">
             <summary>
@@ -6244,6 +6556,26 @@
         <member name="F:net.xmlcatalog.XmlCatalogResolver.log">
             <summary>
             Log4net logger.
+            </summary>
+        </member>
+        <member name="T:net.xmlcatalog.XmlCatalogResolver.PreferType">
+            <summary>
+            Enumeration of the different types of resolver preference.
+            </summary>
+        </member>
+        <member name="F:net.xmlcatalog.XmlCatalogResolver.PreferType.Catalog">
+            <summary>
+            Use preferences as defined in catalogs.
+            </summary>
+        </member>
+        <member name="F:net.xmlcatalog.XmlCatalogResolver.PreferType.System">
+            <summary>
+            Always prefer system IDs to public IDs (override settings in catalogs).
+            </summary>
+        </member>
+        <member name="F:net.xmlcatalog.XmlCatalogResolver.PreferType.Public">
+            <summary>
+            Always prefer public IDs to system IDs (override settings in catalogs).
             </summary>
         </member>
         <member name="F:net.xmlcatalog.XmlCatalogResolver.Prefer">
@@ -6331,233 +6663,6 @@
             </summary>
             <returns>Whitespace normalized string</returns>
             <param name="str">A string</param>
-        </member>
-        <member name="T:net.xmlcatalog.XmlCatalogResolver.PreferType">
-            <summary>
-            Enumeration of the different types of resolver preference.
-            </summary>
-        </member>
-        <member name="F:net.xmlcatalog.XmlCatalogResolver.PreferType.Catalog">
-            <summary>
-            Use preferences as defined in catalogs.
-            </summary>
-        </member>
-        <member name="F:net.xmlcatalog.XmlCatalogResolver.PreferType.System">
-            <summary>
-            Always prefer system IDs to public IDs (override settings in catalogs).
-            </summary>
-        </member>
-        <member name="F:net.xmlcatalog.XmlCatalogResolver.PreferType.Public">
-            <summary>
-            Always prefer public IDs to system IDs (override settings in catalogs).
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.IValidationRule">
-            <summary>
-            Defines a method to validate an arbitrary object and return a result.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.IValidationRule.Validate(System.Object)">
-            <summary>
-            Validates the specified object.
-            </summary>
-            <param name="value">The object to be validated.</param>
-            <returns>The result of the validation.</returns>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.ValidationCheckResult">
-            <summary>
-            Represents the result of a validation check.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.ValidationCheckResult.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Validation.ValidationCheckResult"/> class.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.ValidationCheckResult.#ctor(System.Boolean,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Algenta.Colectica.Model.Validation.ValidationCheckResult"/> class.
-            </summary>
-            <param name="isValid">Whether the checked object is valid.</param>
-            <param name="message">The message.</param>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Validation.ValidationCheckResult.IsValid">
-            <summary>
-            Gets or sets a value indicating whether the object is valid.
-            </summary>
-            <value>
-              <c>true</c> if the value is valid; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Validation.ValidationCheckResult.Message">
-            <summary>
-            Gets or sets a message providing details about why an object is invalid.
-            </summary>
-            <value>
-            The message.
-            </value>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.NumericValidationRule">
-            <summary>
-            Provides a validation method that determines whether the input object is a numeric value.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.NumericValidationRule.Validate(System.Object)">
-            <summary>
-            Validates that the specified value is a valid number.
-            </summary>
-            <param name="value">The value.</param>
-            <returns>
-            The result of the validation.
-            </returns>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.TimeSpanValidationRule">
-            <summary>
-            Provides a validation method that determines whether the input object is a TimeSpan value.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.TimeSpanValidationRule.Validate(System.Object)">
-            <summary>
-            Validates that the specified value is a valid TimeSpan.
-            </summary>
-            <param name="value">The value.</param>
-            <returns>
-            The result of the validation.
-            </returns>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.LatitudeValidationRule">
-            <summary>
-            Provides a validation method that determines whether the input object is a valid latitude on Earth.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.LatitudeValidationRule.Validate(System.Object)">
-            <summary>
-            Validates that the specified value is a valid latitude on Earth.
-            </summary>
-            <param name="value">The value.</param>
-            <returns>
-            The result of the validation.
-            </returns>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.LongitudeValidationRule">
-            <summary>
-            Provides a validation method that determines whether the input object is a valid longitude on Earth.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.LongitudeValidationRule.Validate(System.Object)">
-            <summary>
-            Validates that the specified value is a valid longitude on Earth.
-            </summary>
-            <param name="value">The value.</param>
-            <returns>
-            The result of the validation.
-            </returns>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Validation.UriValidationRule">
-            <summary>
-            Provides a validation method that determines whether the input object is a valid URI.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Validation.UriValidationRule.Validate(System.Object)">
-            <summary>
-            Validates that the specified value is a valid URI.
-            </summary>
-            <param name="value">The value.</param>
-            <returns>
-            The result of the validation.
-            </returns>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Workflow.IGraphModifier">
-            <summary>
-            Provides a method that Colectica Workflow implementers can use to completely remove
-            items that are being processed by the Colectica Workflow server.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Workflow.IGraphModifier.ModifyGraph(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Modifies the children of the specified item.
-            </summary>
-            <param name="item">The item to be modified.</param>
-            <returns><c>true</c> if the item graph was modified in any way; otherwise <c>false</c>.</returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.IGraphModifier.Name">
-            <summary>
-            Gets the name of the graph modifier.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.IGraphModifier.Description">
-            <summary>
-            Gets a description that indicates how the graph modifier acts.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Workflow.IItemModifier">
-            <summary>
-            Provides methods that Colectica Workflow item filters can use to remove
-            content from an item that is being processed by the Colectica Workflow server.
-            </summary>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Workflow.IItemModifier.SupportsItem(System.Guid)">
-            <summary>
-            Determines whether this filter is capable of filtering information from an
-            item of the specified type.
-            </summary>
-            <param name="itemType">The type of item to determine if this filter is 
-            capable of filtering.</param>
-            <returns><c>true</c> if this filter can filter information from an item of
-            the specified type; otherwise <c>false</c>.</returns>
-        </member>
-        <member name="M:Algenta.Colectica.Model.Workflow.IItemModifier.ModifyItem(Algenta.Colectica.Model.IVersionable)">
-            <summary>
-            Modifies the item according to appropriate business rules.
-            </summary>
-            <param name="item">The item to be modified.</param>
-            <returns><c>true</c> if the item was modified in any way; otherwise <c>false</c>.</returns>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.IItemModifier.Name">
-            <summary>
-            Gets the name of the filter.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.IItemModifier.Description">
-            <summary>
-            Gets a description of the filter.
-            </summary>
-        </member>
-        <member name="T:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo">
-            <summary>
-            Represents information required to connect to a Colectica Workflow server.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.Url">
-            <summary>
-            Gets or sets the URL of the Colectica Workflow server.
-            </summary>
-            <value>
-            The URL of the Colectica Workflow server.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.AuthenticationMethod">
-            <summary>
-            Gets or sets the authentication method used to connect to the workflow server.
-            </summary>
-            <value>
-            The authentication method used to connect to the workflow server.
-            </value>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.UserName">
-            <summary>
-            Gets or sets the username used to connect to the workflow server, when <c>AuthenticationMethod</c> is set to <c>UserName</c>.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.Password">
-            <summary>
-            Gets or sets the password used to connect to the workflow server, when <c>AuthenticationMethod</c> is set to <c>UserName</c>.
-            </summary>
-        </member>
-        <member name="P:Algenta.Colectica.Model.Workflow.WorkflowServerConnectionInfo.DisplayLabel">
-            <summary>
-            Gets a label to be displayed when the instance is shown in a list.
-            </summary>
         </member>
     </members>
 </doc>
