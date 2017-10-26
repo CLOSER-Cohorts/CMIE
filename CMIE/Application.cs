@@ -1,0 +1,210 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SysCon = System.Console;
+
+using CMIE.Events;
+using CMIE.ControllerSystem;
+using CMIE.Console;
+
+namespace CMIE
+{
+    class Application : IEventListener
+    {
+        private string buildDirectory;
+        private string controlFile;
+        private string host;
+        private bool keepGoing;
+        private bool quit;
+        private EventManager eventManager;
+        private Controller controller;
+        private CommandConsole console;
+        private Committer committer;
+        private Queue<IJob> pendingJobs;
+        private List<IJob> completedJobs;
+
+        public Application(string[] args = null)
+        {
+            buildDirectory = null;
+            controlFile = null;
+            keepGoing = false;
+            quit = false;
+            host = "localhost";
+            if (args != null) ParseArgs(args);
+        }
+
+        public bool Initialize()
+        {
+            if (controlFile == null)
+            {
+                SysCon.WriteLine("No control file was specified.");
+                return false;
+            }
+            else
+            {
+                SysCon.SetWindowSize(
+                    Math.Min(150, SysCon.LargestWindowWidth),
+                    Math.Min(60, SysCon.LargestWindowHeight)
+                    );
+
+                eventManager = new Events.EventManager();
+                controller = new ControllerSystem.Controller(eventManager, controlFile);
+                committer = new Committer(eventManager, host);
+
+                console = new Console.CommandConsole(eventManager);
+
+                pendingJobs = new Queue<IJob>();
+                completedJobs = new List<IJob>();
+
+                AddListeners();
+                AddCommands();
+
+                eventManager.FireEvent(new LoadControlFileEvent());
+
+                return true;
+            }
+        }
+
+        public void ParseArgs(string[] args)
+        {
+            for (var i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-b")
+                {
+                    buildDirectory = args[i + 1];
+                    i++;
+                    continue;
+                }
+                if (args[i] == "-c")
+                {
+                    controlFile = args[i + 1];
+                    i++;
+                }
+                if (args[i] == "-y")
+                {
+                    keepGoing = true;
+                }
+                if (args[i] == "-h")
+                {
+                    host = args[i + 1];
+                    i++;
+                    continue;
+                }
+            }
+        }
+
+        public void Run()
+        {
+            SysCon.WriteLine("Please enter the group or scope you would like to process.");
+            SysCon.WriteLine("(Write ls [groups/scopes] to get a list of all available groups and scopes)");
+            while (!quit)
+            {
+                RunJobs();
+                console.Run();
+            }
+        }
+
+        private void AddListeners()
+        {
+            eventManager.AddListener(Events.EventType.LOAD_CONTROL_FILE, controller);
+            eventManager.AddListener(Events.EventType.LIST_SCOPE_OPTIONS, controller);
+            eventManager.AddListener(Events.EventType.UPDATE_SELECTED, controller);
+            eventManager.AddListener(Events.EventType.STATUS, controller);
+            eventManager.AddListener(Events.EventType.LIST_AVAILABLE_COMMANDS, console);
+            eventManager.AddListener(Events.EventType.UPDATE_COMMAND, console);
+            eventManager.AddListener(Events.EventType.JOB_COMPLETED, controller);
+            eventManager.AddListener(Events.EventType.EVALUATE, this);
+            eventManager.AddListener(Events.EventType.BUILD, this);
+            eventManager.AddListener(Events.EventType.COMMIT, this);
+            eventManager.AddListener(Events.EventType.QUIT, this);
+        }
+
+        private void AddCommands()
+        {
+            console.RegisterCommand(new QuitCommand(eventManager));
+            console.RegisterCommand(new HelpCommand(eventManager));
+            console.RegisterCommand(new StatusCommand(eventManager));
+            console.RegisterCommand(new EvaluateCommand(eventManager));
+            console.RegisterCommand(new ListOptionsCommand(eventManager));
+            console.RegisterCommand(new AddSelectionCommand(eventManager));
+        }
+
+        private void RunJobs()
+        {
+            while (pendingJobs.Count > 0)
+            {
+                var job = pendingJobs.Dequeue();
+
+                job.Run();
+
+                completedJobs.Add(job);
+            }
+        }
+
+        public void OnEvent(IEvent _event)
+        {
+            switch (_event.GetEventType())
+            {
+                case EventType.QUIT:
+                    quit = true;
+                    break;
+
+                case EventType.BUILD:
+                    OnBuild(_event);
+                    break;
+
+                case EventType.COMMIT:
+                    OnCommit(_event);
+                    break;
+
+                case EventType.EVALUATE:
+                    pendingJobs.Enqueue(new Evaluation(eventManager, controller, host));
+                    break;
+
+                default:
+                    SysCon.WriteLine("Application could not handle event.");
+                    break;
+            }
+        }
+
+        private void OnBuild(IEvent _event)
+        {
+            var buildEvent = (BuildEvent)_event;
+            if (buildEvent.All)
+            {
+                foreach (var scope in controller.GetSelectedScopes())
+                {
+                    // Remove duplicate code
+                    if (scope.update)
+                    {
+                        pendingJobs.Enqueue(new Comparison(eventManager, scope, host));
+                    }
+                    else
+                    {
+                        pendingJobs.Enqueue(committer.AddToCommit(scope));
+                    }
+                }
+            }
+            else
+            {
+                var scope = controller.GetScope(buildEvent.Scope);
+                if (scope.update)
+                {
+                    pendingJobs.Enqueue(new Comparison(eventManager, scope, host));
+                }
+                else
+                {
+                    pendingJobs.Enqueue(committer.AddToCommit(scope));
+                }
+            }
+        }
+
+        private void OnCommit(IEvent _event)
+        {
+            var commitEvent = (CommitEvent)_event;
+            committer.Commit(commitEvent.Rationale);
+        }
+    }
+}
