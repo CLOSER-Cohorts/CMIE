@@ -149,7 +149,7 @@ namespace CMIE
 
         public void OnEvent(IEvent _event)
         {
-            switch (_event.GetEventType())
+            switch (_event.Type)
             {
                 case EventType.QUIT:
                     quit = true;

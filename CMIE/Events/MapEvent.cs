@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class MapEvent : IEvent
+    internal class MapEvent : IEvent
     {
         public enum MappingType
         {
@@ -17,39 +11,36 @@ namespace CMIE.Events
         };
         public bool AllScopes;
         public string Scope;
-        private MappingType Type;
+        private readonly MappingType _mappingType;
 
         public MapEvent(MappingType type = MappingType.ALL)
         {
             AllScopes = true;
-            Type = type;
+            _mappingType = type;
         }
 
         public MapEvent(string scope, MappingType type = MappingType.ALL)
         {
             AllScopes = false;
             Scope = scope;
-            Type = type;
+            _mappingType = type;
         }
-
-        public EventType GetEventType()
-        {
-            return EventType.MAP;
-        }
+        
+        public override EventType Type => EventType.MAP;
 
         public bool DVMap()
         {
-            return Type == MappingType.ALL || Type == MappingType.DV;
+            return _mappingType == MappingType.ALL || _mappingType == MappingType.DV;
         }
 
         public bool QVMap()
         {
-            return Type == MappingType.ALL || Type == MappingType.QV;
+            return _mappingType == MappingType.ALL || _mappingType == MappingType.QV;
         }
 
         public bool RVMap()
         {
-            return Type == MappingType.ALL || Type == MappingType.RV;
+            return _mappingType == MappingType.ALL || _mappingType == MappingType.RV;
         }
     }
 }

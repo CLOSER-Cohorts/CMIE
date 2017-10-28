@@ -307,7 +307,7 @@ namespace CMIE.ControllerSystem
 
         public void OnEvent(IEvent _event)
         {
-            switch (_event.GetEventType())
+            switch (_event.Type)
             {
                 case EventType.JOB_COMPLETED:
                     OnJobCompleted(_event);

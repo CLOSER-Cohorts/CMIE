@@ -104,7 +104,7 @@ namespace CMIE.Console
 
         public void OnEvent(IEvent _event)
         {
-            switch(_event.GetEventType())
+            switch(_event.Type)
             {
                 case EventType.LIST_AVAILABLE_COMMANDS:
                     OnListAvailabeCommands(_event);
@@ -132,13 +132,13 @@ namespace CMIE.Console
         private void OnUpdateCommand(IEvent _event)
         {
             var updateCommandEvent = (UpdateCommandEvent)_event;
-            if (updateCommandEvent.action == UpdateCommandEvent.Actions.ADD)
+            if (updateCommandEvent.Action == UpdateCommandEvent.Actions.ADD)
             {
-                RegisterCommand(ResolveCommand(updateCommandEvent.command));
+                RegisterCommand(ResolveCommand(updateCommandEvent.Command));
             }
             else
             {
-                DeregisterCommand(ResolveCommand(updateCommandEvent.command));
+                DeregisterCommand(ResolveCommand(updateCommandEvent.Command));
             }
         }
 

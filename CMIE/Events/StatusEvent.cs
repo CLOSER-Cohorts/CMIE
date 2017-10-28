@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class StatusEvent : IEvent
+    internal class StatusEvent : IEvent
     {
-        public StatusEvent() { }
-
-        public EventType GetEventType()
-        {
-            return EventType.STATUS;
-        }
+        public override EventType Type => EventType.STATUS;
     }
 }

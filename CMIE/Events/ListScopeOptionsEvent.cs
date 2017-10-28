@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class ListScopeOptionsEvent : IEvent
+    internal class ListScopeOptionsEvent : IEvent
     {
         public bool Scopes;
         public bool Groups;
@@ -16,10 +10,7 @@ namespace CMIE.Events
             Scopes = true;
             Groups = true;
         }
-
-        public EventType GetEventType()
-        {
-            return EventType.LIST_SCOPE_OPTIONS;
-        }
+        
+        public override EventType Type => EventType.LIST_SCOPE_OPTIONS;
     }
 }

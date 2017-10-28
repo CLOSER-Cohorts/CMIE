@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Console;
-using CMIE.Events;
+﻿using CMIE.Console;
 
 namespace CMIE.Events
 {
-    class UpdateCommandEvent : IEvent
+    internal class UpdateCommandEvent : IEvent
     {
         public enum Actions
         {
@@ -17,18 +10,15 @@ namespace CMIE.Events
             REMOVE
         }
 
-        public Actions action;
-        public Commands command;
+        public Actions Action;
+        public Commands Command;
 
         public UpdateCommandEvent(Actions action, Commands command)
         {
-            this.action = action;
-            this.command = command;
+            Action = action;
+            Command = command;
         }
-
-        public EventType GetEventType()
-        {
-            return EventType.UPDATE_COMMAND;
-        }
+        
+        public override EventType Type => EventType.UPDATE_COMMAND;
     }
 }
