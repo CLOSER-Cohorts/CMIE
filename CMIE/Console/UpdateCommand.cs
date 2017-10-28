@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class UpdateCommand : ICommand
+    internal class UpdateCommand : ICommand
     {
         public UpdateCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "update" };
+            Aliases = new[] { "update" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.UPDATE;
-            }
-        }
+        public override Commands Type => Commands.UPDATE;
 
         public override bool Do(string[] arguments)
         {

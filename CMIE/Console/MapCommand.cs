@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class MapCommand : ICommand
+    internal class MapCommand : ICommand
     {
         public MapCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "map" };
+            Aliases = new[] { "map" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.MAP;
-            }
-        }
+        public override Commands Type => Commands.MAP;
 
         public override bool Do(string[] arguments)
         {

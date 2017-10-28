@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using CMIE.Events;
 
@@ -10,9 +7,9 @@ namespace CMIE.Console
 {
     abstract class ICommand
     {
-        protected string[] aliases;
+        protected string[] Aliases;
         protected EventManager EventManager;
-        protected string [] lastArguments;
+        protected string [] LastArguments;
 
         protected ICommand(EventManager em)
         {
@@ -26,7 +23,7 @@ namespace CMIE.Console
 
         public bool Do()
         {
-            return Do(lastArguments);
+            return Do(LastArguments);
         }
 
         public abstract bool Do(string[] arguments);
@@ -36,13 +33,10 @@ namespace CMIE.Console
         public bool IsMatch(string command)
         {
             var chunks = command.Split(' ');
-            if (Array.Exists(aliases, a => a == chunks.First()))
-            {
-                lastArguments = chunks;
-                return true;
-            }
-            else
-                return false;
+            if (!Array.Exists(Aliases, a => a == chunks.First())) return false;
+            
+            LastArguments = chunks;
+            return true;
         }
     }
 }

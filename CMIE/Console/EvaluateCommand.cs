@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class EvaluateCommand : ICommand
+    internal class EvaluateCommand : ICommand
     {
         public EvaluateCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "evaluate", "eval", "ev" };
+            Aliases = new[] { "evaluate", "eval", "ev" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.EVALUATE;
-            }
-        }
+        public override Commands Type => Commands.EVALUATE;
 
         public override bool Do(string[] arguments)
         {

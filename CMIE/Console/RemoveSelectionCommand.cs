@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class RemoveSelectionCommand : ICommand
+    internal class RemoveSelectionCommand : ICommand
     {
         public RemoveSelectionCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "deselect", "dsel" };
+            Aliases = new[] { "deselect", "dsel" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.REMOVE_SELECTION;
-            }
-        }
+        public override Commands Type => Commands.REMOVE_SELECTION;
 
         public override bool Do(string[] arguments)
         {
