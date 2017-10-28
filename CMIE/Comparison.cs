@@ -1,39 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SysCon = System.Console;
+﻿using SysCon = System.Console;
 
 using Algenta.Colectica.Model.Repository;
-using Algenta.Colectica.Model.Ddi;
 
 using CMIE.Events;
 using CMIE.ControllerSystem;
 
 namespace CMIE
 {
-    class Comparison : IJob
+    internal class Comparison : IJob
     {
-        private EventManager eventManager;
-        private Scope scope;
-        private string host;
-        private RepositoryClientBase client;
+        private readonly EventManager _eventManager;
+        private Scope _scope;
+        private readonly string _host;
+        private RepositoryClientBase _client;
 
         public Comparison(EventManager eventManager, Scope scope, string host)
         {
-            this.eventManager = eventManager;
-            this.scope = scope;
-            this.host = host;
+            _eventManager = eventManager;
+            _scope = scope;
+            _host = host;
         }
 
         public void Run()
         {
-            client = Utility.GetClient(host);
+            _client = Utility.GetClient(_host);
             
 
 
-            eventManager.FireEvent(new JobCompletedEvent(JobCompletedEvent.JobType.COMPARISON));
+            _eventManager.FireEvent(new JobCompletedEvent(JobCompletedEvent.JobType.COMPARISON));
         }
     }
 }

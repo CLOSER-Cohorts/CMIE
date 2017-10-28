@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SysCon = System.Console;
 
 using Algenta.Colectica.Model.Repository;
@@ -13,29 +10,29 @@ using CMIE.ControllerSystem;
 
 namespace CMIE
 {
-    class Evaluation : IJob
+    internal class Evaluation : IJob
     {
-        private EventManager eventManager;
-        private Controller controller;
-        private string host;
-        private RepositoryClientBase client;
+        private readonly EventManager _eventManager;
+        private readonly Controller _controller;
+        private readonly string _host;
+        private RepositoryClientBase _client;
 
         public Evaluation(EventManager eventManager, Controller controller, string host)
         {
-            this.eventManager = eventManager;
-            this.controller = controller;
-            this.host = host;
+            _eventManager = eventManager;
+            _controller = controller;
+            _host = host;
         }
 
         public void Run()
         {
-            if (!controller.HasSelected())
+            if (!_controller.HasSelected())
             {
                 SysCon.WriteLine("Error: Nothing selected for evaluation.");
                 return;
             }
-            client = Utility.GetClient(host);
-            foreach (var scope in controller.GetSelectedScopes())
+            _client = Utility.GetClient(_host);
+            foreach (var scope in _controller.GetSelectedScopes())
             {
                 scope.Build();
                 Guid[] bindingPoints = {
@@ -51,7 +48,7 @@ namespace CMIE
                 }
                 facet.SearchTargets.Add(DdiStringType.UserId);
 
-                foreach (var bindingPoint in scope.workingSet.Where(x => Array.Exists(bindingPoints, y => y == x.ItemType)))
+                foreach (var bindingPoint in scope.WorkingSet.Where(x => Array.Exists(bindingPoints, y => y == x.ItemType)))
                 {
                     facet.SearchTerms.Add(bindingPoint.UserIds[0].Identifier);
                 }
@@ -62,7 +59,7 @@ namespace CMIE
                     continue;
                 }
 
-                if (client.Search(facet).TotalResults > 0)
+                if (_client.Search(facet).TotalResults > 0)
                 {
                     scope.update = true;
                 }
@@ -70,7 +67,7 @@ namespace CMIE
                 SysCon.WriteLine("{0,-15}: {1}", scope.name, scope.update ? "Update" : "New");
             }
 
-            eventManager.FireEvent(new JobCompletedEvent(JobCompletedEvent.JobType.EVALUATION));
+            _eventManager.FireEvent(new JobCompletedEvent(JobCompletedEvent.JobType.EVALUATION));
         }
     }
 }

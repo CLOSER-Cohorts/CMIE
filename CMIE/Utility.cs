@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Repository;
@@ -33,28 +31,28 @@ namespace CMIE
 
         public static IVersionable GetItem(RepositoryClientBase client, string urn)
         {
-            string[] pieces = urn.Split(':');
-            if (pieces.Count() == 3)
+            var pieces = urn.Split(':');
+            switch (pieces.Length)
             {
-                return client.GetItem(
-                    new Guid(pieces[1]),
-                    pieces[0],
-                    Convert.ToInt64(pieces[2])
+                case 3:
+                    return client.GetItem(
+                        new Guid(pieces[1]),
+                        pieces[0],
+                        Convert.ToInt64(pieces[2])
                     );
-            }
-            if (pieces.Count() == 2)
-            {
-                return client.GetLatestItem(
-                    new Guid(pieces[1]),
-                    pieces[0]
+                case 2:
+                    return client.GetLatestItem(
+                        new Guid(pieces[1]),
+                        pieces[0]
                     );
+                default:
+                    throw new Exception("Poorly formatted URN");   
             }
-            throw new Exception("Poorly formatted URN");
         }
 
         public class ObservableCollectionFast<T> : ObservableCollection<T>
         {
-            public ObservableCollectionFast() : base() { }
+            public ObservableCollectionFast() { }
 
             public ObservableCollectionFast(IEnumerable<T> collection) : base(collection) { }
 
@@ -67,14 +65,14 @@ namespace CMIE
                     Items.Add(item);
                 }
 
-                this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
 
             public void Reset(IEnumerable<T> range)
             {
-                this.Items.Clear();
+                Items.Clear();
 
                 AddRange(range);
             }
@@ -82,7 +80,7 @@ namespace CMIE
 
         public class ObservableCollectionUnique<T> : ObservableCollection<T>
         {
-            public ObservableCollectionUnique() : base() { }
+            public ObservableCollectionUnique() { }
 
             public ObservableCollectionUnique(IEnumerable<T> collection) : base(collection) { }
 
@@ -90,18 +88,12 @@ namespace CMIE
 
             public new bool Add(T item)
             {
-                if (!Items.Contains(item))
-                {
-                    Items.Add(item);
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                    //this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                if (Items.Contains(item)) return false;
+                Items.Add(item);
+                OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                //this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+                return true;
             }
         }
     }

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SysCon = System.Console;
 
 using Algenta.Colectica.Model.Utility;
@@ -46,31 +43,28 @@ namespace CMIE
                 SysCon.WriteLine("No control file was specified.");
                 return false;
             }
-            else
-            {
-                SysCon.SetWindowSize(
-                    Math.Min(150, SysCon.LargestWindowWidth),
-                    Math.Min(60, SysCon.LargestWindowHeight)
-                    );
+            SysCon.SetWindowSize(
+                Math.Min(150, SysCon.LargestWindowWidth),
+                Math.Min(60, SysCon.LargestWindowHeight)
+            );
 
-                eventManager = new Events.EventManager();
-                controller = new ControllerSystem.Controller(eventManager, controlFile);
-                repository = new Repository(host);
-                committer = new Committer(eventManager, repository, host);
-                mapper = new Mapper(repository); 
+            eventManager = new EventManager();
+            controller = new Controller(eventManager, controlFile);
+            repository = new Repository(host);
+            committer = new Committer(eventManager, repository, host);
+            mapper = new Mapper(repository); 
 
-                console = new Console.CommandConsole(eventManager);
+            console = new CommandConsole(eventManager);
 
-                pendingJobs = new Queue<IJob>();
-                completedJobs = new List<IJob>();
+            pendingJobs = new Queue<IJob>();
+            completedJobs = new List<IJob>();
 
-                AddListeners();
-                AddCommands();
+            AddListeners();
+            AddCommands();
 
-                eventManager.FireEvent(new LoadControlFileEvent());
+            eventManager.FireEvent(new LoadControlFileEvent());
 
-                return true;
-            }
+            return true;
         }
 
         public void ParseArgs(string[] args)
@@ -114,19 +108,19 @@ namespace CMIE
 
         private void AddListeners()
         {
-            eventManager.AddListener(Events.EventType.LOAD_CONTROL_FILE, controller);
-            eventManager.AddListener(Events.EventType.LIST_SCOPE_OPTIONS, controller);
-            eventManager.AddListener(Events.EventType.UPDATE_SELECTED, controller);
-            eventManager.AddListener(Events.EventType.STATUS, controller);
-            eventManager.AddListener(Events.EventType.LIST_AVAILABLE_COMMANDS, console);
-            eventManager.AddListener(Events.EventType.UPDATE_COMMAND, console);
-            eventManager.AddListener(Events.EventType.JOB_COMPLETED, controller);
-            eventManager.AddListener(Events.EventType.JOB_COMPLETED, this);
-            eventManager.AddListener(Events.EventType.EVALUATE, this);
-            eventManager.AddListener(Events.EventType.BUILD, this);
-            eventManager.AddListener(Events.EventType.MAP, this);
-            eventManager.AddListener(Events.EventType.COMMIT, this);
-            eventManager.AddListener(Events.EventType.QUIT, this);
+            eventManager.AddListener(EventType.LOAD_CONTROL_FILE, controller);
+            eventManager.AddListener(EventType.LIST_SCOPE_OPTIONS, controller);
+            eventManager.AddListener(EventType.UPDATE_SELECTED, controller);
+            eventManager.AddListener(EventType.STATUS, controller);
+            eventManager.AddListener(EventType.LIST_AVAILABLE_COMMANDS, console);
+            eventManager.AddListener(EventType.UPDATE_COMMAND, console);
+            eventManager.AddListener(EventType.JOB_COMPLETED, controller);
+            eventManager.AddListener(EventType.JOB_COMPLETED, this);
+            eventManager.AddListener(EventType.EVALUATE, this);
+            eventManager.AddListener(EventType.BUILD, this);
+            eventManager.AddListener(EventType.MAP, this);
+            eventManager.AddListener(EventType.COMMIT, this);
+            eventManager.AddListener(EventType.QUIT, this);
         }
 
         private void AddCommands()
@@ -227,7 +221,7 @@ namespace CMIE
 
         private void OnJobCompleted(IEvent _event)
         {
-            var jobCompletedEvent = (JobCompletedEvent)_event;
+            throw new NotImplementedException();
         }
 
         private void OnMap(IEvent _event)

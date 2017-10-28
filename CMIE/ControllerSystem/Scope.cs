@@ -24,33 +24,33 @@ namespace CMIE.ControllerSystem
             name = _name;
             update = false;
             Init();
-            comparator = new Comparator(workingSet);
+            comparator = new Comparator(WorkingSet);
         }
 
         public void AddAction(IAction action)
         {
-            actions.Add(action);
+            Actions.Add(action);
         }
 
         public void AddResource(IResource resource)
         {
-            resources.Add(resource);
+            Resources.Add(resource);
         }
 
         public void Build()
         {
-            if (!resources.All(x => x.valid))
+            if (!Resources.All(x => x.valid))
             {
                 SysCon.WriteLine("Error: '{0}' could not build as not all resources are valid.", name);
                 return;
             }
 
-            foreach (var resource in resources)
+            foreach (var resource in Resources)
             {
                 try
                 {
-                    workingSet.AddRange(resource.Build(workingSet));
-                    counter[Counters.Total] = workingSet.Count;
+                    WorkingSet.AddRange(resource.Build(WorkingSet));
+                    Counter[Counters.Total] = WorkingSet.Count;
                 }
                 catch (Exception e)
                 {
@@ -162,12 +162,12 @@ namespace CMIE.ControllerSystem
 
         public List<IVersionable> GetUpdates()
         {
-            return toBeAdded;
+            return ToBeAdded;
         }
 
         public void  FindUpdates()
         {
-            if (!actions.All(x => x.valid))
+            if (!Actions.All(x => x.valid))
             {
                 SysCon.WriteLine("Error: '{0}' could not find updates as not all actions are valid.", name);
                 return;
@@ -179,7 +179,7 @@ namespace CMIE.ControllerSystem
             }
             else
             {
-                toBeAdded.AddRange(workingSet);
+                ToBeAdded.AddRange(WorkingSet);
             }
         }
 
@@ -187,7 +187,7 @@ namespace CMIE.ControllerSystem
         {
             var output = new List<Tuple<string, IVersionable>>();
 
-            foreach (var resource in resources)
+            foreach (var resource in Resources)
             {
                 if (resource.Parent.Length < 2) continue;
 
@@ -202,7 +202,7 @@ namespace CMIE.ControllerSystem
 
         public void Validate()
         {
-            foreach (var action in actions)
+            foreach (var action in Actions)
             {
                 try
                 {
@@ -215,7 +215,7 @@ namespace CMIE.ControllerSystem
                 }
             }
 
-            foreach (var resource in resources)
+            foreach (var resource in Resources)
             {
                 try
                 {
