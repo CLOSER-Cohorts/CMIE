@@ -40,7 +40,8 @@ namespace CMIE
                 scope.Build();
                 Guid[] bindingPoints = {
                                            DdiItemType.Instrument, 
-                                           DdiItemType.PhysicalInstance
+                                           DdiItemType.PhysicalInstance,
+                                           DdiItemType.ResourcePackage
                                        };
 
                 var facet = new SearchFacet();

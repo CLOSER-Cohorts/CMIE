@@ -22,9 +22,9 @@ namespace CMIE.ControllerSystem.Actions
 
         public LoadTQLinking(string _filepath) : base(_filepath) {}
 
-        public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
+        public override IEnumerable<IVersionable> Build(Repository repository)
         {
-            if (ccs == default(ControlConstructScheme))
+            /*if (ccs == default(ControlConstructScheme))
             {
                 var client = Utility.GetClient();
                 var facet = new SearchFacet();
@@ -49,7 +49,7 @@ namespace CMIE.ControllerSystem.Actions
                 }
             }
 
-            RunFile(Runner, ws);
+            RunFile(Runner, ws);*/
             return new List<IVersionable>();
         }
 
@@ -77,13 +77,13 @@ namespace CMIE.ControllerSystem.Actions
             }
         }
 
-        public override void Runner(string[] parts, IEnumerable<IVersionable> ws)
+        public override void Runner(string[] parts)
         {
             string qref = parts[parts.Length - 2].Trim();
             string tref = parts[parts.Length - 1].Trim();
 
             if (tref == "0") return;
-
+            /*
             var scopedWS = ws;
 
             if (parts.Length > 2)
@@ -130,7 +130,7 @@ namespace CMIE.ControllerSystem.Actions
                         ccg.AddChild(question);
                     }
                 }
-            }
+            }*/
         }
     }
 }

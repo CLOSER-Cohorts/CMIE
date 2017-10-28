@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SysCon = System.Console;
 
+using Algenta.Colectica.Model.Utility;
+
 using CMIE.Events;
 using CMIE.ControllerSystem;
 using CMIE.Console;
@@ -22,6 +24,8 @@ namespace CMIE
         private Controller controller;
         private CommandConsole console;
         private Committer committer;
+        private Repository repository;
+        private Mapper mapper;
         private Queue<IJob> pendingJobs;
         private List<IJob> completedJobs;
 
@@ -51,7 +55,9 @@ namespace CMIE
 
                 eventManager = new Events.EventManager();
                 controller = new ControllerSystem.Controller(eventManager, controlFile);
-                committer = new Committer(eventManager, host);
+                repository = new Repository(host);
+                committer = new Committer(eventManager, repository, host);
+                mapper = new Mapper(repository); 
 
                 console = new Console.CommandConsole(eventManager);
 
@@ -115,8 +121,10 @@ namespace CMIE
             eventManager.AddListener(Events.EventType.LIST_AVAILABLE_COMMANDS, console);
             eventManager.AddListener(Events.EventType.UPDATE_COMMAND, console);
             eventManager.AddListener(Events.EventType.JOB_COMPLETED, controller);
+            eventManager.AddListener(Events.EventType.JOB_COMPLETED, this);
             eventManager.AddListener(Events.EventType.EVALUATE, this);
             eventManager.AddListener(Events.EventType.BUILD, this);
+            eventManager.AddListener(Events.EventType.MAP, this);
             eventManager.AddListener(Events.EventType.COMMIT, this);
             eventManager.AddListener(Events.EventType.QUIT, this);
         }
@@ -136,6 +144,8 @@ namespace CMIE
             while (pendingJobs.Count > 0)
             {
                 var job = pendingJobs.Dequeue();
+
+                SysCon.WriteLine("Processing job. {0} jobs remaining.", pendingJobs.Count);
 
                 job.Run();
 
@@ -161,6 +171,14 @@ namespace CMIE
 
                 case EventType.EVALUATE:
                     pendingJobs.Enqueue(new Evaluation(eventManager, controller, host));
+                    break;
+
+                case EventType.JOB_COMPLETED:
+                    OnJobCompleted(_event);
+                    break;
+
+                case EventType.MAP:
+                    OnMap(_event);
                     break;
 
                 default:
@@ -205,6 +223,58 @@ namespace CMIE
         {
             var commitEvent = (CommitEvent)_event;
             committer.Commit(commitEvent.Rationale);
+        }
+
+        private void OnJobCompleted(IEvent _event)
+        {
+            var jobCompletedEvent = (JobCompletedEvent)_event;
+        }
+
+        private void OnMap(IEvent _event)
+        {
+            try
+            {
+                var mapEvent = (MapEvent)_event;
+                if (mapEvent.AllScopes)
+                {
+                    foreach (var scope in controller.GetSelectedScopes())
+                    {
+                        if (mapEvent.QVMap())
+                        {
+                            pendingJobs.Enqueue(mapper.QV(scope));
+                        }
+                        if (mapEvent.DVMap())
+                        {
+                            pendingJobs.Enqueue(mapper.DV(scope));
+                        }
+                        if (mapEvent.RVMap())
+                        {
+                            pendingJobs.Enqueue(mapper.RV(scope));
+                        }
+                    }
+                }
+                else
+                {
+                    var scope = controller.GetScope(mapEvent.Scope);
+                    if (mapEvent.QVMap())
+                    {
+                        pendingJobs.Enqueue(mapper.QV(scope));
+                    }
+                    if (mapEvent.DVMap())
+                    {
+                        pendingJobs.Enqueue(mapper.DV(scope));
+                    }
+                    if (mapEvent.RVMap())
+                    {
+                        pendingJobs.Enqueue(mapper.RV(scope));
+                    }
+                }
+                pendingJobs.Enqueue(committer.AddToCommit(mapper.Clear));
+            }
+            catch(Exception e)
+            {
+                Logger.Instance.Log.Error(e.Message);
+            }
         }
     }
 }

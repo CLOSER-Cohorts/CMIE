@@ -11,7 +11,8 @@ namespace CMIE.Events
         public enum JobType
         {
             EVALUATION,
-            COMPARISON
+            COMPARISON,
+            MAPPING
         }
 
         public JobType JobTypeCompleted;

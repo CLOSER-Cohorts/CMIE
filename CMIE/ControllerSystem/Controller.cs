@@ -203,6 +203,10 @@ namespace CMIE.ControllerSystem
                             }
                             break;
 
+                        case "rpackage":
+                            group.AddResource(pieces[2], new LoadResourcePackage(pieces[3], BuildFilePath(pieces[4])));
+                            break;
+
                         case "studysweep":
                             group.AddResource(new LoadStudySweep(BuildFilePath(pieces[2])));
                             break;
@@ -224,6 +228,10 @@ namespace CMIE.ControllerSystem
 
                         case "dvmapping":
                             group.AddAction(pieces[2], new LoadDVMapping(BuildFilePath(pieces[3])));
+                            break;
+
+                        case "rvmapping":
+                            group.AddAction(pieces[2], new LoadRVMapping(BuildFilePath(pieces[3])));
                             break;
 
                         case "tqlinking":
@@ -334,6 +342,9 @@ namespace CMIE.ControllerSystem
             {
                 eventManager.FireEvent( 
                     new UpdateCommandEvent(UpdateCommandEvent.Actions.ADD, Commands.UPDATE)
+                    );
+                eventManager.FireEvent(
+                    new UpdateCommandEvent(UpdateCommandEvent.Actions.ADD, Commands.MAP)
                     );
             }
         }

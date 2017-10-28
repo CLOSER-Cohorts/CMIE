@@ -164,6 +164,10 @@ namespace CMIE.Console
             {
                 return new CommitCommand(eventManager);
             }
+            else if (commandType == Commands.MAP)
+            {
+                return new MapCommand(eventManager);
+            }
             else if (commandType == Commands.REMOVE_SELECTION)
             {
                 return new RemoveSelectionCommand(eventManager);

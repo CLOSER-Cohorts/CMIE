@@ -8,6 +8,7 @@ using System.IO;
 
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Utility;
+using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Ddi.Serialization;
 
@@ -18,20 +19,22 @@ namespace CMIE.ControllerSystem.Actions
         public string scope { protected set; get; }
         public bool valid { protected set; get; }
         protected string filepath;
+        protected Repository Repository;
+        protected List<IVersionable> UpdatedItems;
+
         public IAction()
         {
             valid = false;
         }
         public abstract void Validate();
-        public abstract IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws);
+        public abstract IEnumerable<IVersionable> Build(Repository repository);
     }
 
     public abstract class TXTFileAction : IAction
     {
         public enum Counters {Total, Bad, Skipped};
         public Dictionary<Counters, int> counter { get; protected set; }
-        public abstract void Runner(string[] parts,IEnumerable<IVersionable> ws);
-
+        public abstract void Runner(string[] parts);
         protected abstract int[] numberOfColumns { get; }
 
         public TXTFileAction(string _filepath) : base()
@@ -42,6 +45,7 @@ namespace CMIE.ControllerSystem.Actions
             counter[Counters.Total] = 0;
             counter[Counters.Bad] = 0;
             counter[Counters.Skipped] = 0;
+            UpdatedItems = new List<IVersionable>();
         }
 
         public override void Validate()
@@ -52,8 +56,19 @@ namespace CMIE.ControllerSystem.Actions
             }
             valid = true;
         }
+
+        protected IVersionable GetItemByTypeAndName(Guid type, string name)
+        {
+            var facet = new SearchFacet();
+            facet.ItemTypes.Add(type);
+            facet.SearchTargets.Add(DdiStringType.Name);
+            facet.SearchLatestVersion = true;
+            facet.SearchTerms.Add(name);
+            var response = Repository.Search(facet);
+            return response.FirstOrDefault();
+        }
         
-        protected void RunFile(Action<string[],IEnumerable<IVersionable>> _runner, IEnumerable<IVersionable> ws)
+        protected virtual void RunFile(Action<string[]> _runner)
         {
             string[] lines = File.ReadAllLines(this.filepath);
             foreach (string line in lines)
@@ -67,14 +82,15 @@ namespace CMIE.ControllerSystem.Actions
                     continue;
                 }
 
-                _runner(parts, ws);
+                _runner(parts);
             }
         }
 
-        public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
+        public override IEnumerable<IVersionable> Build(Repository repository)
         {
-            RunFile(Runner, ws);
-            return new List<IVersionable>();
+            Repository = repository;
+            RunFile(Runner);
+            return UpdatedItems;
         }
     }
 }

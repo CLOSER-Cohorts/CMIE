@@ -18,6 +18,7 @@ namespace CMIE.Events
         UPDATE_COMMAND,
         BUILD,
         JOB_COMPLETED,
-        COMMIT
+        COMMIT,
+        MAP
     }
 }

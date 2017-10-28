@@ -22,9 +22,9 @@ namespace CMIE.ControllerSystem.Actions
 
         public LoadTVLinking(string _filepath) : base(_filepath) {}
 
-        public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
+        public override IEnumerable<IVersionable> Build(Repository repository)
         {
-            if (vs == default(VariableScheme))
+            /*if (vs == default(VariableScheme))
             {
                 var client = Utility.GetClient();
                 var facet = new SearchFacet();
@@ -48,9 +48,9 @@ namespace CMIE.ControllerSystem.Actions
                         ChildReferenceProcessing.PopulateLatest) as VariableScheme;
                     //vs.Accept(new GraphPopulator(client));
                 }
-            }
+            }*/
 
-            RunFile(Runner, ws);
+            RunFile(Runner);
             return new List<IVersionable>();
         }
 
@@ -78,13 +78,13 @@ namespace CMIE.ControllerSystem.Actions
             }
         }
 
-        public override void Runner(string[] parts, IEnumerable<IVersionable> ws)
+        public override void Runner(string[] parts)
         {
             string vref = parts[0].Trim();
             string tref = parts[1].Trim();
 
             if (tref == "0") return;
-
+            /*
             var variable = ws.OfType<Variable>().FirstOrDefault(x => x.ItemName.Best == vref);
 
             if (variable != default(Variable))
@@ -117,7 +117,7 @@ namespace CMIE.ControllerSystem.Actions
                         vg.AddChild(variable);
                     }
                 }
-            }
+            }*/
         }
     }
 }

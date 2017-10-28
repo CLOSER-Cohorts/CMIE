@@ -16,13 +16,66 @@ using CMIE.Events;
 
 namespace CMIE
 {
-    class AddToCommit : IJob
+    class AddFuncToCommit : AddItemsToCommit
+    {
+        protected Func<List<IVersionable>> Func;
+        public AddFuncToCommit(Repository repository, Utility.ObservableCollectionFast<IVersionable> toBeCommitted, Func<List<IVersionable>> func) : 
+            base(repository, toBeCommitted, new List<IVersionable>())
+        {
+            Func = func;
+        }
+
+        public override void Run()
+        {
+            Items = Func();
+            base.Run();
+        }
+    }
+
+    class AddItemsToCommit : IJob
+    {
+        private Repository Repository;
+        private Utility.ObservableCollectionFast<IVersionable> ToBeCommitted;
+        protected List<IVersionable> Items;
+
+        public AddItemsToCommit(Repository repository, Utility.ObservableCollectionFast<IVersionable> toBeCommitted, List<IVersionable> items)
+        {
+            Repository = repository;
+            ToBeCommitted = toBeCommitted;
+            Items = items;
+        }
+
+        public virtual void Run()
+        {
+            var facet = new SetSearchFacet();
+            facet.ReverseTraversal = true;
+            var UpdatedItems = new List<IVersionable>();
+
+            Repository.AddToCache(Items);
+
+            foreach (var item in Items)
+            {
+                var response = Repository.SearchTypedSet(item.CompositeId, facet);
+                foreach (var parent in response)
+                {
+                    if (parent.AgencyId == item.AgencyId && parent.Identifier == item.Identifier) continue;
+                    UpdatedItems.Add(parent);
+                    parent.IsDirty = true;
+                }
+                UpdatedItems.Add(item);
+            }
+
+            ToBeCommitted.AddRange(UpdatedItems.Distinct());
+        }
+    }
+
+    class AddScopeToCommit : IJob
     {
         private string Host;
         private Utility.ObservableCollectionFast<IVersionable> ToBeCommitted;
         private Scope Scope;
 
-        public AddToCommit(string host, Utility.ObservableCollectionFast<IVersionable> toBeCommitted, Scope scope)
+        public AddScopeToCommit(string host, Utility.ObservableCollectionFast<IVersionable> toBeCommitted, Scope scope)
         {
             Host = host;
             ToBeCommitted = toBeCommitted;
@@ -113,25 +166,42 @@ namespace CMIE
     {
         private EventManager EventManager;
         private string Host;
+        private Repository Repository;
         private Utility.ObservableCollectionFast<IVersionable> ToBeCommitted;
         private Versioner Versioner;
 
-        public Committer(EventManager eventManager, string host)
+        public Committer(EventManager eventManager, Repository repository, string host)
         {
             EventManager = eventManager;
             Host = host;
+            Repository = repository;
             Reset();
             ToBeCommitted.CollectionChanged += CollectionUpdated;
         }
 
-        public AddToCommit AddToCommit(Scope scope)
+        public IJob AddToCommit(Scope scope)
         {
-            return new AddToCommit(Host, ToBeCommitted, scope);
+            return new AddScopeToCommit(Host, ToBeCommitted, scope);
+        }
+
+        public IJob AddToCommit(List<IVersionable> items)
+        {
+            return new AddItemsToCommit(Repository, ToBeCommitted, items);
+        }
+
+        public IJob AddToCommit(Func<List<IVersionable>> func)
+        {
+            return new AddFuncToCommit(Repository, ToBeCommitted, func);
         }
 
         public void Commit(string rationale = "")
         {
             var client = Utility.GetClient(Host);
+
+            foreach (var item in ToBeCommitted.OfType<Algenta.Colectica.Model.Ddi.DdiInstance>())
+            {
+                Versioner.IncrementDityItemAndParents(item);
+            }
 
             foreach (var item in ToBeCommitted.OfType<Algenta.Colectica.Model.Ddi.Group>())
             {

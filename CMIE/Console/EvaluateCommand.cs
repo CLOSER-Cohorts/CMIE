@@ -12,7 +12,7 @@ namespace CMIE.Console
     {
         public EvaluateCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "evalute", "eval", "ev" };
+            aliases = new string[] { "evaluate", "eval", "ev" };
         }
 
         public override Commands Type

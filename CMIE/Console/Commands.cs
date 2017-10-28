@@ -16,6 +16,7 @@ namespace CMIE.Console
         STATUS,
         EVALUATE,
         UPDATE,
-        COMMIT
+        COMMIT,
+        MAP
     }
 }

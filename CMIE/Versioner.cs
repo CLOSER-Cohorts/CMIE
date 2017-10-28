@@ -38,7 +38,6 @@ namespace CMIE
 
         private void Dig(IVersionable item)
         {
-
             foreach (var child in item.GetChildren())
             {
                 AddParent(child, item);

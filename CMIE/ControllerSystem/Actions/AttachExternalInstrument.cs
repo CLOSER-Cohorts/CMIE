@@ -28,12 +28,12 @@ namespace CMIE.ControllerSystem.Actions
             }
         }
 
-        public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
+        public override IEnumerable<IVersionable> Build(Repository repository)
         {
-            var instrument = ws.OfType<Instrument>()
+            /*var instrument = ws.OfType<Instrument>()
                 .Where(x => x.UserIds.Count > 0)
                 .FirstOrDefault( x => x.UserIds.Any(y => y.Identifier == instrumentUserId));
-            Attach(instrument, externalPath);
+            Attach(instrument, externalPath);*/
 
             return new List<IVersionable>();
         }

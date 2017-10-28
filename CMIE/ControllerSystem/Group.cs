@@ -74,7 +74,7 @@ namespace CMIE.ControllerSystem
                 if (action is TXTFileAction) return;
                 SysCon.WriteLine("{0}: Validating {1}", name, action.scope);
                 action.Validate();
-                workingSet.AddRange(action.Build(workingSet));
+                //workingSet.AddRange(action.Build(workingSet));
             });
             PublishConsole();
             var progress = new ParallelProgressMonitor(scopes.Count);
@@ -102,7 +102,7 @@ namespace CMIE.ControllerSystem
                 if (!(action is TXTFileAction)) return;
                 SysCon.WriteLine("{0}: Validating {1}", name, action.scope);
                 action.Validate();
-                workingSet.AddRange(action.Build(globalWS));
+                //workingSet.AddRange(action.Build(globalWS));
             });
             PublishConsole();
             //Parallel.ForEach<KeyValuePair<string, Scope>>(scopes, scope =>

@@ -6,23 +6,45 @@ using System;
 using SysCon = System.Console;
 
 using Algenta.Colectica.Model;
-using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Utility;
+using Algenta.Colectica.Model.Repository;
+using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Ddi.Serialization;
 
 namespace CMIE.ControllerSystem.Actions
 {
     class LoadQVMapping : TXTFileAction
     {
+        private SearchFacet QcFacet;
+        private SearchFacet VarFacet;
+        private Dictionary<string, IdentifierTriple> QuestionConstructSchemeCache;
+        private Dictionary<string, IdentifierTriple> VariableSchemeCache;
         protected override int[] numberOfColumns
         {
             get { return new int[]{2,4}; }
         }
-        public LoadQVMapping(string _filepath) : base(_filepath) {}
-
-        public override void Runner(string[] parts, IEnumerable<IVersionable> ws)
+        public LoadQVMapping(string _filepath) : base(_filepath) 
         {
-            IEnumerable<IVersionable> subFocusedWS = ws;
+            QuestionConstructSchemeCache = new Dictionary<string, IdentifierTriple>();
+            VariableSchemeCache = new Dictionary<string, IdentifierTriple>();
+        }
+
+        protected override void RunFile(Action<string[]> _runner)
+        {
+            QcFacet = new SearchFacet();
+            QcFacet.ItemTypes.Add(DdiItemType.QuestionConstruct);
+            QcFacet.SearchTargets.Add(DdiStringType.Name);
+            QcFacet.SearchLatestVersion = true;
+
+            VarFacet = new SearchFacet();
+            VarFacet.ItemTypes.Add(DdiItemType.Variable);
+            VarFacet.SearchTargets.Add(DdiStringType.Name);
+            VarFacet.SearchLatestVersion = true;
+            base.RunFile(_runner);
+        }
+
+        public override void Runner(string[] parts)
+        {
             string questionName, variableName;
 
             int qindex = (parts.Length/2)-1;
@@ -34,44 +56,114 @@ namespace CMIE.ControllerSystem.Actions
 
             if (questionName == "0" || variableName == "0") return;
 
+            QcFacet.SearchSets.Clear();
+            VarFacet.SearchSets.Clear();
+            QcFacet.SearchTerms.Clear();
+            VarFacet.SearchTerms.Clear();
+
             if (parts.Length == 4)
             {
-                var foundCcs = ws.OfType<ControlConstructScheme>().Where(x => x.ItemName.Best == parts[0].Trim());
-                if (foundCcs.Count() == 0)
+                var ccsId = GetControlConstructScheme(parts[0].Trim());
+                if (ccsId == default(IdentifierTriple))
                 {
-                    SysCon.WriteLine("Invalid question scheme: {0}", parts[0]);
+                    SysCon.WriteLine("ControlConstructScheme '{0}' could not be found in the repository.", parts[0]);
                     counter[Counters.Skipped] += 1;
                     return;
                 }
+                QcFacet.SearchSets.Add(ccsId);
 
-                var foundVs = ws.OfType<VariableScheme>().Where(x => x.ItemName.Best == parts[2].Trim());
-                if (foundVs.Count() == 0)
+                var vsId = GetVariableScheme(parts[2].Trim());
+                if (vsId == default(IdentifierTriple))
                 {
-                    SysCon.WriteLine("Invalid variable scheme: {0}", parts[2]);
+                    Logger.Instance.Log.ErrorFormat("VariableScheme '{0}' could not be found in the repository.", parts[2]);
                     counter[Counters.Skipped] += 1;
                     return;
                 }
-
-                var gatherer = new ItemGathererVisitor();
-                foreach (var foundCc in foundCcs) foundCc.Accept(gatherer);
-                foreach (var foundV in foundVs) foundV.Accept(gatherer);
-
-                subFocusedWS = gatherer.FoundItems;
+                VarFacet.SearchSets.Add(vsId);
             }
 
-            var qs = subFocusedWS.OfType<QuestionActivity>().Where(x => x.ItemName.Best == questionName);
-            var vs = subFocusedWS.OfType<Variable>().Where(x => x.ItemName.Best == variableName);
+            QcFacet.SearchTerms.Add(questionName);
+            VarFacet.SearchTerms.Add(variableName);
 
-            if (qs.Count() > 0 && vs.Count() > 0)
+            var questions = Repository.Search(QcFacet);
+            var variables = Repository.Search(VarFacet);
+
+            if (questions.Count != 1)
             {
-                if (qs.First().Question != null)
+                if (questions.Count == 0)
                 {
-                    vs.First().SourceQuestions.Add(qs.First().Question);
+                    Logger.Instance.Log.ErrorFormat("No question was found named '{0}' within the scope. Please check {1}", questionName, filepath);
                 }
-                if (qs.First().QuestionGrid != null)
+                else
                 {
-                    vs.First().SourceQuestionGrids.Add(qs.First().QuestionGrid);
+                    Logger.Instance.Log.ErrorFormat("{0} questions were found named '{1}' within the scope. Please check {2}", questions.Count, questionName, filepath);
                 }
+                counter[Counters.Skipped] += 1;
+                return;
+            }
+
+            if (variables.Count != 1)
+            {
+                if (variables.Count == 0)
+                {
+                    Logger.Instance.Log.ErrorFormat("No variable was found named '{0}' within the scope. Please check {1}", variableName, filepath);
+                }
+                else
+                {
+                    Logger.Instance.Log.ErrorFormat("{0} variables were found named '{1}' within the scope. Please check {2}", variables.Count, variableName, filepath);
+                }
+                counter[Counters.Skipped] += 1;
+                return;
+            }
+
+            var question = questions.First() as QuestionActivity;
+            var variable = variables.First() as Variable;
+
+            if (question.Question != null)
+            {
+                variable.SourceQuestions.Add(question.Question);
+            }
+            if (question.QuestionGrid != null)
+            {
+                variable.SourceQuestionGrids.Add(question.QuestionGrid);
+            }
+
+            UpdatedItems.Add(variable);
+        }
+
+        private IdentifierTriple GetControlConstructScheme(string name)
+        {
+            if (QuestionConstructSchemeCache.ContainsKey(name))
+            {
+                return QuestionConstructSchemeCache[name];
+            }
+            var result = GetItemByTypeAndName(DdiItemType.ControlConstructScheme, name);
+            if (result == default(IVersionable))
+            {
+                return default(IdentifierTriple);
+            }
+            else
+            {
+                QuestionConstructSchemeCache[name] = result.CompositeId;
+                return result.CompositeId;
+            }
+        }
+
+        private IdentifierTriple GetVariableScheme(string name)
+        {
+            if (VariableSchemeCache.ContainsKey(name))
+            {
+                return VariableSchemeCache[name];
+            }
+            var result = GetItemByTypeAndName(DdiItemType.VariableScheme, name);
+            if (result == default(IVersionable))
+            {
+                return default(IdentifierTriple);
+            }
+            else
+            {
+                VariableSchemeCache[name] = result.CompositeId;
+                return result.CompositeId;
             }
         }
     }

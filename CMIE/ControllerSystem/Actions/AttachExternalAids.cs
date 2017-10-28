@@ -32,9 +32,9 @@ namespace CMIE.ControllerSystem.Actions
             }
         }
 
-        public override IEnumerable<IVersionable> Build(IEnumerable<IVersionable> ws)
+        public override IEnumerable<IVersionable> Build(Repository repository)
         {
-            var qcs = ws.OfType<ControlConstructScheme>().Single(x => x.ItemName.Best == ccsName).GetChildren().OfType<QuestionActivity>().ToList();
+            /*var qcs = ws.OfType<ControlConstructScheme>().Single(x => x.ItemName.Best == ccsName).GetChildren().OfType<QuestionActivity>().ToList();
 
             foreach (var fileName in fileEntries)
             {
@@ -60,7 +60,7 @@ namespace CMIE.ControllerSystem.Actions
                     label = questionConstruct.QuestionGrid.Label.Best;
                 }
                 aid.DublinCoreMetadata.Title.SetStringForDefaultAudience("en-GB", label);
-            }
+            }*/
 
             return new List<IVersionable>();
         }
