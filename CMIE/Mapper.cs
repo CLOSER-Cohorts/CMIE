@@ -66,7 +66,6 @@ namespace CMIE
 
     class RvMapping : IJob
     {
-        private EventManager EventManager;
         private List<IVersionable> UpdatedItems;
         private Repository Repository;
         private Scope Scope;

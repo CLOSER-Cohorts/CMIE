@@ -47,6 +47,9 @@ namespace CMIE.Console
                         mappingType = MapEvent.MappingType.RV;
                         break;
 
+                    case "qb"
+                        mappingType = MapEvent.MappingType.QB;
+
                     default:
                         mappingType = MapEvent.MappingType.ALL;
                         i--;

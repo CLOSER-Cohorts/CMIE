@@ -19,7 +19,10 @@ namespace CMIE.ControllerSystem.Actions
         {
             get { return new int[]{2,4}; }
         }
-        public LoadDVMapping(string _filepath) : base(_filepath) {}
+        public LoadDVMapping(string _filepath) : base(_filepath) 
+        {
+            VariableSchemeCache = new Dictionary<string, IdentifierTriple>();
+        }
 
         protected override void RunFile(Action<string[]> _runner)
         {
@@ -55,7 +58,7 @@ namespace CMIE.ControllerSystem.Actions
                     counter[Counters.Skipped] += 1;
                     return;
                 }
-                var ssId = GetVariableScheme(parts[0].Trim());
+                var ssId = GetVariableScheme(parts[2].Trim());
                 if (ssId == default(IdentifierTriple))
                 {
                     Logger.Instance.Log.ErrorFormat("VariableScheme '{0}' could not be found in the repository.", parts[2]);

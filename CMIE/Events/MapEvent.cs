@@ -13,6 +13,7 @@ namespace CMIE.Events
             QV,
             DV,
             RV,
+            QB,
             ALL
         };
         public bool AllScopes;
@@ -50,6 +51,11 @@ namespace CMIE.Events
         public bool RVMap()
         {
             return Type == MappingType.ALL || Type == MappingType.RV;
+        }
+
+        public bool QBMap()
+        {
+            return Type == MappingType.ALL || Type == MappingType.QB;
         }
     }
 }

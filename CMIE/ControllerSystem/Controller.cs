@@ -234,6 +234,10 @@ namespace CMIE.ControllerSystem
                             group.AddAction(pieces[2], new LoadRVMapping(BuildFilePath(pieces[3])));
                             break;
 
+                        case "qblinking":
+                            group.AddAction(pieces[2], new LoadQBLinking(BuildFilePath(pieces[3])));
+                            break;
+
                         case "tqlinking":
                             group.AddAction(pieces[2], new LoadTQLinking(BuildFilePath(pieces[3])));
                             break;

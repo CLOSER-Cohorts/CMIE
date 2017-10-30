@@ -23,11 +23,14 @@ namespace CMIE.ControllerSystem.Resources
             var pi = allItems.OfType<PhysicalInstance>().FirstOrDefault();
             if (pi != default(PhysicalInstance))
             {
-                foreach (var dr in allItems.OfType<DataRelationship>())
+                if (pi.RecordLayouts.Count > 0)
                 {
-                    pi.DataRelationships.Add(dr);
+                    foreach (var dr in allItems.OfType<DataRelationship>())
+                    {
+                        pi.DataRelationships.Add(dr);
+                    }
+                    pi.RecordLayouts.Clear();
                 }
-                pi.RecordLayouts.Clear();
             }
 
             BindingPoints.AddRange(allItems.OfType<PhysicalInstance>());

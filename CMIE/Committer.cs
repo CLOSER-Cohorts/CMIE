@@ -87,13 +87,9 @@ namespace CMIE
             var client = Utility.GetClient(Host);
             foreach (var binding in Scope.GetBindings())
             {
-                var parent = Utility.GetItem(client, binding.Item1);
-                if (parent == default(IVersionable))
+                try
                 {
-                    throw new Exception(String.Format("Could not find parent ({0}) for scope '{1}'", binding.Item1, Scope.name));
-                }
-                else
-                {
+                    var parent = Utility.GetItem(client, binding.Item1);
                     var facet = new SetSearchFacet();
                     facet.ReverseTraversal = true;
                     var typedIds = client.SearchTypedSet(parent.CompositeId, facet);
@@ -104,7 +100,7 @@ namespace CMIE
                     }
                     var remoteSet = client.GetItems(ids).ToList();
                     var set = new Collection<IVersionable>();
-                    while (remoteSet.Any()) 
+                    while (remoteSet.Any())
                     {
                         var remoteItem = remoteSet[0];
                         remoteSet.RemoveAt(0);
@@ -156,6 +152,10 @@ namespace CMIE
                     var parentInSet = set.First(x => x.AgencyId == parent.AgencyId && x.Identifier == parent.Identifier);
                     parentInSet.AddChild(binding.Item2);
                     parentInSet.IsDirty = true;
+                } 
+                catch (Exception e)
+                {
+                    throw new Exception(String.Format("Could not find parent ({0}) for scope '{1}'", binding.Item1, Scope.name));
                 }
             }
             ToBeCommitted.AddRange(Scope.workingSet);
@@ -210,6 +210,13 @@ namespace CMIE
 
             var options = new CommitOptions();
             options.VersionRationale["en-GB"] = rationale;
+            for (var i = 0; i < ToBeCommitted.Count; i++)
+            {
+                if (ToBeCommitted[i].AgencyId == default(string) && i > 0)
+                {
+                    ToBeCommitted[i].AgencyId = ToBeCommitted[i-1].AgencyId;
+                }
+            }
             client.RegisterItems(ToBeCommitted, options);
             Reset();
         }

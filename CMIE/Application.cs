@@ -147,9 +147,16 @@ namespace CMIE
 
                 SysCon.WriteLine("Processing job. {0} jobs remaining.", pendingJobs.Count);
 
-                job.Run();
-
-                completedJobs.Add(job);
+                try
+                {
+                    job.Run();
+                    completedJobs.Add(job);
+                }
+                catch (Exception e)
+                {
+                    Logger.Instance.Log.Error(e.Message);
+                    Logger.Instance.Log.Info("Job aborted. It is advisable to restart CMIE");
+                }
             }
         }
 
