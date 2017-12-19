@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class QuitCommand : ICommand
+    internal class QuitCommand : ICommand
     {
         public QuitCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "quit" };
+            Aliases = new[] { "quit" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.QUIT;
-            }
-        }
+        public override Commands Type { get { return Commands.QUIT; } }
 
         public override bool Do(string[] arguments)
         {

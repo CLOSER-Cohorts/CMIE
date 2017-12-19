@@ -1,13 +1,10 @@
-﻿using System;
-using SysCon = System.Console;
-
-using Algenta.Colectica.Model.Utility;
+﻿using SysCon = System.Console;
 
 namespace CMIE
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var app = new Application(args);
             if (app.Initialize())

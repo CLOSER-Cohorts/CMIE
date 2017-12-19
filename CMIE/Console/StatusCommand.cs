@@ -1,28 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class StatusCommand : ICommand
+    internal class StatusCommand : ICommand
     {
         public StatusCommand(EventManager em)
             : base(em)
         {
-            aliases = new string[] { "status" };
+            Aliases = new[] { "status" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.STATUS;
-            }
-        }
+        public override Commands Type { get { return Commands.STATUS; } }
 
         public override bool Do(string[] arguments)
         {

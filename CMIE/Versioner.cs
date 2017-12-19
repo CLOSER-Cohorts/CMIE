@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Utility;
 
 namespace CMIE
 {
-    class Versioner
+    internal class Versioner
     {
-        private Dictionary<IVersionable, List<IVersionable>> parents;
-        private List<IVersionable> incremented;
+        private readonly Dictionary<IVersionable, List<IVersionable>> _parents;
+        private readonly List<IVersionable> _incremented;
 
         public Versioner()
         {
-            parents = new Dictionary<IVersionable, List<IVersionable>>();
-            incremented = new List<IVersionable>();
+            _parents = new Dictionary<IVersionable, List<IVersionable>>();
+            _incremented = new List<IVersionable>();
         }
 
-        public void IncrementDityItemAndParents(IVersionable item)
+        public void IncrementDirtyItemAndParents(IVersionable item)
         {
             Dig(item);
             var dirtyGthr = new DirtyItemGatherer();
@@ -36,6 +32,17 @@ namespace CMIE
             }
         }
 
+        public void IncrementItemAndParents(IVersionable item)
+        {
+            Dig(item);
+            Increment(item);
+            var allParents = GetAllParents(item);
+            foreach (var parent in allParents)
+            {
+                Increment(parent);
+            }
+        }
+
         private void Dig(IVersionable item)
         {
             foreach (var child in item.GetChildren())
@@ -47,27 +54,26 @@ namespace CMIE
 
         private void AddParent(IVersionable item, IVersionable parent)
         {
-            if (!parents.ContainsKey(item))
+            if (!_parents.ContainsKey(item))
             {
-                parents[item] = new List<IVersionable>();
+                _parents[item] = new List<IVersionable>();
             }
-            if (!parents[item].Contains(parent))
+            if (!_parents[item].Contains(parent))
             {
-                parents[item].Add(parent);
+                _parents[item].Add(parent);
             }
         }
 
-        private List<IVersionable> GetAllParents(IVersionable item)
+        private IEnumerable<IVersionable> GetAllParents(IVersionable item)
         {
             var output = new List<IVersionable>();
 
-            if (parents.ContainsKey(item))
+            if (!_parents.ContainsKey(item)) return output;
+            
+            foreach (var parent in _parents[item])
             {
-                foreach (var parent in parents[item])
-                {
-                    output.Add(parent);
-                    output.AddRange(GetAllParents(parent));
-                }
+                output.Add(parent);
+                output.AddRange(GetAllParents(parent));
             }
 
             return output;
@@ -75,11 +81,10 @@ namespace CMIE
 
         private void Increment(IVersionable item)
         {
-            if (!incremented.Contains(item))
-            {
-                item.Version++;
-                incremented.Add(item);
-            }
+            if (_incremented.Contains(item)) return;
+            
+            item.Version++;
+            _incremented.Add(item);
         }
     }
 }

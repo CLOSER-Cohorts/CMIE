@@ -27,11 +27,11 @@ namespace CMIE.Events
 
         public bool FireEvent(IEvent _event) 
         {
-            if (!listeners.ContainsKey(_event.GetEventType()))
+            if (!listeners.ContainsKey(_event.Type))
             {
                 return false;
             }
-            foreach (var listener in listeners[_event.GetEventType()])
+            foreach (var listener in listeners[_event.Type])
             {
                 listener.OnEvent(_event);
             }

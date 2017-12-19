@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class AddSelectionCommand : ICommand
+    internal class AddSelectionCommand : ICommand
     {
         public AddSelectionCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "select", "sel" };
+            Aliases = new[] { "select", "sel" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.ADD_SELECTION;
-            }
-        }
+        public override Commands Type { get { return Commands.ADD_SELECTION; } }
 
         public override bool Do(string[] arguments)
         {

@@ -17,40 +17,52 @@ namespace CMIE.ControllerSystem
     {
         public string name { get; set; }
         public bool update { get; set; }
-        private Comparator comparator;
+        public bool IsValid
+        {
+            get
+            {
+                return Actions.All(x => x.valid) && Resources.All(x => x.valid);
+            }
+        }
+        private Dictionary<IdentifierTriple, IVersionable> repoBindingPoints;
 
         public Scope(string _name)
         {
             name = _name;
             update = false;
             Init();
-            comparator = new Comparator(workingSet);
+            repoBindingPoints = new Dictionary<IdentifierTriple, IVersionable>();
         }
 
         public void AddAction(IAction action)
         {
-            actions.Add(action);
+            Actions.Add(action);
+        }
+
+        public void AddBindingPoint(IdentifierTriple repoId, IVersionable localItem)
+        {
+            repoBindingPoints[repoId] = localItem;
         }
 
         public void AddResource(IResource resource)
         {
-            resources.Add(resource);
+            Resources.Add(resource);
         }
 
         public void Build()
         {
-            if (!resources.All(x => x.valid))
+            if (!Resources.All(x => x.valid))
             {
                 SysCon.WriteLine("Error: '{0}' could not build as not all resources are valid.", name);
                 return;
             }
 
-            foreach (var resource in resources)
+            foreach (var resource in Resources)
             {
                 try
                 {
-                    workingSet.AddRange(resource.Build(workingSet));
-                    counter[Counters.Total] = workingSet.Count;
+                    WorkingSet.AddRange(resource.Build(WorkingSet));
+                    Counter[Counters.Total] = WorkingSet.Count;
                 }
                 catch (Exception e)
                 {
@@ -160,14 +172,19 @@ namespace CMIE.ControllerSystem
             toBeAdded.AddRange(allGthr.FoundItems);*/
         }
 
+        public Dictionary<IdentifierTriple, IVersionable> GetBindingPoints()
+        {
+            return repoBindingPoints;
+        }
+
         public List<IVersionable> GetUpdates()
         {
-            return toBeAdded;
+            return ToBeAdded;
         }
 
         public void  FindUpdates()
         {
-            if (!actions.All(x => x.valid))
+            if (!Actions.All(x => x.valid))
             {
                 SysCon.WriteLine("Error: '{0}' could not find updates as not all actions are valid.", name);
                 return;
@@ -179,7 +196,7 @@ namespace CMIE.ControllerSystem
             }
             else
             {
-                toBeAdded.AddRange(workingSet);
+                ToBeAdded.AddRange(WorkingSet);
             }
         }
 
@@ -187,7 +204,7 @@ namespace CMIE.ControllerSystem
         {
             var output = new List<Tuple<string, IVersionable>>();
 
-            foreach (var resource in resources)
+            foreach (var resource in Resources)
             {
                 if (resource.Parent.Length < 2) continue;
 
@@ -202,7 +219,7 @@ namespace CMIE.ControllerSystem
 
         public void Validate()
         {
-            foreach (var action in actions)
+            foreach (var action in Actions)
             {
                 try
                 {
@@ -210,12 +227,11 @@ namespace CMIE.ControllerSystem
                 }
                 catch (Exception e)
                 {
-                    SysCon.WriteLine("{0}", e.StackTrace);
-                    SysCon.WriteLine("{0}", e.Message);
+                    Logger.Instance.Log.ErrorFormat("{0}", e.Message);
                 }
             }
 
-            foreach (var resource in resources)
+            foreach (var resource in Resources)
             {
                 try
                 {
@@ -223,8 +239,7 @@ namespace CMIE.ControllerSystem
                 }
                 catch (Exception e)
                 {
-                    SysCon.WriteLine("{0}", e.StackTrace);
-                    SysCon.WriteLine("{0}", e.Message);
+                    Logger.Instance.Log.ErrorFormat("{0}", e.Message);
                 }
             }
         }

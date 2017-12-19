@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    interface IEvent
+    abstract class IEvent
     {
-        EventType GetEventType();
+        public abstract EventType Type
+        {
+            get;
+        }
     }
 }

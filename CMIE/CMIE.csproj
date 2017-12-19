@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>D:\CLOSER\CMIE-Production\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -22,9 +22,11 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -66,46 +68,62 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>36BD5C6C9D96DD40D5E7C9E1139C593BF316D6E2</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>CMIE_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Algenta.Colectica.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.Model.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\Algenta.Colectica.Model.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Model.Ddi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.Model.Ddi.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\Algenta.Colectica.Model.Ddi.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Repository.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.Repository.Client.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\Algenta.Colectica.Repository.Client.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.ViewModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Algenta.Colectica.ViewModel.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\Algenta.Colectica.ViewModel.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\log4net.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\Newtonsoft.Json.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph, Version=3.2.40122.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Colectica\Colectica SDK\5.3.6253\bin\QuickGraph.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Colectica\Colectica SDK\5.3.6321\bin\QuickGraph.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Console\LinkCommand.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadQBLinking.cs" />
+    <Compile Include="ControllerSystem\Actions\LinkChild.cs" />
     <Compile Include="ControllerSystem\Actions\LoadRVMapping.cs" />
+    <Compile Include="Events\RunLinkerEvent.cs" />
+    <Compile Include="Linker.cs" />
     <Compile Include="Mapper.cs" />
     <Compile Include="Committer.cs" />
     <Compile Include="Comparator.cs" />
@@ -126,8 +144,8 @@
     <Compile Include="ControllerSystem\Actions\AttachExternalAids.cs" />
     <Compile Include="ControllerSystem\Actions\AttachExternalInstrument.cs" />
     <Compile Include="ControllerSystem\Resources\LoadResourcePackage.cs" />
-    <Compile Include="ControllerSystem\Actions\LoadTQLinking.cs" />
     <Compile Include="ControllerSystem\Actions\LoadTVLinking.cs" />
+    <Compile Include="ControllerSystem\Actions\LoadTQLinking.cs" />
     <Compile Include="ControllerSystem\Resources\LoadTopics.cs" />
     <Compile Include="ControllerSystem\Actions\LoadDVMapping.cs" />
     <Compile Include="ControllerSystem\Actions\LoadQVMapping.cs" />
@@ -169,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="CMIE_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -188,6 +207,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist Addins mkdir Addins</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

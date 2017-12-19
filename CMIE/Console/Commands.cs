@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Console
+﻿namespace CMIE.Console
 {
-    enum Commands
+    internal enum Commands
     {
         HELP,
         QUIT,
@@ -17,6 +11,7 @@ namespace CMIE.Console
         EVALUATE,
         UPDATE,
         COMMIT,
-        MAP
+        MAP,
+        LINK
     }
 }

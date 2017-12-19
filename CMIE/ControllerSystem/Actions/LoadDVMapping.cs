@@ -15,6 +15,7 @@ namespace CMIE.ControllerSystem.Actions
     {
         private SearchFacet Facet;
         private Dictionary<string, IdentifierTriple> VariableSchemeCache;
+        private Dictionary<IdentifierTriple, List<string>> _updateTracker;
         protected override int[] numberOfColumns
         {
             get { return new int[]{2,4}; }
@@ -22,6 +23,7 @@ namespace CMIE.ControllerSystem.Actions
         public LoadDVMapping(string _filepath) : base(_filepath) 
         {
             VariableSchemeCache = new Dictionary<string, IdentifierTriple>();
+            _updateTracker = new Dictionary<IdentifierTriple, List<string>>();
         }
 
         protected override void RunFile(Action<string[]> _runner)
@@ -42,12 +44,14 @@ namespace CMIE.ControllerSystem.Actions
             sourceVariable = parts[sindex].Trim();
             derivedVariable = parts[dindex].Trim();
 
-            if (sourceVariable == "0" || derivedVariable == "0") return;
+            if (derivedVariable == "0") return;
+
+            bool loadSource = sourceVariable != "0";
 
             Facet.SearchSets.Clear();
             Facet.SearchTerms.Clear();
 
-            List<IVersionable> sources, deriveds;
+            List<IVersionable> sources = default(List<IVersionable>), deriveds;
 
             if (parts.Length == 4)
             {
@@ -58,45 +62,38 @@ namespace CMIE.ControllerSystem.Actions
                     counter[Counters.Skipped] += 1;
                     return;
                 }
-                var ssId = GetVariableScheme(parts[2].Trim());
-                if (ssId == default(IdentifierTriple))
-                {
-                    Logger.Instance.Log.ErrorFormat("VariableScheme '{0}' could not be found in the repository.", parts[2]);
-                    counter[Counters.Skipped] += 1;
-                    return;
-                }
 
-                Facet.SearchSets.Add(ssId);
-                Facet.SearchTerms.Add(sourceVariable);
-                sources = Repository.Search(Facet);
-                Facet.SearchSets.Clear();
-                Facet.SearchTerms.Clear();
+                if (loadSource)
+                {
+                    var ssId = GetVariableScheme(parts[2].Trim());
+                    if (ssId == default(IdentifierTriple))
+                    {
+                        Logger.Instance.Log.ErrorFormat("VariableScheme '{0}' could not be found in the repository.", parts[2]);
+                        counter[Counters.Skipped] += 1;
+                        return;
+                    }
+
+                    Facet.SearchSets.Add(ssId);
+                    Facet.SearchTerms.Add(sourceVariable);
+                    sources = Repository.Search(Facet);
+                    Facet.SearchSets.Clear();
+                    Facet.SearchTerms.Clear();
+                }
                 Facet.SearchSets.Add(dsId);
                 Facet.SearchTerms.Add(derivedVariable);
                 deriveds = Repository.Search(Facet);
             }
             else
             {
-                Facet.SearchTerms.Add(sourceVariable);
-                sources = Repository.Search(Facet);
-                Facet.SearchSets.Clear();
-                Facet.SearchTerms.Clear();
+                if (loadSource)
+                {
+                    Facet.SearchTerms.Add(sourceVariable);
+                    sources = Repository.Search(Facet);
+                    Facet.SearchSets.Clear();
+                    Facet.SearchTerms.Clear();
+                }
                 Facet.SearchTerms.Add(derivedVariable);
                 deriveds = Repository.Search(Facet);
-            }
-
-            if (sources.Count != 1)
-            {
-                if (sources.Count == 0)
-                {
-                    Logger.Instance.Log.ErrorFormat("No variable was found named '{0}' within the scope. Please check {1}", sourceVariable, filepath);
-                }
-                else
-                {
-                    Logger.Instance.Log.ErrorFormat("{0} questions were found named '{1}' within the scope. Please check {2}", sources.Count, sourceVariable, filepath);
-                }
-                counter[Counters.Skipped] += 1;
-                return;
             }
 
             if (deriveds.Count != 1)
@@ -112,11 +109,48 @@ namespace CMIE.ControllerSystem.Actions
                 counter[Counters.Skipped] += 1;
                 return;
             }
-
-            var source = sources.First() as Variable;
             var derived = deriveds.First() as Variable;
 
-            derived.SourceVariables.Add(source);
+            if (loadSource)
+            {
+                if (!_updateTracker.ContainsKey(derived.CompositeId))
+                {
+                    _updateTracker[derived.CompositeId] = new List<string>();
+                    foreach (var sv in derived.SourceVariables)
+                    {
+                        _updateTracker[derived.CompositeId].Add(sv.UserIds[0].Identifier);
+                    }
+                }
+
+                if (sources.Count != 1)
+                {
+                    if (sources.Count == 0)
+                    {
+                        Logger.Instance.Log.ErrorFormat("No variable was found named '{0}' within the scope. Please check {1}", sourceVariable, filepath);
+                    }
+                    else
+                    {
+                        Logger.Instance.Log.ErrorFormat("{0} questions were found named '{1}' within the scope. Please check {2}", sources.Count, sourceVariable, filepath);
+                    }
+                    counter[Counters.Skipped] += 1;
+                    return;
+                }
+
+                var source = sources.First() as Variable;
+                Func<string, bool> predicate = x => x == source.UserIds[0].Identifier;
+                if (_updateTracker[derived.CompositeId].Any(predicate))
+                {
+                    _updateTracker[derived.CompositeId].RemoveAll(new Predicate<string>(predicate));
+                }
+                else
+                {
+                    derived.SourceVariables.Add(source);
+                }
+            }
+            else
+            {
+                derived.SourceVariables.Clear();
+            }
 
             UpdatedItems.Add(derived);
         }
@@ -137,6 +171,24 @@ namespace CMIE.ControllerSystem.Actions
                 VariableSchemeCache[name] = result.CompositeId;
                 return result.CompositeId;
             }
+        }
+
+        private void RemoveOldMappings()
+        {
+            foreach (var update in _updateTracker)
+            {
+                if (update.Value.Count > 0)
+                {
+                    var derived = Repository.GetItem(update.Key) as Variable;
+                    foreach (var userId in update.Value)
+                    {
+                        var source = Repository.GetItem(userId) as Variable;
+                        derived.SourceVariables.Remove(source);
+                        UpdatedItems.Add(derived);
+                    }
+                }
+            }
+            _updateTracker.Clear();
         }
     }
 }

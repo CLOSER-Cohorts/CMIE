@@ -1,28 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SysCon = System.Console;
+﻿using SysCon = System.Console;
 
 using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class CommitCommand : ICommand
+    internal class CommitCommand : ICommand
     {
         public CommitCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "commit" };
+            Aliases = new[] { "commit" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.COMMIT;
-            }
-        }
+        public override Commands Type { get { return Commands.COMMIT; } }
 
         public override bool Do(string[] arguments)
         {

@@ -90,6 +90,10 @@ namespace CMIE.ControllerSystem.Actions
         {
             Repository = repository;
             RunFile(Runner);
+            if (UpdatedItems.Any())
+            {
+                Logger.Instance.Log.Info("Mapping completed with no updates required.");
+            }
             return UpdatedItems;
         }
     }

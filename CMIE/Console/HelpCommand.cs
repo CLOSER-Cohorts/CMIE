@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CMIE.Events;
+﻿using CMIE.Events;
 
 namespace CMIE.Console
 {
-    class HelpCommand : ICommand
+    internal class HelpCommand : ICommand
     {
         public HelpCommand(EventManager em) : base(em)
         {
-            aliases = new string[] { "help" };
+            Aliases = new[] { "help" };
         }
 
-        public override Commands Type
-        {
-            get
-            {
-                return Commands.HELP;
-            }
-        }
+        public override Commands Type { get { return Commands.HELP; } }
 
         public override bool Do(string[] arguments)
         {

@@ -1,65 +1,119 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Utility;
 using Algenta.Colectica.Model.Repository;
-using Algenta.Colectica.Repository.Client;
 
 namespace CMIE
 {
     public class Repository
     {
-        private RepositoryClientBase Client;
-        private Dictionary<IdentifierTriple, IVersionable> Cache;
-        private Dictionary<IdentifierTriple, List<IVersionable>> Parents;
+        private readonly RepositoryClientBase _client;
+        private readonly Dictionary<IdentifierTriple, IVersionable> _cache;
+        private readonly Dictionary<IdentifierTriple, List<IVersionable>> _parents;
+        private readonly Dictionary<Tuple<string, Guid>, long> _latestVersions;
 
         public Repository(string host)
         {
-            Client = Utility.GetClient(host);
-            Cache = new Dictionary<IdentifierTriple, IVersionable>();
-            Parents = new Dictionary<IdentifierTriple, List<IVersionable>>();
+            _client = Utility.GetClient(host);
+            _cache = new Dictionary<IdentifierTriple, IVersionable>();
+            _parents = new Dictionary<IdentifierTriple, List<IVersionable>>();
+            _latestVersions = new Dictionary<Tuple<string, Guid>, long>();
         }
 
-        public void AddToCache(List<IVersionable> items, bool force = false)
+        public IVersionable AddToCache(IVersionable item, bool force = false)
         {
+            if (!_cache.ContainsKey(item.CompositeId) || force)
+            {
+                _cache[item.CompositeId] = item;
+                FindChildren(item);
+                AttachToParents(item);
+            }
+            return _cache[item.CompositeId];
+        }
+
+        public List<IVersionable> AddToCache(List<IVersionable> items, bool force = false)
+        {
+            var output = new List<IVersionable>();
             foreach (var item in items)
             {
-                if (!Cache.ContainsKey(item.CompositeId) || force)
+                output.Add(AddToCache(item, force));
+            }
+            return output;
+        }
+
+        public List<IVersionable> FilterOldVersions(List<IVersionable> items)
+        {
+            var output = new List<IVersionable>();
+
+            foreach (var item in items)
+            {
+                var versionlessId = new Tuple<string, Guid>(item.AgencyId, item.Identifier);
+                if (!_latestVersions.ContainsKey(versionlessId))
                 {
-                    Cache[item.CompositeId] = item;
+                    _latestVersions[versionlessId] = _client.GetLatestVersionNumber(item.Identifier, item.AgencyId);
+                }
+                if (_latestVersions[versionlessId] == item.Version)
+                {
+                    output.Add(item);
                 }
             }
+
+            return output;
         }
 
         public List<IVersionable> GetCache()
         {
-            return Cache.Values.ToList();
+            return _cache.Values.ToList();
         }
 
-        public IVersionable GetItem(IdentifierTriple id)
+        public RepositoryClientBase GetClient()
         {
-            if (Cache.ContainsKey(id))
+            return _client;
+        }
+
+        public IVersionable GetItem(IdentifierTriple id, ChildReferenceProcessing processing = ChildReferenceProcessing.InstantiateLatest)
+        {
+            if (_cache.ContainsKey(id))
             {
-                return Cache[id];
+                return _cache[id];
             }
-            else
+
+            _cache[id] = _client.GetItem(id, processing);
+            _cache[id].IsDirty = false;
+            MakeClean(_cache[id]);
+            FindChildren(_cache[id]);
+            AttachToParents(_cache[id]);
+
+            if (processing == ChildReferenceProcessing.Populate || processing == ChildReferenceProcessing.PopulateLatest)
             {
-                Cache[id] = Client.GetItem(id);
-                foreach (var child in Cache[id].GetChildren())
+                foreach (var child in _cache[id].GetChildren())
                 {
-                    AddParent(child.CompositeId, Cache[id]);
-                    if (Cache.ContainsKey(child.CompositeId))
-                    {
-                        Cache[id].ReplaceChild(child.CompositeId, Cache[child.CompositeId]);
-                    }
+                    AddToCache(child);
                 }
-                AttachToParents(Cache[id]);
-                return Cache[id];
             }
+
+            return _cache[id];
+        }
+
+        public IVersionable GetItem(string userId, ChildReferenceProcessing processing = ChildReferenceProcessing.InstantiateLatest)
+        {
+            //Check cache
+            foreach(var item in _cache.Values)
+            {
+                if (item.UserIds.Any(x => x.Identifier == userId))
+                {
+                    return item;
+                }
+            }
+
+            //Go find repo item
+            var facet = new SearchFacet {SearchDepricatedItems = false, SearchLatestVersion = true };
+            facet.SearchTargets.Add(DdiStringType.UserId);
+            facet.SearchTerms.Add(userId);
+            return Search(facet, processing).FirstOrDefault();
         }
 
         public IVersionable GetLatestItem(string urn)
@@ -68,59 +122,81 @@ namespace CMIE
             return GetLatestItem(Guid.Parse(pieces[1]), pieces[0]);
         }
 
-        public IVersionable GetLatestItem(Guid id, string agency)
+        public IVersionable GetLatestItem(Guid id, string agency, ChildReferenceProcessing processing = ChildReferenceProcessing.InstantiateLatest)
         {
-            var version = Client.GetLatestVersionNumber(id, agency);
-            return GetItem(new IdentifierTriple(id, version, agency));
+            var version = _client.GetLatestVersionNumber(id, agency);
+            return GetItem(new IdentifierTriple(id, version, agency), processing);
         }
 
-        public List<IVersionable> Search(SearchFacet facet)
+        public void PopulateChildren(IVersionable item)
         {
-            var response = Client.Search(facet);
-            var output = new List<IVersionable>();
-
-            foreach (var result in response.Results)
+            foreach (var child in item.GetChildren())
             {
-                output.Add(GetItem(result.CompositeId));
+                if (!child.IsPopulated)
+                {
+                    item.ReplaceChild(child.CompositeId, GetItem(child.CompositeId));
+                }
             }
+        }
 
-            return output;
+        public List<IVersionable> Search(SearchFacet facet, ChildReferenceProcessing processing = ChildReferenceProcessing.InstantiateLatest)
+        {
+            var response = _client.Search(facet);
+            return response.Results.Select(result => GetItem(result.CompositeId, processing)).ToList();
         }
 
         public List<IVersionable> SearchTypedSet(IdentifierTriple id, SetSearchFacet facet)
         {
-            var response = Client.SearchTypedSet(id, facet);
-            var output = new List<IVersionable>();
-
-            foreach (var result in response)
-            {
-                output.Add(GetItem(result.CompositeId));
-            }
-
-            return output;
+            var response = _client.SearchTypedSet(id, facet);
+            return response.Select(result => GetItem(result.CompositeId)).ToList();
         }
 
         private void AddParent(IdentifierTriple item, IVersionable parent)
         {
-            if (!Parents.ContainsKey(item))
+            if (!_parents.ContainsKey(item))
             {
-                Parents[item] = new List<IVersionable>();
+                _parents[item] = new List<IVersionable>();
             }
-            if (!Parents[item].Contains(parent))
+            if (!_parents[item].Contains(parent))
             {
-                Parents[item].Add(parent);
+                _parents[item].Add(parent);
             }
         }
 
         private void AttachToParents(IVersionable item)
         {
-            if (!Parents.ContainsKey(item.CompositeId)) return;
-            foreach (var parent in Parents[item.CompositeId])
+            if (!_parents.ContainsKey(item.CompositeId)) return;
+            foreach (var parent in _parents[item.CompositeId])
             {
-                if (Cache.ContainsKey(parent.CompositeId))
+                if (_cache.ContainsKey(parent.CompositeId))
                 {
-                    Cache[parent.CompositeId].ReplaceChild(item.CompositeId, item);
+                    bool isDirty = item.IsDirty;
+                    _cache[parent.CompositeId].ReplaceChild(item.CompositeId, item);
+                    item.IsDirty = isDirty;
                 }
+            }
+        }
+
+        private void FindChildren(IVersionable item)
+        {
+            foreach (var child in item.GetChildren())
+            {
+                AddParent(child.CompositeId, item);
+                if (_cache.ContainsKey(child.CompositeId))
+                {
+                    bool isDirty = item.IsDirty;
+                    item.ReplaceChild(child.CompositeId, _cache[child.CompositeId]);
+                    item.IsDirty = isDirty;
+                }
+            }
+        }
+
+        private void MakeClean(IVersionable item)
+        {
+            item.IsDirty = false;
+            foreach (var child in item.GetChildren())
+            {
+                MakeClean(child);
             }
         }
     }

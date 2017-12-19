@@ -14,7 +14,7 @@ namespace CMIE.ControllerSystem.Actions
     class LoadQBLinking : TXTFileAction
     {
         private SearchFacet Facet;
-        private Dictionary<string, IdentifierTriple> QuestionConstructSchemeCache;
+        private Dictionary<string, IdentifierTriple> QuestionSchemeCache;
         protected override int[] numberOfColumns
         {
             get { return new int[]{4}; }
@@ -22,13 +22,13 @@ namespace CMIE.ControllerSystem.Actions
         public LoadQBLinking(string _filepath)
             : base(_filepath) 
         {
-            QuestionConstructSchemeCache = new Dictionary<string, IdentifierTriple>();
+            QuestionSchemeCache = new Dictionary<string, IdentifierTriple>();
         }
 
         protected override void RunFile(Action<string[]> _runner)
         {
             Facet = new SearchFacet();
-            Facet.ItemTypes.Add(DdiItemType.QuestionConstruct);
+            Facet.ItemTypes.Add(DdiItemType.QuestionItem);
             Facet.SearchTargets.Add(DdiStringType.Name);
             Facet.SearchLatestVersion = true;
             base.RunFile(_runner);
@@ -48,17 +48,17 @@ namespace CMIE.ControllerSystem.Actions
 
             List<IVersionable> bases, deriveds;
 
-            var bsId = GetControlConstructScheme(parts[0].Trim());
+            var bsId = GetQuestionScheme(parts[0].Trim());
             if (bsId == default(IdentifierTriple))
             {
-                Logger.Instance.Log.ErrorFormat("ControlConstructScheme '{0}' could not be found in the repository.", parts[0]);
+                Logger.Instance.Log.ErrorFormat("QuestionScheme '{0}' could not be found in the repository.", parts[0]);
                 counter[Counters.Skipped] += 1;
                 return;
             }
-            var dsId = GetControlConstructScheme(parts[2].Trim());
+            var dsId = GetQuestionScheme(parts[2].Trim());
             if (dsId == default(IdentifierTriple))
             {
-                Logger.Instance.Log.ErrorFormat("ControlConstructScheme '{0}' could not be found in the repository.", parts[2]);
+                Logger.Instance.Log.ErrorFormat("QuestionScheme '{0}' could not be found in the repository.", parts[2]);
                 counter[Counters.Skipped] += 1;
                 return;
             }
@@ -76,7 +76,7 @@ namespace CMIE.ControllerSystem.Actions
             {
                 if (bases.Count == 0)
                 {
-                    Logger.Instance.Log.ErrorFormat("No variable was found named '{0}' within the scope. Please check {1}", baseQuestion, filepath);
+                    Logger.Instance.Log.ErrorFormat("No question was found named '{0}' within the scope. Please check {1}", baseQuestion, filepath);
                 }
                 else
                 {
@@ -90,38 +90,39 @@ namespace CMIE.ControllerSystem.Actions
             {
                 if (deriveds.Count == 0)
                 {
-                    Logger.Instance.Log.ErrorFormat("No variable was found named '{0}' within the scope. Please check {1}", derivedQuestion, filepath);
+                    Logger.Instance.Log.ErrorFormat("No question was found named '{0}' within the scope. Please check {1}", derivedQuestion, filepath);
                 }
                 else
                 {
-                    Logger.Instance.Log.ErrorFormat("{0} variables were found named '{1}' within the scope. Please check {2}", deriveds.Count, derivedQuestion, filepath);
+                    Logger.Instance.Log.ErrorFormat("{0} questions were found named '{1}' within the scope. Please check {2}", deriveds.Count, derivedQuestion, filepath);
                 }
                 counter[Counters.Skipped] += 1;
                 return;
             }
 
-            var baseQc = bases.First() as QuestionActivity;
-            var derivedQc = deriveds.First() as QuestionActivity;
+            var baseQi = bases.First() as Question;
+            var derivedQi = deriveds.First() as Question;
 
-            derivedQc.Question.BasedOn.Items.Add(new TypedIdTriple(baseQc.Question.CompositeId, DdiItemType.QuestionItem));
+            derivedQi.BasedOn = new BasedOn();
+            derivedQi.BasedOn.Items.Add(new TypedIdTriple(baseQi.CompositeId, DdiItemType.QuestionItem));
 
-            UpdatedItems.Add(derivedQc);
+            UpdatedItems.Add(derivedQi);
         }
 
-        private IdentifierTriple GetControlConstructScheme(string name)
+        private IdentifierTriple GetQuestionScheme(string name)
         {
-            if (QuestionConstructSchemeCache.ContainsKey(name))
+            if (QuestionSchemeCache.ContainsKey(name))
             {
-                return QuestionConstructSchemeCache[name];
+                return QuestionSchemeCache[name];
             }
-            var result = GetItemByTypeAndName(DdiItemType.ControlConstructScheme, name);
+            var result = GetItemByTypeAndName(DdiItemType.QuestionScheme, name);
             if (result == default(IVersionable))
             {
                 return default(IdentifierTriple);
             }
             else
             {
-                QuestionConstructSchemeCache[name] = result.CompositeId;
+                QuestionSchemeCache[name] = result.CompositeId;
                 return result.CompositeId;
             }
         }

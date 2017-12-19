@@ -24,9 +24,9 @@ namespace CMIE.ControllerSystem
             get
             {
                 var count = 0;
-                count += toBeAdded.Count;
+                count += ToBeAdded.Count;
                 foreach (var scope in scopes)
-                    count += scope.Value.toBeAdded.Count;
+                    count += scope.Value.ToBeAdded.Count;
                 return count;
             }
         }
@@ -41,12 +41,12 @@ namespace CMIE.ControllerSystem
 
         public void AddAction(IAction action)
         {
-            actions.Add(action);
+            Actions.Add(action);
         }
 
         public void AddResource(IResource resource)
         {
-            resources.Add(resource);
+            Resources.Add(resource);
         }
 
         public void AddAction(string scope, IAction action)
@@ -69,7 +69,7 @@ namespace CMIE.ControllerSystem
 
         public void Build(bool include_globals = false)
         {
-            Parallel.ForEach<IAction>(actions, action =>
+            Parallel.ForEach<IAction>(Actions, action =>
             {
                 if (action is TXTFileAction) return;
                 SysCon.WriteLine("{0}: Validating {1}", name, action.scope);
@@ -88,16 +88,16 @@ namespace CMIE.ControllerSystem
                 scope.Value.Build();
                 progress.FinishThread(
                     Thread.CurrentThread.ManagedThreadId,
-                    text.PadRight(40, '-') + "> done. (" + String.Format("{0} items)", scope.Value.counter[Counters.Total]).PadLeft(12)
+                    text.PadRight(40, '-') + "> done. (" + String.Format("{0} items)", scope.Value.Counter[Counters.Total]).PadLeft(12)
                     );
             }
             var globalWS = new List<IVersionable>();
-            globalWS.AddRange(workingSet);
+            globalWS.AddRange(WorkingSet);
             foreach (var scope in scopes)
             {
-                globalWS.AddRange(scope.Value.workingSet);
+                globalWS.AddRange(scope.Value.WorkingSet);
             }
-            Parallel.ForEach<IAction>(actions, action =>
+            Parallel.ForEach<IAction>(Actions, action =>
             {
                 if (!(action is TXTFileAction)) return;
                 SysCon.WriteLine("{0}: Validating {1}", name, action.scope);
@@ -120,8 +120,8 @@ namespace CMIE.ControllerSystem
             //});
             if (include_globals)
             {
-                workingSet.AddRange(ControllerSystem.Actions.LoadTVLinking.FinishedAllBuilds());
-                workingSet.AddRange(ControllerSystem.Actions.LoadTQLinking.FinishedAllBuilds());
+                //WorkingSet.AddRange(ControllerSystem.Actions.LoadTVLinking.FinishedAllBuilds());
+                //WorkingSet.AddRange(ControllerSystem.Actions.LoadTQLinking.FinishedAllBuilds());
             }
             
             foreach (var scope in scopes)
@@ -312,14 +312,14 @@ namespace CMIE.ControllerSystem
             facet.ItemTypes.Add(DdiItemType.DdiInstance);
             facet.ReverseTraversal = true;
             var toCommit = new List<IVersionable>();
-            toCommit.AddRange(toBeAdded);
-            toCommit.AddRange(workingSet.OfType<VariableScheme>());
-            toCommit.AddRange(workingSet.OfType<VariableGroup>());
-            toCommit.AddRange(workingSet.OfType<ControlConstructScheme>());
-            toCommit.AddRange(workingSet.OfType<ControlConstructGroup>());
+            toCommit.AddRange(ToBeAdded);
+            toCommit.AddRange(WorkingSet.OfType<VariableScheme>());
+            toCommit.AddRange(WorkingSet.OfType<VariableGroup>());
+            toCommit.AddRange(WorkingSet.OfType<ControlConstructScheme>());
+            toCommit.AddRange(WorkingSet.OfType<ControlConstructGroup>());
             foreach (var scope in scopes)
             {
-                toCommit.AddRange(scope.Value.toBeAdded);
+                toCommit.AddRange(scope.Value.ToBeAdded);
             }
             var versioner = new Versioner();
 
@@ -374,7 +374,7 @@ namespace CMIE.ControllerSystem
                         }
                     }
                 }
-                versioner.IncrementDityItemAndParents(top.Value);
+                versioner.IncrementDirtyItemAndParents(top.Value);
             }
             client.RegisterItems(toCommit, new CommitOptions());
         }

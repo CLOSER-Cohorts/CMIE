@@ -13,111 +13,133 @@ namespace CMIE.ControllerSystem.Actions
 {
     class LoadTVLinking : TXTFileAction
     {
-        static VariableScheme vs;
+        private SearchFacet Facet;
+        private SetSearchFacet vgFacet;
+        private Dictionary<string, IdentifierTriple> VariableGroupCache;
+        private Dictionary<string, IdentifierTriple> VariableSchemeCache;
 
         protected override int[] numberOfColumns
         {
-            get { return new int[]{2}; }
+            get { return new int[]{2,3}; }
         }
 
-        public LoadTVLinking(string _filepath) : base(_filepath) {}
-
-        public override IEnumerable<IVersionable> Build(Repository repository)
+        public LoadTVLinking(string _filepath) : base(_filepath) 
         {
-            /*if (vs == default(VariableScheme))
-            {
-                var client = Utility.GetClient();
-                var facet = new SearchFacet();
-                facet.ItemTypes.Add(DdiItemType.VariableScheme);
-                facet.SearchTargets.Add(DdiStringType.Name);
-                facet.SearchTerms.Add("Topic Variable Groups");
-                facet.SearchLatestVersion = true;
-                SearchResponse response = client.Search(facet);
-
-                var graphPopulator = new GraphPopulator(client)
-                {
-                    ChildProcessing = ChildReferenceProcessing.PopulateLatest,
-                };
-                //graphPopulator.TypesToPopulate.Add(DdiItemType.Variable);
-                graphPopulator.TypesToPopulate.Add(DdiItemType.VariableGroup);
-
-                if (response.Results.Count == 1)
-                {
-                    vs = client.GetItem(
-                        response.Results[0].CompositeId,
-                        ChildReferenceProcessing.PopulateLatest) as VariableScheme;
-                    //vs.Accept(new GraphPopulator(client));
-                }
-            }*/
-
-            RunFile(Runner);
-            return new List<IVersionable>();
+            VariableGroupCache = new Dictionary<string, IdentifierTriple>();
+            VariableSchemeCache = new Dictionary<string, IdentifierTriple>();
         }
 
-        public static IEnumerable<IVersionable> FinishedAllBuilds(bool clear_vs_reference = true)
+        protected override void RunFile(Action<string[]> _runner)
         {
-            if (vs == default(VariableScheme))
-            {
-                return new List<IVersionable>();
-            }
-            else
-            {
-                var gthr = new ItemGathererVisitor();
-                gthr.TypesToFind.Add(DdiItemType.VariableScheme);
-                gthr.TypesToFind.Add(DdiItemType.VariableGroup);
-                vs.Accept(gthr);
-
-                var foundItems = gthr.FoundItems;
-
-                if (clear_vs_reference)
-                {
-                    vs = default(VariableScheme);
-                }
-
-                return foundItems;
-            }
+            Facet = new SearchFacet();
+            Facet.ItemTypes.Add(DdiItemType.Variable);
+            Facet.SearchTargets.Add(DdiStringType.Name);
+            Facet.SearchLatestVersion = true;
+            vgFacet = new SetSearchFacet();
+            vgFacet.ItemTypes.Add(DdiItemType.VariableGroup);
+            vgFacet.LeafItemTypes.Add(DdiItemType.VariableGroup);
+            vgFacet.ReverseTraversal = true;
+            base.RunFile(_runner);
         }
 
         public override void Runner(string[] parts)
         {
-            string vref = parts[0].Trim();
-            string tref = parts[1].Trim();
+            string vref = parts[parts.Length - 2].Trim();
+            string tref = parts[parts.Length - 1].Trim();
 
             if (tref == "0") return;
-            /*
-            var variable = ws.OfType<Variable>().FirstOrDefault(x => x.ItemName.Best == vref);
 
-            if (variable != default(Variable))
+            Facet.SearchTerms.Clear();
+            Facet.SearchSets.Clear();
+
+            if (parts.Length > 2)
             {
-                var vg = vs.VariableGroups.FirstOrDefault(x => x.ItemName.Best == tref);
-                if (vg != default(VariableGroup))
+                var vsId = GetVariableScheme(parts[0].Trim());
+                if (vsId == default(IdentifierTriple))
                 {
-                    var in_group = vg.GetChildren().OfType<Variable>().Any(x => x.ItemName.Best == variable.ItemName.Best);
-                    if (!in_group)
-                    {
-                        var old_vgs = new List<VariableGroup>();
-                        for (var j = 0; j < vs.VariableGroups.Count; j++)
-                        {
-                            foreach (var v in vs.VariableGroups[j].ItemsList)
-                            {
-                                if (v is Variable)
-                                {
-                                    if (((DescribableBase)v).ItemName.Best == variable.ItemName.Best)
-                                    {
-                                        old_vgs.Add(vs.VariableGroups[j]);
-                                    }
-                                }
-                            }
-                        }
-                        for (var i = 0; i < old_vgs.Count; i++ )
-                        {
-                            var to_be_removed = old_vgs[i].GetChildren().OfType<Variable>().FirstOrDefault(x => x.ItemName.Best == variable.ItemName.Best);
-                            old_vgs[i].RemoveChild(to_be_removed);
-                        }
-                        vg.AddChild(variable);
-                    }
+                    Logger.Instance.Log.ErrorFormat("VariableScheme '{0}' could not be found in the repository.", parts[0]);
+                    counter[Counters.Skipped] += 1;
+                    return;
                 }
-            }*/
+                Facet.SearchSets.Add(vsId);
+            }
+
+            Facet.SearchTerms.Add(vref);
+            var variables = Repository.Search(Facet);
+
+            if (variables.Count != 1)
+            {
+                if (variables.Count == 0)
+                {
+                    Logger.Instance.Log.ErrorFormat("No variable was found named '{0}' within the scope. Please check {1}", vref, filepath);
+                }
+                else
+                {
+                    Logger.Instance.Log.ErrorFormat("{0} variables were found named '{1}' within the scope. Please check {2}", variables.Count, vref, filepath);
+                }
+                counter[Counters.Skipped] += 1;
+                return;
+            }
+
+            var variable = variables.First() as Variable;
+
+            var vgId = GetVariableGroup(tref);
+            var variableGroup = Repository.GetItem(vgId) as VariableGroup;
+
+            // VariableGroup already contains the Variable
+            if (variableGroup.Items.Any(x => x.AgencyId == variable.AgencyId && x.Identifier == variable.Identifier))
+            {
+                return;
+            }
+
+            var oldVgs = Repository.FilterOldVersions(Repository.SearchTypedSet(variable.CompositeId, vgFacet));
+            
+            if (oldVgs.Count > 0)               //New topic mapping
+            {
+                foreach (var oldVg in oldVgs)
+                {
+                    oldVg.RemoveChild(variable.CompositeId);
+                    UpdatedItems.Add(oldVg);
+                }
+            }
+            variableGroup.Items.Add(variable);
+            UpdatedItems.Add(variableGroup);
+        }
+
+        private IdentifierTriple GetVariableGroup(string name)
+        {
+            if (VariableGroupCache.ContainsKey(name))
+            {
+                return VariableGroupCache[name];
+            }
+            var result = GetItemByTypeAndName(DdiItemType.VariableGroup, name);
+            if (result == default(IVersionable))
+            {
+                return default(IdentifierTriple);
+            }
+            else
+            {
+                VariableGroupCache[name] = result.CompositeId;
+                return result.CompositeId;
+            }
+        }
+
+        private IdentifierTriple GetVariableScheme(string name)
+        {
+            if (VariableSchemeCache.ContainsKey(name))
+            {
+                return VariableSchemeCache[name];
+            }
+            var result = GetItemByTypeAndName(DdiItemType.VariableScheme, name);
+            if (result == default(IVersionable))
+            {
+                return default(IdentifierTriple);
+            }
+            else
+            {
+                VariableSchemeCache[name] = result.CompositeId;
+                return result.CompositeId;
+            }
         }
     }
 }

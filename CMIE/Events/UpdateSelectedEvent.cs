@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class UpdateSelectedEvent : IEvent
+    internal class UpdateSelectedEvent : IEvent
     {
         public enum Actions
         {
@@ -19,13 +13,10 @@ namespace CMIE.Events
 
         public UpdateSelectedEvent(string scope, Actions action)
         {
-            this.Scope = scope;
+            Scope = scope;
             Action = action;
         }
 
-        public EventType GetEventType()
-        {
-            return EventType.UPDATE_SELECTED;
-        }
+        public override EventType Type { get { return EventType.UPDATE_SELECTED; } }
     }
 }

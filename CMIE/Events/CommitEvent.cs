@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class CommitEvent : IEvent
+    internal class CommitEvent : IEvent
     {
         public string Rationale;
 
@@ -14,10 +8,7 @@ namespace CMIE.Events
         {
             Rationale = rationale;
         }
-
-        public EventType GetEventType()
-        {
-            return EventType.COMMIT;
-        }
+        
+        public override EventType Type { get { return EventType.COMMIT; } }
     }
 }

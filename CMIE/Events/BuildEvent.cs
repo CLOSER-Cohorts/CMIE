@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class BuildEvent : IEvent
+    internal class BuildEvent : IEvent
     {
         public bool All;
         public string Scope;
@@ -19,12 +13,9 @@ namespace CMIE.Events
         public BuildEvent(string scope)
         {
             All = false;
-            this.Scope = scope;
+            Scope = scope;
         }
-
-        public EventType GetEventType()
-        {
-            return EventType.BUILD;
-        }
+        
+        public override EventType Type  { get { return EventType.BUILD; } }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class JobCompletedEvent : IEvent
+    internal class JobCompletedEvent : IEvent
     {
         public enum JobType
         {
@@ -22,9 +16,6 @@ namespace CMIE.Events
             JobTypeCompleted = type;
         }
 
-        public EventType GetEventType()
-        {
-            return EventType.JOB_COMPLETED;
-        }
+        public override EventType Type { get { return EventType.JOB_COMPLETED; } }
     }
 }

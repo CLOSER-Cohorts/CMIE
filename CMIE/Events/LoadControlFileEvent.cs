@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class LoadControlFileEvent : IEvent
+    internal class LoadControlFileEvent : IEvent
     {
         public bool Reset;
         public string Filepath;
@@ -17,14 +11,11 @@ namespace CMIE.Events
             Filepath = null;
         }
 
-        public EventType GetEventType()
-        {
-            return EventType.LOAD_CONTROL_FILE;
-        }
+        public override EventType Type { get { return EventType.LOAD_CONTROL_FILE; } }
 
         public bool HasNewFile()
         {
-            return this.Filepath != null;
+            return Filepath != null;
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 using SysCon = System.Console;
 
 using Algenta.Colectica.Model.Utility;
@@ -16,29 +12,29 @@ using CMIE.ControllerSystem;
 
 namespace CMIE
 {
-    class Evaluation : IJob
+    internal class Evaluation : IJob
     {
-        private EventManager eventManager;
-        private Controller controller;
-        private string host;
-        private RepositoryClientBase client;
+        private readonly EventManager _eventManager;
+        private readonly Controller _controller;
+        private readonly string _host;
+        private RepositoryClientBase _client;
 
         public Evaluation(EventManager eventManager, Controller controller, string host)
         {
-            this.eventManager = eventManager;
-            this.controller = controller;
-            this.host = host;
+            _eventManager = eventManager;
+            _controller = controller;
+            _host = host;
         }
 
         public void Run()
         {
-            if (!controller.HasSelected())
+            if (!_controller.HasSelected())
             {
-                SysCon.WriteLine("Error: Nothing selected for evaluation.");
+                Logger.Instance.Log.Warn("Nothing selected for evaluation.");
                 return;
             }
-            client = Utility.GetClient(host);
-            foreach (var scope in controller.GetSelectedScopes())
+            _client = Utility.GetClient(_host);
+            foreach (var scope in _controller.GetSelectedScopes())
             {
                 scope.Build();
                 Guid[] bindingTypes = {
@@ -47,41 +43,47 @@ namespace CMIE
                                            DdiItemType.ResourcePackage
                                        };
 
-                var bindingPoints = scope.workingSet.Where(x => Array.Exists(bindingTypes, y => y == x.ItemType));
-                var userIds = bindingPoints.SelectMany(x => x.UserIds.Select(y => y.Identifier).ToList()).ToList();
+                var bindingPoints = scope.WorkingSet.Where(x => Array.Exists(bindingTypes, y => y == x.ItemType));
 
-                if (userIds.Count > 0)
+                foreach (var bp in bindingPoints)
                 {
-                    var facet = new SearchFacet();
-                    foreach (var itemType in bindingTypes)
+                    var userIds = bp.UserIds.Select(y => y.Identifier).ToList();
+                    if (userIds.Count > 0)
                     {
-                        facet.ItemTypes.Add(itemType);
-                    }
-                    facet.SearchTargets.Add(DdiStringType.UserId);
-                    foreach (var userId in userIds)
-                    {
-                        facet.SearchTerms.Add(userId);
-                    }
-                    if (!facet.SearchTerms.Any())
-                    {
-                        SysCon.WriteLine("{0,-15}: {1}", scope.name, "Error");
-                        continue;
-                    }
+                        var facet = new SearchFacet();
+                        foreach (var itemType in bindingTypes)
+                        {
+                            facet.ItemTypes.Add(itemType);
+                        }
+                        facet.SearchTargets.Add(DdiStringType.UserId);
+                        foreach (var userId in userIds)
+                        {
+                            facet.SearchTerms.Add(userId);
+                        }
+                        if (!facet.SearchTerms.Any())
+                        {
+                            SysCon.WriteLine("{0,-15}: {1}", scope.name, "Error");
+                            continue;
+                        }
 
-                    if (client.Search(facet).TotalResults > 0)
-                    {
-                        scope.update = true;
+                        var itemsFound = _client.Search(facet);
+                        if (itemsFound.TotalResults > 0)
+                        {
+                            foreach (var item in itemsFound.Results)
+                            {
+                                scope.AddBindingPoint(item.CompositeId, bp);
+                            }
+                            scope.update = true;
+                        }
                     }
-                }
-                else
-                {
-                    foreach (var bp in bindingPoints)
+                    else 
                     {
                         try
                         {
-                            var result = client.GetLatestItem(bp.Identifier, bp.AgencyId);
+                            var result = _client.GetLatestItem(bp.Identifier, bp.AgencyId);
                             if (result != default(IVersionable))
                             {
+                                scope.AddBindingPoint(result.CompositeId, bp);
                                 scope.update = true;
                                 break;
                             }
@@ -92,10 +94,11 @@ namespace CMIE
                     }
                 }
 
+
                 SysCon.WriteLine("{0,-15}: {1}", scope.name, scope.update ? "Update" : "New");
             }
 
-            eventManager.FireEvent(new JobCompletedEvent(JobCompletedEvent.JobType.EVALUATION));
+            _eventManager.FireEvent(new JobCompletedEvent(JobCompletedEvent.JobType.EVALUATION));
         }
     }
 }

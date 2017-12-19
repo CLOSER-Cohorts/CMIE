@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 
 using Algenta.Colectica.Model;
+using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Utility;
 
@@ -12,39 +13,37 @@ namespace CMIE
 {
     public class Comparator
     {
-        public List<IVersionable> amendments;
-        public List<IVersionable> repoSet;
+        private Repository _repository;
+        private List<IVersionable> _updatedItems;
 
-        public Comparator(List<IVersionable> _repoSet)
+        public Comparator(Repository repository, List<IVersionable> updatedItems)
         {
-            amendments = new List<IVersionable>();
-            repoSet = _repoSet;
+            _repository = repository;
+            _updatedItems = updatedItems;
         }
 
         public int Compare(IVersionable A, IVersionable B)
         {
-            var gathererA = new ItemGathererVisitor();
-            var gathererB = new ItemGathererVisitor();
-            A.Accept(gathererA);
-            B.Accept(gathererB);
-
-            var childrenA = gathererA.FoundItems.Where(x => x.UserIds.Count > 0).ToCollection();
-            var childrenB = gathererB.FoundItems.Where(x => x.UserIds.Count > 0).ToCollection();
+            var childrenA = A.GetChildren().Where(x => x.UserIds.Count > 0).ToCollection();
+            var childrenB = B.GetChildren().Where(x => x.UserIds.Count > 0).ToCollection();
 
             int compared = 0;
 
             foreach (var childA in childrenA)
             {
                 compared++;
+                if (childA.GetType() == typeof(CodeList))
+                {
+                    System.Console.Write("");
+                }
 
                 var childB = childrenB.FirstOrDefault(x => x.UserIds[0].Identifier == childA.UserIds[0].Identifier);
+                
+                
                 if (childB != default(IVersionable))
                 {
+                    childrenB.Remove(childB);
                     var amendmended = false;
-                    if (childB.ItemType == DdiItemType.Loop)
-                    {
-                        bool stop = true;
-                    }
                     amendmended |= Compare<DescribableBase>(
                         new[] { "Label", "ItemName", "Description" },
                         childA,
@@ -103,18 +102,18 @@ namespace CMIE
                         var seqA = (CustomSequenceActivity)childA;
                         var seqB = (CustomSequenceActivity)childB;
 
-                        var ccsA = seqA.GetChildren();
-                        var ccsB = seqB.GetChildren();
-
                         var reorderControlConstructs = false;
 
-                        if (ccsA.Count != ccsB.Count) 
+                        if (seqA.Activities.Count != seqB.Activities.Count) 
                             reorderControlConstructs = true;
                         else
                         {
-                            for (var i = 0; i < ccsA.Count; i++)
+                            for (var i = 0; i < seqA.Activities.Count; i++)
                             {
-                                if (ccsA[i].UserIds[0].Identifier != ccsB[i].UserIds[0].Identifier)
+                                var isDirty = seqA.IsDirty;
+                                seqA.ReplaceChild(seqA.Activities[i].CompositeId, _repository.GetItem(seqA.Activities[i].CompositeId));
+                                seqA.IsDirty = isDirty;
+                                if (seqA.Activities[i].UserIds[0].Identifier != seqB.Activities[i].UserIds[0].Identifier)
                                 {
                                     reorderControlConstructs = true;
                                     break;
@@ -123,27 +122,37 @@ namespace CMIE
                         }
                         if (reorderControlConstructs)
                         {
-                            foreach (var cc in ccsA)
+                            foreach (var cc in seqA.Activities)
                             {
                                 seqA.RemoveChild(cc.CompositeId);
                             }
-                            for (var i = 0; i < ccsB.Count; i++)
+                            for (var i = 0; i < seqB.Activities.Count; i++)
                             {
-                                var tmp = repoSet.Where(x => x.UserIds.Count > 0).ToList();
-                                IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == ccsB[i].UserIds[0].Identifier);
-                                seqA.AddChild(found);
+                                seqA.AddChild(_repository.GetItem(seqB.Activities[i].UserIds[0].Identifier));
                             }
                             childA.IsDirty = true;
                             amendmended = true;
                         }
                     }
-
                     if (amendmended)
                     {
-                        amendments.Add(childA);
+                        if (!_updatedItems.Any(x => x.CompositeId.Identifier == childA.CompositeId.Identifier))
+                        {
+                            _updatedItems.Add(childA);
+                        }
                     }
                 }
+                else
+                {
+                    A.RemoveChild(childA.CompositeId);
+                }
             }
+            foreach (var childB in childrenB)
+            {
+                //_repository.AddToCache(childB);
+                //_updatedItems.Add(childB);
+            }
+
             return compared;
         }
 
@@ -203,6 +212,7 @@ namespace CMIE
                             UpdateProperty<T, bool>(p, a, b);
                             UpdateProperty<T, Nullable<int>>(p, a, b);
                             UpdateProperty<T, Nullable<decimal>>(p, a, b);
+                            UpdateProperty<T, ObservableCollection<Code>, Code>(p, a, b);
                         }
                     }
                     if (amendedReference)
@@ -316,9 +326,7 @@ namespace CMIE
             IdentifiableBase vb = (IdentifiableBase)p.GetValue(b, null);
             if (vb == null) return;
             if (!(vb.UserIds.Any())) return;
-            var tmp = repoSet.Where(x => x.UserIds.Count > 0).ToList();
-            IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == vb.UserIds[0].Identifier);
-            p.SetValue(a, found, null);
+            p.SetValue(a, _repository.GetItem(vb.UserIds[0].Identifier), null);
         }
 
         private void UpdateReferenceProperty<T, S, R>(PropertyInfo p, T a, T b) where R : VersionableBase
@@ -332,12 +340,11 @@ namespace CMIE
                 ((IVersionable)a).RemoveChild(((VersionableBase)va[i]).CompositeId);
             }
             if (!vb.Any()) return;
-            var tmp = repoSet.Where(x => x.UserIds.Count > 0).ToList();
             for (var i = 0; i < vb.Count; i++)
             {
-                IVersionable found = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == vb[i].UserIds[0].Identifier);
+                R found = (R)_repository.GetItem(vb[i].UserIds[0].Identifier);
                 found.IsDirty = true;
-                va.Add((R)found);
+                va.Add(found);
             }
         }
 
@@ -347,15 +354,45 @@ namespace CMIE
             p.SetValue(a, p.GetValue(b, null), null);
         }
 
-        private void UpdateProperty<T, S, R>(PropertyInfo p, T a, T b) where S : ICollection<R>
+        private void UpdateProperty<T, S, R>(PropertyInfo p, T a, T b)
+            where S : ICollection<R>
+            where R : IdentifiableBase
         {
             if (p.PropertyType != typeof(S)) return;
+            PropertyInfo[] properties = typeof(R).GetProperties();
             S va = (S)p.GetValue(a, null);
             S vb = (S)p.GetValue(b, null);
-            va.Clear();
-            foreach (var val in vb)
+            var tmp = new List<R>();
+            foreach (var valA in va)
             {
-                va.Add(val);
+                tmp.Add(valA);
+            }
+            va.Clear();
+            foreach (var valB in vb)
+            {
+                R valA = default(R);
+                if (tmp.Select(x => x.UserIds.Count).Min() > 0)
+                {
+                    valA = tmp.FirstOrDefault(x => x.UserIds[0].Identifier == valB.UserIds[0].Identifier);
+                }
+                else if (typeof(R) == typeof(Code))
+                {
+                    var categoryUserId = (valB as Code).Category.UserIds[0].Identifier;
+                    valA = tmp.FirstOrDefault(x => (x as Code).Category.UserIds[0].Identifier == categoryUserId);
+                }
+
+                if (valA != default(R))
+                {
+                    var valProp = typeof(R).GetProperty("Value");
+                    UpdateProperty<R, string>(valProp, valA, valB);
+                    var catProp = typeof(R).GetProperty("Category");
+                    UpdateReferenceProperty<R>(catProp, valA, valB);
+                    va.Add(valA);
+                }
+                else 
+                {
+                    va.Add(valB);
+                }
             }
         }
 

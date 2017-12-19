@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    class QuitEvent : IEvent
+    internal class QuitEvent : IEvent
     {
-        public QuitEvent() { }
-
-        public EventType GetEventType()
-        {
-            return EventType.QUIT;
-        }
+        public override EventType Type { get { return EventType.QUIT; } }
     }
 }

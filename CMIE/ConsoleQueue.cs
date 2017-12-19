@@ -1,24 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System;
-using System.Runtime.InteropServices.ComTypes;
-using Algenta.Colectica.Model.Utility;
 using SysCon = System.Console;
 
 namespace CMIE
 {
     public class ConsoleQueue
     {
-        private Queue<string> queue;
+        private readonly Queue<string> _queue;
 
         public ConsoleQueue()
         {
-            queue = new Queue<string>();
+            _queue = new Queue<string>();
         }
 
         public void Write(string str, params object[] args)
         {
-            queue.Enqueue(String.Format(str, args));
+            _queue.Enqueue(string.Format(str, args));
         }
 
         public void WriteLine(string str, params object[] args)
@@ -28,9 +25,9 @@ namespace CMIE
 
         public void Publish()
         {
-            while (queue.Count > 0)
+            while (_queue.Count > 0)
             {
-                SysCon.Write(queue.Dequeue());
+                SysCon.Write(_queue.Dequeue());
             }
         }
     }

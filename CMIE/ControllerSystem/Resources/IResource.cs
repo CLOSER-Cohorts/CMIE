@@ -48,6 +48,10 @@ namespace CMIE.ControllerSystem.Resources
             }
             else
             {
+                foreach (var message in validator.ResultMessages)
+                {
+                    Logger.Instance.Log.Error(message.DisplayMessage);
+                }     
                 throw new System.Exception("Invalid file: " + this.filepath);
             }
             valid = true;

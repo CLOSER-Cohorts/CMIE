@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMIE.Events
+﻿namespace CMIE.Events
 {
-    enum EventType
+    internal enum EventType
     {
         QUIT,
         STATUS,
@@ -19,6 +13,7 @@ namespace CMIE.Events
         BUILD,
         JOB_COMPLETED,
         COMMIT,
-        MAP
+        MAP,
+        RUN_LINKER
     }
 }

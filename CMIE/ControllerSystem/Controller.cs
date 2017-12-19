@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SysCon = System.Console;
 
+using Algenta.Colectica.Model.Utility;
+
 using CMIE.ControllerSystem.Actions;
 using CMIE.ControllerSystem.Resources;
 using CMIE.Console;
@@ -23,6 +25,7 @@ namespace CMIE.ControllerSystem
         public List<Group> groups { get; private set; }
         public List<IAction> globalActions { get; private set; }
         public List<IResource> globalResources { get; private set; }
+        public List<LinkChild> links { get; private set; }
         private Utility.ObservableCollectionUnique<string> selected;
 
         public Controller(EventManager eventManager, string filepath, bool verbose = false)
@@ -38,14 +41,21 @@ namespace CMIE.ControllerSystem
         {
             if (GetOptions().Any(x => x == scope))
             {
-                if (!selected.Add(scope))
+                if (ScopeIsValid(scope))
                 {
-                    SysCon.WriteLine("Error: '{0}' is already selected.", scope);
+                    if (!selected.Add(scope))
+                    {
+                        Logger.Instance.Log.WarnFormat("'{0}' is already selected.", scope);
+                    }
+                }
+                else
+                {
+                    Logger.Instance.Log.ErrorFormat("Could not select '{0}' because not all resources or assests passed validation.", scope);
                 }
             }
             else
             {
-                SysCon.WriteLine("Error: '{0}' is not a valid selection.", scope);
+                Logger.Instance.Log.ErrorFormat("'{0}' is not a valid selection.", scope);
             }
         }
 
@@ -98,7 +108,7 @@ namespace CMIE.ControllerSystem
                     return group.scopes[scopeName];
                 }
             }
-            throw new Exception(scopeName + " was now found in any group.");
+            throw new Exception(scopeName + " was not found in any group.");
         }
 
         public bool HasSelected()
@@ -146,9 +156,8 @@ namespace CMIE.ControllerSystem
         {
             groups = new List<Group>();
             globalActions = new List<IAction>();
+            links = new List<LinkChild>();
             selected = new Utility.ObservableCollectionUnique<string>();
-
-            
         }
 
         public void Validate()
@@ -182,6 +191,10 @@ namespace CMIE.ControllerSystem
 
                     case "concepts":
                         globalResources.Add(new LoadTopics(BuildFilePath(pieces[1])));
+                        return;
+
+                    case "link":
+                        links.Add(new LinkChild(pieces[1], pieces[2]));
                         return;
 
                     default:
@@ -309,9 +322,14 @@ namespace CMIE.ControllerSystem
             }
         }
 
+        private bool ScopeIsValid(string scope)
+        {
+            return GetScope(scope).IsValid;
+        }
+
         public void OnEvent(IEvent _event)
         {
-            switch (_event.GetEventType())
+            switch (_event.Type)
             {
                 case EventType.JOB_COMPLETED:
                     OnJobCompleted(_event);
